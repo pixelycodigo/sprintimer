@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { clientesService } from '../../services/clientesService';
+import { clientesService } from '../../../services/clientesService';
 
 export default function CrearCliente() {
   const navigate = useNavigate();

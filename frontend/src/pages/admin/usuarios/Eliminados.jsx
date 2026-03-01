@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { usuariosService } from '../../services/usuariosService';
+import { usuariosService } from '../../../services/usuariosService';
 
 export default function Eliminados() {
   const [eliminados, setEliminados] = useState([]);

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { tareasService, actividadesService } from '../../services/tareasService';
-import HorasInput from '../../components/tareas/HorasInput';
+import { tareasService, actividadesService } from '../../../services/tareasService';
+import HorasInput from '../../../components/tareas/HorasInput';
 
 export default function RegistrarTarea() {
   const navigate = useNavigate();

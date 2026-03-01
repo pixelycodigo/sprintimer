@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { cortesService } from '../../services/cortesService';
+import { cortesService } from '../../../services/cortesService';
 
 export default function MisCortes() {
   const [cortes, setCortes] = useState([]);

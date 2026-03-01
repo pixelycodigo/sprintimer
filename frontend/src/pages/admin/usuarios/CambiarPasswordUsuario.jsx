@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { usuariosService } from '../../services/usuariosService';
+import { usuariosService } from '../../../services/usuariosService';
 
 export default function CambiarPasswordUsuario() {
   const { id } = useParams();

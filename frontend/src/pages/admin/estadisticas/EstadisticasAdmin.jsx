@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { estadisticasService } from '../../services/estadisticasService';
-import { HorasPorUsuarioChart, HorasPorDiaChart, ProgresoSprintsChart } from '../../components/estadisticas/Charts';
+import { estadisticasService } from '../../../services/estadisticasService';
+import { HorasPorUsuarioChart, HorasPorDiaChart, ProgresoSprintsChart } from '../../../components/estadisticas/Charts';
 
 export default function EstadisticasAdmin() {
   const [loading, setLoading] = useState(true);

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { tareasService } from '../../services/tareasService';
+import { tareasService } from '../../../services/tareasService';
 
 export default function MisTareas() {
   const [tareas, setTareas] = useState([]);

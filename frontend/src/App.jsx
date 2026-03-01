@@ -42,6 +42,12 @@ import EstadisticasAdmin from './pages/admin/estadisticas/EstadisticasAdmin';
 import CortesMensuales from './pages/admin/cortes/CortesMensuales';
 import DetalleCorte from './pages/admin/cortes/DetalleCorte';
 
+// Admin - Sprints
+import ListaSprints from './pages/admin/sprints/ListaSprints';
+
+// Admin - Actividades
+import ListaActividades from './pages/admin/actividades/ListaActividades';
+
 // Usuario - Cortes
 import MisCortes from './pages/usuario/cortes/MisCortes';
 import DetalleCorteUsuario from './pages/admin/cortes/DetalleCorte';
@@ -282,6 +288,8 @@ function App() {
             <Route path="estadisticas" element={<EstadisticasAdmin />} />
             <Route path="cortes" element={<CortesMensuales />} />
             <Route path="cortes/:id" element={<DetalleCorte />} />
+            <Route path="sprints" element={<ListaSprints />} />
+            <Route path="actividades" element={<ListaActividades />} />
           </Route>
 
           {/* Rutas Protegidas - Usuario */}
@@ -313,6 +321,32 @@ function App() {
           >
             <Route index element={<Navigate to="/super-admin/dashboard" replace />} />
             <Route path="dashboard" element={<SuperAdminDashboard />} />
+            {/* Rutas de administración (acceso total) */}
+            <Route path="admins" element={<ListaUsuarios />} />
+            <Route path="admins/crear" element={<CrearUsuario />} />
+            <Route path="admins/:id" element={<DetalleUsuario />} />
+            <Route path="admins/:id/editar" element={<EditarUsuario />} />
+            <Route path="admins/:id/cambiar-password" element={<CambiarPasswordUsuario />} />
+            <Route path="usuarios" element={<ListaUsuarios />} />
+            <Route path="usuarios/crear" element={<CrearUsuario />} />
+            <Route path="usuarios/:id" element={<DetalleUsuario />} />
+            <Route path="usuarios/:id/editar" element={<EditarUsuario />} />
+            <Route path="clientes" element={<ListaClientes />} />
+            <Route path="clientes/crear" element={<CrearCliente />} />
+            <Route path="clientes/:id" element={<EditarCliente />} />
+            <Route path="clientes/:id/editar" element={<EditarCliente />} />
+            <Route path="proyectos" element={<ListaProyectos />} />
+            <Route path="proyectos/crear" element={<CrearProyecto />} />
+            <Route path="proyectos/:id" element={<EditarProyecto />} />
+            <Route path="proyectos/:id/editar" element={<EditarProyecto />} />
+            <Route path="proyectos/:id/asignar-usuarios" element={<AsignarUsuariosProyecto />} />
+            <Route path="proyectos/:id/dias-laborables" element={<ConfigurarDiasLaborables />} />
+            <Route path="estadisticas" element={<EstadisticasAdmin />} />
+            <Route path="cortes" element={<CortesMensuales />} />
+            <Route path="cortes/:id" element={<DetalleCorte />} />
+            <Route path="sprints" element={<ListaSprints />} />
+            <Route path="actividades" element={<ListaActividades />} />
+            <Route path="eliminados" element={<Eliminados />} />
           </Route>
 
           {/* Redirect raíz */}

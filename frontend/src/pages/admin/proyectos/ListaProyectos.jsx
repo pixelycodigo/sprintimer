@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { proyectosService } from '../../services/proyectosService';
+import { proyectosService } from '../../../services/proyectosService';
 
 export default function ListaProyectos() {
   const [proyectos, setProyectos] = useState([]);

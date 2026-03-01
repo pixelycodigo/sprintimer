@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { clientesService } from '../../services/clientesService';
+import { clientesService } from '../../../services/clientesService';
 
 export default function EditarCliente() {
   const { id } = useParams();

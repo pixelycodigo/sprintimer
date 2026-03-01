@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { proyectosService } from '../../services/proyectosService';
-import { usuariosService } from '../../services/usuariosService';
+import { proyectosService } from '../../../services/proyectosService';
+import { usuariosService } from '../../../services/usuariosService';
 
 export default function AsignarUsuariosProyecto() {
   const { id } = useParams();

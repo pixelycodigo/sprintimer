@@ -1,6 +1,12 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// URL de la API desde variables de entorno
+// Se define en .env.local (desarrollo) o .env.production (producción)
+const API_URL = import.meta.env.VITE_API_URL;
+
+if (!API_URL) {
+  console.warn('⚠️ VITE_API_URL no está definida. Revisa tu archivo .env.local o .env.production');
+}
 
 // Crear instancia de axios
 const api = axios.create({

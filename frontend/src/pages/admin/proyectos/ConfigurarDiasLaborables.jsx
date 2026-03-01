@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { proyectosService } from '../../services/proyectosService';
+import { proyectosService } from '../../../services/proyectosService';
 
 const diasSemana = [
   { value: 0, nombre: 'Domingo', short: 'Dom' },

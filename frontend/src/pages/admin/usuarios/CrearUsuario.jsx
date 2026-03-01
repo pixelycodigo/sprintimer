@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { usuariosService } from '../../services/usuariosService';
+import { usuariosService } from '../../../services/usuariosService';
 
 export default function CrearUsuario() {
   const navigate = useNavigate();

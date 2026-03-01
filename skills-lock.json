@@ -1,6 +1,11 @@
 {
   "version": 1,
   "skills": {
+    "Error Resolver": {
+      "source": "davila7/claude-code-templates",
+      "sourceType": "github",
+      "computedHash": "0561de16f5af512ef82aeaeb812e60f9adb0064c75a8f7c1de9b864a58d2595b"
+    },
     "brainstorming": {
       "source": "obra/superpowers",
       "sourceType": "github",

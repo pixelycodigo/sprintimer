@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { estadisticasService } from '../../services/estadisticasService';
+import { estadisticasService } from '../../../services/estadisticasService';
 
 export default function EstadisticasUsuario() {
   const [loading, setLoading] = useState(true);

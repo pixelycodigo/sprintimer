@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { proyectosService } from '../../services/proyectosService';
-import { clientesService } from '../../services/clientesService';
+import { proyectosService } from '../../../services/proyectosService';
+import { clientesService } from '../../../services/clientesService';
 
 export default function CrearProyecto() {
   const navigate = useNavigate();
