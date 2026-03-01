@@ -31,11 +31,12 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Rutas principales (se irán agregando en las próximas fases)
-// app.use('/api/auth', require('./routes/auth'));
-// app.use('/api/admin', require('./routes/admin'));
-// app.use('/api/usuario', require('./routes/usuario'));
-// app.use('/api/super-admin', require('./routes/super-admin'));
+// Rutas principales
+app.use('/api/auth', require('./src/routes/auth'));
+// Las siguientes rutas se agregarán en las próximas fases:
+// app.use('/api/admin', require('./src/routes/admin'));
+// app.use('/api/usuario', require('./src/routes/usuario'));
+// app.use('/api/super-admin', require('./src/routes/super-admin'));
 
 // Middleware de manejo de errores
 app.use((err, req, res, next) => {
