@@ -37,7 +37,9 @@ app.use('/api/admin/usuarios', require('./src/routes/usuarios'));
 app.use('/api/admin/clientes', require('./src/routes/clientes'));
 app.use('/api/admin/proyectos', require('./src/routes/proyectos'));
 app.use('/api/admin', require('./src/routes/configuracion'));
+app.use('/api/admin/tiempo', require('./src/routes/tiempo'));
 app.use('/api/usuario', require('./src/routes/usuario'));
+app.use('/api/usuario/tareas', require('./src/routes/tareas'));
 app.use('/api/super-admin', require('./src/routes/super-admin'));
 
 // Middleware de manejo de errores
