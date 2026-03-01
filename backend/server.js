@@ -40,6 +40,7 @@ app.use('/api/admin', require('./src/routes/configuracion'));
 app.use('/api/admin/tiempo', require('./src/routes/tiempo'));
 app.use('/api/admin/pagos', require('./src/routes/pagos'));
 app.use('/api/admin/estadisticas', require('./src/routes/estadisticas'));
+app.use('/api/admin/eliminados', require('./src/routes/eliminados'));
 app.use('/api/usuario', require('./src/routes/usuario'));
 app.use('/api/usuario/tareas', require('./src/routes/tareas'));
 app.use('/api/usuario/cortes', require('./src/routes/usuario-cortes'));
