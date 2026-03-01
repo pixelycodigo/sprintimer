@@ -25,6 +25,11 @@
       "source": "supercent-io/skills-template",
       "sourceType": "github",
       "computedHash": "44d192022e830fb048770335351cc34cf5a52d360a7bd1253a9d9f510e4f1d3a"
+    },
+    "writing-clearly-and-concisely": {
+      "source": "softaworks/agent-toolkit",
+      "sourceType": "github",
+      "computedHash": "136a0413255aa82d800459c775eabf041620b2e9cbf2d713b739bf1b87a3db3a"
     }
   }
 }
