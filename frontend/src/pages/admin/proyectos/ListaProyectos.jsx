@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { proyectosService } from '../../../services/proyectosService';
+import Modal from '../../../components/Modal';
 
 export default function ListaProyectos() {
   const [proyectos, setProyectos] = useState([]);
@@ -15,15 +16,20 @@ export default function ListaProyectos() {
     search: '',
     estado: '',
   });
+  const [activeFilters, setActiveFilters] = useState(filters);
+  const [proyectoEliminar, setProyectoEliminar] = useState(null);
+  const [showModalEliminar, setShowModalEliminar] = useState(false);
+  const [success, setSuccess] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
     cargarProyectos();
-  }, [pagination.page, filters]);
+  }, [pagination.page, activeFilters]);
 
   const cargarProyectos = async () => {
     setLoading(true);
     try {
-      const params = { ...pagination, ...filters };
+      const params = { ...pagination, ...activeFilters };
       const response = await proyectosService.listar(params);
       setProyectos(response.proyectos);
       setPagination(response.pagination);
@@ -34,11 +40,40 @@ export default function ListaProyectos() {
     }
   };
 
-  const handleEliminar = async (id) => {
-    if (!confirm('¿Estás seguro de eliminar este proyecto?')) return;
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setActiveFilters(filters);
+    setPagination((prev) => ({ ...prev, page: 1 }));
+  };
+
+  const handleClearFilters = () => {
+    const cleanFilters = { search: '', estado: '' };
+    setFilters(cleanFilters);
+    setActiveFilters(cleanFilters);
+    setPagination((prev) => ({ ...prev, page: 1 }));
+  };
+
+  const handleEliminar = (proyecto) => {
+    setProyectoEliminar(proyecto);
+    setShowModalEliminar(true);
+  };
+
+  const confirmarEliminar = async () => {
+    if (!proyectoEliminar) return;
+
     try {
-      await proyectosService.eliminar(id, 'Eliminado desde frontend');
+      // Soft delete - se mueve a eliminados
+      await proyectosService.eliminar(proyectoEliminar.id, 'Eliminado desde frontend');
+      setSuccess('Proyecto movido a eliminados');
+      setProyectoEliminar(null);
+      setShowModalEliminar(false);
       cargarProyectos();
+      setTimeout(() => setSuccess(''), 3000);
     } catch (error) {
       console.error('Error al eliminar:', error);
     }
@@ -46,11 +81,11 @@ export default function ListaProyectos() {
 
   const getEstadoColor = (estado) => {
     const colors = {
-      activo: 'badge-success',
-      completado: 'badge-info',
-      pausado: 'badge-warning',
+      activo: 'bg-emerald-100 text-emerald-700',
+      completado: 'bg-blue-100 text-blue-700',
+      pausado: 'bg-amber-100 text-amber-700',
     };
-    return colors[estado] || 'badge-info';
+    return colors[estado] || 'bg-slate-100 text-slate-600';
   };
 
   return (
@@ -67,43 +102,53 @@ export default function ListaProyectos() {
         </Link>
       </div>
 
+      {/* Alertas */}
+      {error && (
+        <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+          {error}
+        </div>
+      )}
+
+      {success && (
+        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-lg text-sm text-emerald-700">
+          {success}
+        </div>
+      )}
+
       {/* Filters */}
       <div className="card-base p-4">
-        <div className="flex flex-wrap gap-4">
+        <form onSubmit={handleSearch} className="flex flex-wrap gap-4">
           <input
             type="text"
-            placeholder="Buscar por nombre..."
+            name="search"
+            placeholder="Buscar por nombre, estado o cliente..."
             value={filters.search}
-            onChange={(e) => {
-              setFilters({ search: e.target.value });
-              setPagination(prev => ({ ...prev, page: 1 }));
-            }}
-            className="input-base flex-1 min-w-64"
+            onChange={handleFilterChange}
+            className="input-base flex-1"
           />
           <select
+            name="estado"
             value={filters.estado}
-            onChange={(e) => {
-              setFilters({ estado: e.target.value });
-              setPagination(prev => ({ ...prev, page: 1 }));
-            }}
+            onChange={handleFilterChange}
             className="input-base w-40"
           >
             <option value="">Todos los estados</option>
-            <option value="activo">Activos</option>
-            <option value="completado">Completados</option>
-            <option value="pausado">Pausados</option>
+            <option value="activo">Activo</option>
+            <option value="completado">Completado</option>
+            <option value="pausado">Pausado</option>
           </select>
-          <button onClick={cargarProyectos} className="btn-primary">🔍 Buscar</button>
+          <button type="submit" className="btn-primary">🔍 Filtrar</button>
           <button
-            onClick={() => setFilters({ search: '', estado: '' })}
+            type="button"
+            onClick={handleClearFilters}
             className="btn-secondary"
           >
             Limpiar
           </button>
-        </div>
+        </form>
       </div>
 
-      {/* Grid de Proyectos */}
+      {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {loading ? (
           <div className="col-span-full py-12 text-center">
@@ -111,112 +156,143 @@ export default function ListaProyectos() {
             <p className="mt-4 text-slate-600">Cargando proyectos...</p>
           </div>
         ) : proyectos.length === 0 ? (
-          <div className="col-span-full py-12 text-center text-slate-500">
-            No se encontraron proyectos
+          <div className="col-span-full py-12 text-center">
+            <span className="text-6xl">🔍</span>
+            <h3 className="mt-4 text-lg font-semibold text-slate-900">
+              No se encontraron proyectos
+            </h3>
+            <p className="mt-2 text-slate-600">
+              Intenta con otros filtros o limpia los filtros actuales
+            </p>
+            {(filters.search || filters.estado) && (
+              <button
+                onClick={handleClearFilters}
+                className="mt-4 btn-secondary"
+              >
+                Limpiar filtros
+              </button>
+            )}
           </div>
         ) : (
           proyectos.map((proyecto) => (
-            <div key={proyecto.id} className="card-base p-6 hover:shadow-md transition-shadow">
+            <div key={proyecto.id} className="card-base p-6 hover:shadow-lg transition-shadow">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-slate-900">{proyecto.nombre}</h3>
-                  <p className="text-sm text-slate-600 mt-1">{proyecto.cliente_nombre}</p>
+                  <h3 className="text-lg font-semibold text-slate-900">
+                    {proyecto.nombre}
+                  </h3>
+                  <p className="text-sm text-slate-600 mt-1">
+                    {proyecto.cliente_nombre || 'Sin cliente'}
+                  </p>
                 </div>
-                <span className={getEstadoColor(proyecto.estado)}>
+                <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${getEstadoColor(proyecto.estado)}`}>
                   {proyecto.estado}
                 </span>
               </div>
-
               <p className="text-sm text-slate-600 mb-4 line-clamp-2">
                 {proyecto.descripcion || 'Sin descripción'}
               </p>
-
-              <div className="flex items-center justify-between text-sm text-slate-500 mb-4">
-                <span>📅 {new Date(proyecto.fecha_creacion).toLocaleDateString('es-ES')}</span>
-                <span>⏱️ {proyecto.sprint_duracion} semanas</span>
-              </div>
-
-              <div className="flex gap-2 pt-4 border-t border-slate-200">
-                <Link
-                  to={`/admin/proyectos/${proyecto.id}`}
-                  className="btn-secondary flex-1 text-center"
-                >
-                  Ver
-                </Link>
+              <div className="flex gap-2">
                 <Link
                   to={`/admin/proyectos/${proyecto.id}/editar`}
-                  className="btn-secondary flex-1 text-center"
+                  className="flex-1 btn-secondary text-center text-sm"
                 >
-                  Editar
+                  ✏️ Editar
                 </Link>
                 <button
-                  onClick={() => handleEliminar(proyecto.id)}
-                  className="btn-secondary text-red-600 hover:bg-red-50"
+                  onClick={() => handleEliminar(proyecto)}
+                  className="p-2 text-red-600 rounded hover:bg-red-50 transition-colors"
+                  title="Eliminar"
                 >
                   🗑️
                 </button>
-              </div>
-
-              {/* Accesos rápidos a configuraciones */}
-              <div className="mt-4 pt-4 border-t border-slate-200">
-                <p className="text-xs text-slate-500 mb-2 font-medium">Configuraciones:</p>
-                <div className="grid grid-cols-2 gap-2">
-                  <Link
-                    to={`/admin/proyectos/${proyecto.id}/sprints`}
-                    className="text-xs px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded text-center text-slate-700"
-                  >
-                    📅 Sprints
-                  </Link>
-                  <Link
-                    to={`/admin/proyectos/${proyecto.id}/actividades`}
-                    className="text-xs px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded text-center text-slate-700"
-                  >
-                    ✅ Actividades
-                  </Link>
-                  <Link
-                    to={`/admin/proyectos/${proyecto.id}/hitos`}
-                    className="text-xs px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded text-center text-slate-700"
-                  >
-                    🎯 Hitos
-                  </Link>
-                  <Link
-                    to={`/admin/proyectos/${proyecto.id}/trimestres`}
-                    className="text-xs px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded text-center text-slate-700"
-                  >
-                    📆 Trimestres
-                  </Link>
-                </div>
               </div>
             </div>
           ))
         )}
       </div>
 
-      {/* Pagination */}
+      {/* Paginación */}
       {pagination.totalPages > 1 && (
-        <div className="card-base px-6 py-4 flex items-center justify-between">
+        <div className="px-6 py-4 border-t border-slate-200 flex items-center justify-between">
           <div className="text-sm text-slate-600">
-            Mostrando {(pagination.page - 1) * pagination.limit + 1} a{' '}
-            {Math.min(pagination.page * pagination.limit, pagination.total)} de {pagination.total}
+            Mostrando <span className="font-medium">{proyectos.length}</span> de{' '}
+            <span className="font-medium">{pagination.total}</span> proyectos
           </div>
           <div className="flex gap-2">
             <button
               onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
               disabled={pagination.page === 1}
-              className="btn-secondary disabled:opacity-50"
+              className="px-3 py-1 text-sm border border-slate-300 rounded hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Anterior
+              ← Anterior
             </button>
+            <span className="px-3 py-1 text-sm text-slate-600">
+              Página {pagination.page} de {pagination.totalPages}
+            </span>
             <button
               onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
-              disabled={pagination.page === pagination.totalPages}
-              className="btn-secondary disabled:opacity-50"
+              disabled={pagination.page >= pagination.totalPages}
+              className="px-3 py-1 text-sm border border-slate-300 rounded hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Siguiente
+              Siguiente →
             </button>
           </div>
         </div>
       )}
+
+      {/* Modal Eliminar */}
+      <Modal
+        isOpen={showModalEliminar}
+        onClose={() => {
+          setShowModalEliminar(false);
+          setProyectoEliminar(null);
+        }}
+        title="Eliminar Proyecto"
+        footer={
+          <div className="flex gap-3 justify-end">
+            <button
+              type="button"
+              onClick={() => {
+                setShowModalEliminar(false);
+                setProyectoEliminar(null);
+              }}
+              className="btn-secondary"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              onClick={confirmarEliminar}
+              className="btn-primary bg-red-600 hover:bg-red-700 text-white"
+            >
+              🗑️ Eliminar
+            </button>
+          </div>
+        }
+      >
+        <div className="space-y-3">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-2xl">
+              ⚠️
+            </div>
+            <div>
+              <p className="font-medium text-slate-900">
+                {proyectoEliminar?.nombre}
+              </p>
+              <p className="text-sm text-slate-500">
+                {proyectoEliminar?.cliente_nombre || 'Sin cliente'}
+              </p>
+            </div>
+          </div>
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+            <p className="text-sm text-amber-800">
+              <strong>⚠️ Atención:</strong> El proyecto se moverá a la papelera de eliminados. 
+              Podrás recuperarlo o eliminarlo permanentemente desde allí.
+            </p>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

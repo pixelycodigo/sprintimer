@@ -12,7 +12,7 @@ export function AuthProvider({ children }) {
     const initAuth = async () => {
       const token = authService.getToken();
       const storedUser = authService.getUser();
-      
+
       if (token && storedUser) {
         try {
           // Verificar token válido
@@ -57,9 +57,9 @@ export function AuthProvider({ children }) {
     registro,
     cambiarPassword,
     isAuthenticated: !!user,
-    isAdmin: user?.rol === 'admin' || user?.rol === 'super_admin',
+    isAdmin: user?.rol === 'admin',
     isSuperAdmin: user?.rol === 'super_admin',
-    isUsuario: user?.rol === 'usuario',
+    isTeamMember: user?.rol === 'team_member',
     debeCambiarPassword: user?.debe_cambiar_password,
   };
 

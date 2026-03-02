@@ -26,6 +26,11 @@
       "sourceType": "github",
       "computedHash": "c8539b97ed6fe495fd7220f9ec8c9e8173038a4d523adc9b0f278e324e319cd1"
     },
+    "systematic-debugging": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "computedHash": "72e9ab72627e4fd8ed26a582e82309a98ecdc4f6e1c99418430ac05682c9e91d"
+    },
     "ui-ux-expert": {
       "source": "martinholovsky/claude-skills-generator",
       "sourceType": "github",

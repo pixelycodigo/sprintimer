@@ -36,28 +36,28 @@ const registro = async (req, res) => {
         message: 'Este email ya está registrado',
       });
     }
-    
-    // Obtener rol de admin
-    const adminRole = await db('roles').where('nombre', 'usuario').first();
-    if (!adminRole) {
+
+    // Obtener rol de team_member (registro público)
+    const teamMemberRole = await db('roles').where('nombre', 'team_member').first();
+    if (!teamMemberRole) {
       return res.status(500).json({
         error: 'Error de configuración',
-        message: 'Rol de administrador no encontrado',
+        message: 'Rol de team_member no encontrado',
       });
     }
-    
+
     // Hashear contraseña
     const passwordHash = await hashPassword(password);
-    
+
     // Generar token de verificación de email
     const tokenVerificacion = crypto.randomBytes(32).toString('hex');
-    
+
     // Crear usuario
     const [usuarioId] = await db('usuarios').insert({
       nombre,
       email,
       password_hash: passwordHash,
-      rol_id: adminRole.id,
+      rol_id: teamMemberRole.id,
       debe_cambiar_password: false,
       activo: true,
       email_verificado: false,
@@ -401,12 +401,21 @@ const verificarEmail = async (req, res) => {
 const obtenerUsuarioActual = async (req, res) => {
   try {
     const usuario = await db('usuarios')
-      .select('id', 'nombre', 'email', 'rol_id', 'ultimo_login', 'fecha_creacion')
-      .where('id', req.usuario.id)
+      .select('usuarios.id', 'usuarios.nombre', 'usuarios.email', 'usuarios.rol_id', 
+              'usuarios.ultimo_login', 'usuarios.fecha_creacion', 
+              'roles.nombre as rol', 'roles.nivel as rol_nivel')
+      .leftJoin('roles', 'usuarios.rol_id', 'roles.id')
+      .where('usuarios.id', req.usuario.id)
       .first();
-    
+
     res.json({
-      usuario,
+      usuario: {
+        id: usuario.id,
+        nombre: usuario.nombre,
+        email: usuario.email,
+        rol: usuario.rol,
+        rol_nivel: usuario.rol_nivel,
+      },
     });
   } catch (error) {
     console.error('Error al obtener usuario:', error);

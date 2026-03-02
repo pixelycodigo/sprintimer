@@ -10,7 +10,7 @@ const { autenticar, verificarRol } = require('../middleware/auth');
  */
 router.get('/',
   autenticar,
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   eliminadosController.listarEliminados
 );
 
@@ -21,7 +21,7 @@ router.get('/',
  */
 router.get('/resumen',
   autenticar,
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   eliminadosController.obtenerResumenPapelera
 );
 
@@ -32,7 +32,7 @@ router.get('/resumen',
  */
 router.get('/:id',
   autenticar,
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   eliminadosController.obtenerDetalleEliminado
 );
 
@@ -43,7 +43,7 @@ router.get('/:id',
  */
 router.post('/:id/recuperar',
   autenticar,
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   eliminadosController.recuperarEliminado
 );
 
@@ -54,7 +54,7 @@ router.post('/:id/recuperar',
  */
 router.delete('/eliminados/:id/permanente', 
   autenticar, 
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   eliminadosController.eliminarPermanenteIndividual
 );
 
@@ -65,7 +65,7 @@ router.delete('/eliminados/:id/permanente',
  */
 router.post('/eliminados/eliminar-multiple', 
   autenticar, 
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   eliminadosController.eliminarPermanenteMultiple
 );
 
@@ -76,7 +76,7 @@ router.post('/eliminados/eliminar-multiple',
  */
 router.delete('/eliminados/vaciar-todos', 
   autenticar, 
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   eliminadosController.vaciarTodosEliminados
 );
 
@@ -87,7 +87,7 @@ router.delete('/eliminados/vaciar-todos',
  */
 router.get('/eliminados/configuracion/dias', 
   autenticar, 
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   eliminadosController.obtenerConfiguracion
 );
 
@@ -98,7 +98,7 @@ router.get('/eliminados/configuracion/dias',
  */
 router.put('/eliminados/configuracion/dias/:entidad', 
   autenticar, 
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   eliminadosController.actualizarConfiguracion
 );
 

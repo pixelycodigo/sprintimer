@@ -1,71 +1,150 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { hitosService } from '../../../services/tiempoService';
 import { proyectosService } from '../../../services/proyectosService';
+import { actividadesService } from '../../../services/tiempoService';
+import Modal from '../../../components/Modal';
 
 export default function ListaHitos() {
-  const { id: proyecto_id } = useParams();
   const [hitos, setHitos] = useState([]);
   const [proyectos, setProyectos] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({
-    nombre: '',
-    descripcion: '',
-    fecha_limite: '',
+  const [actividades, setActividades] = useState([]);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 0,
   });
+  const [loading, setLoading] = useState(true);
+  const [filters, setFilters] = useState({
+    search: '',
+    proyecto_id: '',
+    completado: '',
+  });
+  const [activeFilters, setActiveFilters] = useState(filters);
+  const [success, setSuccess] = useState('');
+  const [error, setError] = useState('');
+  const [hitoEliminar, setHitoEliminar] = useState(null);
+  const [showModalEliminar, setShowModalEliminar] = useState(false);
 
   useEffect(() => {
     cargarDatos();
-  }, [proyecto_id]);
+  }, [pagination.page, activeFilters]);
 
   const cargarDatos = async () => {
     setLoading(true);
     try {
-      if (proyecto_id) {
-        const response = await hitosService.listar(proyecto_id);
-        setHitos(response.hitos || []);
+      // Cargar proyectos
+      const proyectosRes = await proyectosService.listar({ limit: 100 });
+      setProyectos(proyectosRes.proyectos || []);
+
+      // Cargar hitos
+      let allHitos = [];
+      if (activeFilters.proyecto_id) {
+        const response = await hitosService.listar(activeFilters.proyecto_id);
+        allHitos = (response.hitos || []).map(h => ({
+          ...h,
+          proyecto_nombre: response.hitos?.[0]?.proyecto_nombre || ''
+        }));
       } else {
-        const proyectosRes = await proyectosService.listar({ limit: 100 });
-        setProyectos(proyectosRes.proyectos || []);
-        const allHitos = [];
-        for (const proyecto of proyectosRes.proyectos || []) {
-          const hitosRes = await hitosService.listar(proyecto.id);
-          allHitos.push(...(hitosRes.hitos || []).map(h => ({...h, proyecto_nombre: proyecto.nombre})));
-        }
-        setHitos(allHitos);
+        // Cargar TODOS los hitos
+        const response = await hitosService.listar(null, { todas: true });
+        allHitos = (response.hitos || []);
       }
+
+      // Aplicar filtros
+      if (activeFilters.search) {
+        const search = activeFilters.search.toLowerCase();
+        allHitos = allHitos.filter(h =>
+          h.nombre.toLowerCase().includes(search) ||
+          h.descripcion?.toLowerCase().includes(search) ||
+          h.proyecto_nombre?.toLowerCase().includes(search)
+        );
+      }
+      if (activeFilters.completado) {
+        if (activeFilters.completado === 'true') {
+          allHitos = allHitos.filter(h => h.completado === true);
+        } else if (activeFilters.completado === 'false') {
+          allHitos = allHitos.filter(h => h.completado === false);
+        }
+      }
+
+      // Paginación manual
+      const total = allHitos.length;
+      const totalPages = Math.ceil(total / pagination.limit);
+      const start = (pagination.page - 1) * pagination.limit;
+      const paginated = allHitos.slice(start, start + pagination.limit);
+
+      setHitos(paginated);
+      setPagination({
+        page: pagination.page,
+        limit: pagination.limit,
+        total,
+        totalPages,
+      });
     } catch (error) {
       console.error('Error al cargar hitos:', error);
+      setError('Error al cargar hitos');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCrear = async (e) => {
-    e.preventDefault();
-    try {
-      await hitosService.crear(proyecto_id, formData);
-      setShowForm(false);
-      setFormData({ nombre: '', descripcion: '', fecha_limite: '' });
-      cargarHitos();
-    } catch (error) {
-      console.error('Error al crear hito:', error);
-      alert(error.response?.data?.message || 'Error al crear hito');
-    }
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleEliminar = async (id) => {
-    if (!confirm('¿Eliminar este hito?')) return;
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setActiveFilters(filters);
+    setPagination((prev) => ({ ...prev, page: 1 }));
+  };
+
+  const handleClearFilters = () => {
+    const cleanFilters = { search: '', proyecto_id: '', completado: '' };
+    setFilters(cleanFilters);
+    setActiveFilters(cleanFilters);
+    setPagination((prev) => ({ ...prev, page: 1 }));
+  };
+
+  const handleEliminar = (hito) => {
+    setHitoEliminar(hito);
+    setShowModalEliminar(true);
+  };
+
+  const confirmarEliminar = async () => {
+    if (!hitoEliminar) return;
+
     try {
-      await hitosService.eliminar(id, 'Eliminado desde frontend');
-      cargarHitos();
+      await hitosService.eliminar(hitoEliminar.id, 'Eliminado desde frontend');
+      setSuccess('Hito movido a eliminados');
+      setError('');
+      setHitoEliminar(null);
+      setShowModalEliminar(false);
+      cargarDatos();
+      setTimeout(() => setSuccess(''), 3000);
     } catch (error) {
       console.error('Error al eliminar:', error);
+      setError('Error al eliminar hito');
+      setTimeout(() => setError(''), 3000);
     }
   };
 
-  if (loading) {
+  const getCompletadoBadge = (completado) => {
+    return (
+      <div className="flex items-center gap-2">
+        <span className={`w-2.5 h-2.5 rounded-full ${
+          completado ? 'bg-emerald-500' : 'bg-amber-500'
+        }`}></span>
+        <span className="text-sm text-slate-600">
+          {completado ? 'Completado' : 'Pendiente'}
+        </span>
+      </div>
+    );
+  };
+
+  if (loading && hitos.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -78,110 +157,259 @@ export default function ListaHitos() {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Hitos</h1>
           <p className="text-slate-600 mt-1">
-            Gestiona los hitos del proyecto
+            Gestiona los hitos de los proyectos
           </p>
         </div>
-        <button onClick={() => setShowForm(!showForm)} className="btn-primary">
+        <Link to="/admin/hitos/crear" className="btn-primary">
           <span className="text-lg mr-2">+</span>
           Nuevo Hito
-        </button>
+        </Link>
       </div>
 
-      {showForm && (
-        <div className="card-base p-6">
-          <h2 className="text-lg font-semibold mb-4">Nuevo Hito</h2>
-          <form onSubmit={handleCrear} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
-                Nombre
-              </label>
-              <input
-                type="text"
-                value={formData.nombre}
-                onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
-                className="input-base"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
-                Descripción
-              </label>
-              <textarea
-                value={formData.descripcion}
-                onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
-                className="input-base"
-                rows="3"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
-                Fecha Límite
-              </label>
-              <input
-                type="date"
-                value={formData.fecha_limite}
-                onChange={(e) => setFormData({ ...formData, fecha_limite: e.target.value })}
-                className="input-base"
-                required
-              />
-            </div>
-            <div className="flex gap-2">
-              <button type="submit" className="btn-primary">Guardar</button>
-              <button type="button" onClick={() => setShowForm(false)} className="btn-secondary">
-                Cancelar
-              </button>
-            </div>
-          </form>
+      {/* Alertas */}
+      {error && (
+        <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+          {error}
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-4">
-        {hitos.length === 0 ? (
-          <div className="card-base p-12 text-center">
-            <span className="text-4xl">🎯</span>
-            <h3 className="text-lg font-semibold text-slate-900 mt-4">
-              No hay hitos registrados
-            </h3>
-            <p className="text-slate-600 mt-2">
-              {proyecto_id 
-                ? 'Comienza creando un nuevo hito para este proyecto'
-                : 'Los proyectos no tienen hitos registrados'}
-            </p>
-          </div>
-        ) : (
-          hitos.map((hito) => (
-            <div key={hito.id} className="card-base p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-semibold text-slate-900">{hito.nombre}</h3>
-                  {hito.descripcion && (
-                    <p className="text-sm text-slate-600 mt-1">{hito.descripcion}</p>
-                  )}
-                  {!proyecto_id && hito.proyecto_nombre && (
-                    <p className="text-xs text-slate-500 mt-1">📦 {hito.proyecto_nombre}</p>
-                  )}
-                  <p className="text-sm text-slate-500 mt-1">
-                    📅 {new Date(hito.fecha_limite).toLocaleDateString()}
-                  </p>
-                </div>
-                {proyecto_id && (
-                  <button
-                    onClick={() => handleEliminar(hito.id)}
-                    className="text-red-600 hover:text-red-800 text-sm"
-                  >
-                    Eliminar
-                  </button>
-                )}
-              </div>
+      {success && (
+        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-lg text-sm text-emerald-700">
+          {success}
+        </div>
+      )}
+
+      {/* Filtros */}
+      <div className="card-base p-4">
+        <form onSubmit={handleSearch} className="flex flex-wrap gap-4">
+          <input
+            type="text"
+            name="search"
+            placeholder="Buscar por nombre..."
+            value={filters.search}
+            onChange={handleFilterChange}
+            className="input-base flex-1 min-w-48"
+          />
+          <select
+            name="proyecto_id"
+            value={filters.proyecto_id}
+            onChange={handleFilterChange}
+            className="input-base w-40"
+          >
+            <option value="">Todos los proyectos</option>
+            {proyectos.map((proyecto) => (
+              <option key={proyecto.id} value={proyecto.id}>
+                {proyecto.nombre}
+              </option>
+            ))}
+          </select>
+          <select
+            name="completado"
+            value={filters.completado}
+            onChange={handleFilterChange}
+            className="input-base w-32"
+          >
+            <option value="">Todos los estados</option>
+            <option value="true">✅ Completados</option>
+            <option value="false">⏳ Pendientes</option>
+          </select>
+          <button type="submit" className="btn-primary">🔍 Filtrar</button>
+          <button
+            type="button"
+            onClick={handleClearFilters}
+            className="btn-secondary"
+          >
+            Limpiar
+          </button>
+        </form>
+      </div>
+
+      {/* Tabla */}
+      <div className="card-base overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-slate-200">
+            <thead className="bg-slate-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                  Hito
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                  Proyecto
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                  Actividad
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                  Fecha Límite
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                  Estado
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                  Acciones
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-slate-200">
+              {hitos.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
+                    No hay hitos registrados
+                  </td>
+                </tr>
+              ) : (
+                hitos.map((hito) => (
+                  <tr key={hito.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center">
+                        <div className="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-semibold text-sm">
+                          {hito.nombre.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="ml-4">
+                          <div className="text-sm font-medium text-slate-900">
+                            {hito.nombre}
+                          </div>
+                          {hito.descripcion && (
+                            <div className="text-xs text-slate-500 line-clamp-1">
+                              {hito.descripcion}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                        {hito.proyecto_nombre || '—'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                      {hito.actividad_nombre || '—'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                      {hito.fecha_limite 
+                        ? new Date(hito.fecha_limite + 'T00:00:00').toLocaleDateString('es-ES', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                          })
+                        : '—'
+                      }
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {getCompletadoBadge(hito.completado)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <div className="flex justify-end gap-2">
+                        <Link
+                          to={`/admin/hitos/${hito.id}/editar`}
+                          className="p-2 text-blue-600 rounded hover:bg-blue-50 transition-colors"
+                          title="Editar"
+                        >
+                          ✏️
+                        </Link>
+                        <button
+                          onClick={() => handleEliminar(hito)}
+                          className="p-2 text-red-600 rounded hover:bg-red-50 transition-colors"
+                          title="Eliminar"
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Paginación */}
+        {pagination.totalPages > 1 && (
+          <div className="px-6 py-4 border-t border-slate-200 flex items-center justify-between">
+            <div className="text-sm text-slate-600">
+              Mostrando <span className="font-medium">{hitos.length}</span> de{' '}
+              <span className="font-medium">{pagination.total}</span> hitos
             </div>
-          ))
+            <div className="flex gap-2">
+              <button
+                onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
+                disabled={pagination.page === 1}
+                className="px-3 py-1 text-sm border border-slate-300 rounded hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                ← Anterior
+              </button>
+              <span className="px-3 py-1 text-sm text-slate-600">
+                Página {pagination.page} de {pagination.totalPages}
+              </span>
+              <button
+                onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
+                disabled={pagination.page >= pagination.totalPages}
+                className="px-3 py-1 text-sm border border-slate-300 rounded hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Siguiente →
+              </button>
+            </div>
+          </div>
         )}
       </div>
+
+      {/* Modal Eliminar */}
+      <Modal
+        isOpen={showModalEliminar}
+        onClose={() => {
+          setShowModalEliminar(false);
+          setHitoEliminar(null);
+        }}
+        title="Eliminar Hito"
+        footer={
+          <div className="flex gap-3 justify-end">
+            <button
+              type="button"
+              onClick={() => {
+                setShowModalEliminar(false);
+                setHitoEliminar(null);
+              }}
+              className="btn-secondary"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              onClick={confirmarEliminar}
+              className="btn-primary bg-red-600 hover:bg-red-700 text-white"
+            >
+              🗑️ Eliminar
+            </button>
+          </div>
+        }
+      >
+        <div className="space-y-3">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-2xl">
+              ⚠️
+            </div>
+            <div>
+              <p className="font-medium text-slate-900">
+                {hitoEliminar?.nombre}
+              </p>
+              <p className="text-sm text-slate-500">
+                {hitoEliminar?.proyecto_nombre || 'Sin proyecto'}
+              </p>
+            </div>
+          </div>
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+            <p className="text-sm text-amber-800">
+              <strong>⚠️ Atención:</strong> El hito se moverá a la papelera de eliminados. 
+              Podrás recuperarlo o eliminarlo permanentemente desde allí.
+            </p>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

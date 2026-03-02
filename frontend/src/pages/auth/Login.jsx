@@ -19,14 +19,18 @@ export default function Login() {
 
     try {
       const response = await login(formData.email, formData.password);
-      
-      // Redirigir según rol
-      if (response.usuario.rol === 'super_admin') {
+      const rol = response.usuario.rol;
+
+      // Redirigir según rol exacto
+      if (rol === 'super_admin') {
         navigate('/super-admin/dashboard');
-      } else if (response.usuario.rol === 'admin') {
+      } else if (rol === 'admin') {
         navigate('/admin/dashboard');
+      } else if (rol === 'team_member') {
+        navigate('/team-member/dashboard');
       } else {
-        navigate('/usuario/dashboard');
+        // usuario (registro público) va a /admin también
+        navigate('/admin/dashboard');
       }
     } catch (err) {
       setError(

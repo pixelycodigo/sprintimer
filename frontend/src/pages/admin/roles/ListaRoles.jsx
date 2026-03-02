@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import api from '../../../services/api';
+import { rolesService } from '../../../services/rolesService';
 
 export default function ListaRoles() {
   const [roles, setRoles] = useState([]);
@@ -21,8 +21,8 @@ export default function ListaRoles() {
   const cargarRoles = async () => {
     setLoading(true);
     try {
-      const response = await api.get('/admin/roles');
-      setRoles(response.data.roles || []);
+      const response = await rolesService.listar();
+      setRoles(response.roles || []);
     } catch (error) {
       console.error('Error al cargar roles:', error);
     } finally {
@@ -57,39 +57,39 @@ export default function ListaRoles() {
 
     try {
       if (editingRole) {
-        // Actualizar rol existente
-        await api.put(`/admin/roles/${editingRole.id}`, formData);
-        setSuccess('Rol actualizado exitosamente');
+        // Actualizar perfil existente
+        await rolesService.actualizar(editingRole.id, formData);
+        setSuccess('Perfil actualizado exitosamente');
       } else {
-        // Crear nuevo rol
-        await api.post('/admin/roles', formData);
-        setSuccess('Rol creado exitosamente');
+        // Crear nuevo perfil
+        await rolesService.crear(formData);
+        setSuccess('Perfil creado exitosamente');
       }
-      
+
       setShowForm(false);
       cargarRoles();
-      
+
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
-      setError(err.response?.data?.message || 'Error al guardar rol');
+      setError(err.response?.data?.message || 'Error al guardar perfil');
     }
   };
 
   const handleEliminar = async (rol) => {
-    if (rol.nombre === 'usuario' || rol.nombre === 'admin' || rol.nombre === 'super_admin') {
-      alert('No se pueden eliminar los roles base del sistema');
+    if (rol.nombre === 'team_member' || rol.nombre === 'admin' || rol.nombre === 'super_admin') {
+      alert('No se pueden eliminar los perfiles base del sistema');
       return;
     }
 
-    if (!confirm(`¿Estás seguro de eliminar el rol "${rol.nombre}"?`)) return;
+    if (!confirm(`¿Estás seguro de eliminar el perfil "${rol.nombre}"?`)) return;
 
     try {
-      await api.delete(`/admin/roles/${rol.id}`);
-      setSuccess('Rol eliminado exitosamente');
+      await rolesService.eliminar(rol.id);
+      setSuccess('Perfil eliminado exitosamente');
       cargarRoles();
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
-      setError(err.response?.data?.message || 'Error al eliminar rol');
+      setError(err.response?.data?.message || 'Error al eliminar perfil');
     }
   };
 
@@ -115,14 +115,14 @@ export default function ListaRoles() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Roles del Sistema</h1>
+          <h1 className="text-2xl font-bold text-slate-900">Perfiles del Sistema</h1>
           <p className="text-slate-600 mt-1">
-            Gestiona los roles disponibles en el sistema
+            Gestiona los perfiles disponibles en el sistema
           </p>
         </div>
         <button onClick={handleNuevo} className="btn-primary">
           <span className="text-lg mr-2">+</span>
-          Nuevo Rol
+          Nuevo Perfil
         </button>
       </div>
 
@@ -141,7 +141,7 @@ export default function ListaRoles() {
       {showForm && (
         <div className="card-base p-6">
           <h2 className="text-lg font-semibold mb-4">
-            {editingRole ? 'Editar Rol' : 'Nuevo Rol'}
+            {editingRole ? 'Editar Perfil' : 'Nuevo Perfil'}
           </h2>
           <form onSubmit={handleGuardar} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
@@ -190,7 +190,7 @@ export default function ListaRoles() {
             </div>
             <div className="flex gap-2">
               <button type="submit" className="btn-primary">
-                {editingRole ? 'Actualizar' : 'Crear'} Rol
+                {editingRole ? 'Actualizar' : 'Crear'} Perfil
               </button>
               <button type="button" onClick={handleCancelar} className="btn-secondary">
                 Cancelar
@@ -286,8 +286,7 @@ export default function ListaRoles() {
 
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
         <p className="text-sm text-blue-800">
-          <strong>💡 Nota:</strong> Los roles base del sistema (usuario, admin, super_admin) no se pueden eliminar.
-          Para asignar roles personalizados a usuarios en un proyecto, usa la función "Asignar Usuarios" en cada proyecto.
+          <strong>💡 Nota:</strong> Los perfiles base del sistema (team_member, admin, super_admin) no se pueden eliminar.
         </p>
       </div>
     </div>

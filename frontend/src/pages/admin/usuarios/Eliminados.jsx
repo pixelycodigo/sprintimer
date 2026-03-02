@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { usuariosService } from '../../../services/usuariosService';
+import { clientesService } from '../../../services/clientesService';
+import { proyectosService } from '../../../services/proyectosService';
 
 export default function Eliminados() {
   const [eliminados, setEliminados] = useState([]);
@@ -41,11 +43,24 @@ export default function Eliminados() {
     }
   };
 
-  const handleRecuperar = async (id) => {
+  const handleRecuperar = async (item) => {
     try {
-      await usuariosService.recuperar(id);
+      console.log('Recuperando:', item);
+      // Usar el servicio correcto según la entidad
+      if (item.entidad === 'cliente') {
+        await clientesService.recuperar(item.entidad_id);
+        console.log('Cliente recuperado:', item.entidad_id);
+      } else if (item.entidad === 'proyecto') {
+        await proyectosService.recuperar(item.entidad_id);
+        console.log('Proyecto recuperado:', item.entidad_id);
+      } else {
+        await usuariosService.recuperar(item.entidad_id);
+        console.log('Usuario recuperado:', item.entidad_id);
+      }
       setShowRecoverModal(false);
-      cargarEliminados();
+      console.log('Recargando lista...');
+      await cargarEliminados();
+      console.log('Lista recargada');
     } catch (error) {
       console.error('Error al recuperar:', error);
     }
@@ -363,7 +378,7 @@ export default function Eliminados() {
 
             <div className="flex gap-3">
               <button
-                onClick={() => handleRecuperar(selectedItem.id)}
+                onClick={() => handleRecuperar(selectedItem)}
                 className="flex-1 bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-emerald-700 transition-colors"
               >
                 Recuperar

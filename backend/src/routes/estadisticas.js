@@ -10,37 +10,37 @@ const { autenticar, verificarRol } = require('../middleware/auth');
  */
 router.get('/resumen',
   autenticar,
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   estadisticasAdminController.obtenerResumenGeneral
 );
 
 router.get('/horas-por-usuario',
   autenticar,
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   estadisticasAdminController.horasPorUsuario
 );
 
 router.get('/horas-por-proyecto',
   autenticar,
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   estadisticasAdminController.horasPorProyecto
 );
 
 router.get('/progreso-sprints',
   autenticar,
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   estadisticasAdminController.progresoSprints
 );
 
 router.get('/tareas-completadas',
   autenticar,
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   estadisticasAdminController.tareasCompletadasPorUsuario
 );
 
 router.get('/horas-por-dia',
   autenticar,
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   estadisticasAdminController.horasPorDia
 );
 

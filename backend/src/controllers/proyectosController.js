@@ -27,9 +27,11 @@ const listarProyectos = async (req, res) => {
     
     // Aplicar filtros
     if (search) {
+      const searchLower = search.toLowerCase();
       query.where((builder) => {
-        builder.where('proyectos.nombre', 'like', `%${search}%`)
-               .orWhere('proyectos.descripcion', 'like', `%${search}%`);
+        builder.whereRaw('LOWER(proyectos.nombre) LIKE ?', [`%${searchLower}%`])
+               .orWhereRaw('LOWER(proyectos.estado) LIKE ?', [`%${searchLower}%`])
+               .orWhereRaw('LOWER(clientes.nombre) LIKE ?', [`%${searchLower}%`]);
       });
     }
     
@@ -42,7 +44,7 @@ const listarProyectos = async (req, res) => {
     }
     
     // Solo mostrar proyectos del admin que los creó (o todos para super_admin)
-    if (req.usuario.rol === 'usuario') {
+    if (req.usuario.rol === 'admin') {
       query.where('proyectos.creado_por', req.usuario.id);
     }
 
@@ -54,9 +56,11 @@ const listarProyectos = async (req, res) => {
     
     // Aplicar filtros al count
     if (search) {
+      const searchLower = search.toLowerCase();
       countQuery.where((builder) => {
-        builder.where('proyectos.nombre', 'like', `%${search}%`)
-               .orWhere('proyectos.descripcion', 'like', `%${search}%`);
+        builder.whereRaw('LOWER(proyectos.nombre) LIKE ?', [`%${searchLower}%`])
+               .orWhereRaw('LOWER(proyectos.estado) LIKE ?', [`%${searchLower}%`])
+               .orWhereRaw('LOWER(clientes.nombre) LIKE ?', [`%${searchLower}%`]);
       });
     }
     if (estado) {
@@ -65,7 +69,7 @@ const listarProyectos = async (req, res) => {
     if (cliente_id) {
       countQuery.where('proyectos.cliente_id', cliente_id);
     }
-    if (req.usuario.rol === 'usuario') {
+    if (req.usuario.rol === 'admin') {
       countQuery.where('proyectos.creado_por', req.usuario.id);
     }
     
@@ -119,7 +123,7 @@ const obtenerProyecto = async (req, res) => {
     }
     
     // Verificar permisos (admin solo ve sus proyectos)
-    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
         message: 'No tienes permisos para ver este proyecto',
@@ -167,7 +171,7 @@ const crearProyecto = async (req, res) => {
     }
     
     // Verificar permisos (admin solo usa sus clientes)
-    if (req.usuario.rol === 'usuario' && cliente.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'admin' && cliente.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
         message: 'No puedes usar este cliente',
@@ -228,7 +232,7 @@ const actualizarProyecto = async (req, res) => {
     }
     
     // Verificar permisos (admin solo edita sus proyectos)
-    if (req.usuario.rol === 'usuario' && proyectoExistente.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'admin' && proyectoExistente.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
         message: 'No tienes permisos para editar este proyecto',
@@ -242,7 +246,7 @@ const actualizarProyecto = async (req, res) => {
         return res.status(404).json({ error: 'Cliente no encontrado' });
       }
       
-      if (req.usuario.rol === 'usuario' && cliente.creado_por !== req.usuario.id) {
+      if (req.usuario.rol === 'admin' && cliente.creado_por !== req.usuario.id) {
         return res.status(403).json({
           error: 'No autorizado',
           message: 'No puedes usar este cliente',
@@ -294,7 +298,7 @@ const eliminarProyecto = async (req, res) => {
     }
     
     // Verificar permisos (admin solo elimina sus proyectos)
-    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
         message: 'No tienes permisos para eliminar este proyecto',
@@ -369,7 +373,7 @@ const recuperarProyecto = async (req, res) => {
     }
     
     // Verificar permisos
-    if (req.usuario.rol === 'usuario' && eliminado.eliminado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'admin' && eliminado.eliminado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
         message: 'No puedes recuperar este proyecto',
@@ -413,8 +417,8 @@ const recuperarProyecto = async (req, res) => {
  */
 const asignarUsuarioAProyecto = async (req, res) => {
   const { id } = req.params; // ID del proyecto
-  const { usuario_id, rol_en_proyecto = 'miembro' } = req.body;
-  
+  const { usuario_id, perfil_en_proyecto = 'miembro' } = req.body;
+
   try {
     // Validar campos requeridos
     if (!usuario_id) {
@@ -423,7 +427,7 @@ const asignarUsuarioAProyecto = async (req, res) => {
         message: 'usuario_id es requerido',
       });
     }
-    
+
     // Verificar que el proyecto existe
     const proyecto = await db('proyectos').where('id', id).first();
     if (!proyecto) {
@@ -431,7 +435,7 @@ const asignarUsuarioAProyecto = async (req, res) => {
         error: 'Proyecto no encontrado',
       });
     }
-    
+
     // Verificar que el usuario existe
     const usuario = await db('usuarios').where('id', usuario_id).first();
     if (!usuario) {
@@ -439,43 +443,43 @@ const asignarUsuarioAProyecto = async (req, res) => {
         error: 'Usuario no encontrado',
       });
     }
-    
+
     // Verificar permisos
-    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
         message: 'No tienes permisos para asignar usuarios a este proyecto',
       });
     }
-    
+
     // Verificar si ya está asignado
     const asignacionExistente = await db('usuarios_proyectos')
       .where('usuario_id', usuario_id)
       .where('proyecto_id', id)
       .first();
-    
+
     if (asignacionExistente) {
       // Actualizar asignación existente
       await db('usuarios_proyectos')
         .where('usuario_id', usuario_id)
         .where('proyecto_id', id)
         .update({
-          rol_en_proyecto,
+          perfil_en_proyecto,
           activo: true,
         });
-      
+
       return res.json({
         mensaje: 'Asignación de usuario actualizada',
       });
     }
-    
+
     // Crear nueva asignación
     await db('usuarios_proyectos').insert({
       usuario_id,
       proyecto_id: id,
-      rol_en_proyecto,
+      perfil_en_proyecto,
     });
-    
+
     res.status(201).json({
       mensaje: 'Usuario asignado al proyecto exitosamente',
     });
@@ -504,7 +508,7 @@ const desasignarUsuarioDeProyecto = async (req, res) => {
     }
     
     // Verificar permisos
-    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
         message: 'No tienes permisos para desasignar usuarios de este proyecto',
@@ -533,7 +537,7 @@ const desasignarUsuarioDeProyecto = async (req, res) => {
  */
 const obtenerUsuariosAsignados = async (req, res) => {
   const { id } = req.params; // ID del proyecto
-  
+
   try {
     // Verificar que el proyecto existe
     const proyecto = await db('proyectos').where('id', id).first();
@@ -542,32 +546,70 @@ const obtenerUsuariosAsignados = async (req, res) => {
         error: 'Proyecto no encontrado',
       });
     }
-    
+
     // Verificar permisos
-    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
         message: 'No tienes permisos para ver los usuarios de este proyecto',
       });
     }
-    
-    // Obtener usuarios asignados
-    const usuarios = await db('usuarios_proyectos')
-      .select('usuarios_proyectos.*', 
-              'usuarios.nombre', 
+
+    // Obtener usuarios asignados (usando team_projects)
+    const usuarios = await db('team_projects')
+      .select('team_projects.*',
+              'usuarios.nombre',
               'usuarios.email',
               'roles.nombre as rol')
-      .leftJoin('usuario', 'usuarios_proyectos.usuario_id', 'usuarios.id')
+      .leftJoin('usuarios', 'team_projects.usuario_id', 'usuarios.id')
       .leftJoin('roles', 'usuarios.rol_id', 'roles.id')
-      .where('usuarios_proyectos.proyecto_id', id)
-      .where('usuarios_proyectos.activo', true);
-    
+      .where('team_projects.proyecto_id', id)
+      .where('team_projects.activo', true);
+
     res.json({
       usuarios,
       total: usuarios.length,
     });
   } catch (error) {
     console.error('Error al obtener usuarios asignados:', error);
+    res.status(500).json({
+      error: 'Error interno del servidor',
+    });
+  }
+};
+
+/**
+ * Actualizar perfil de usuario en proyecto
+ */
+const actualizarPerfilUsuario = async (req, res) => {
+  const { id } = req.params; // ID del proyecto
+  const { usuario_id } = req.params;
+  const { activo, perfil_en_proyecto } = req.body;
+
+  try {
+    // Verificar que el proyecto existe
+    const proyecto = await db('proyectos').where('id', id).first();
+    if (!proyecto) {
+      return res.status(404).json({
+        error: 'Proyecto no encontrado',
+      });
+    }
+
+    // Actualizar asignación
+    const updateData = {};
+    if (activo !== undefined) updateData.activo = activo;
+    if (perfil_en_proyecto !== undefined) updateData.perfil_en_proyecto = perfil_en_proyecto;
+
+    await db('usuarios_proyectos')
+      .where('usuario_id', usuario_id)
+      .where('proyecto_id', id)
+      .update(updateData);
+
+    res.json({
+      mensaje: 'Perfil actualizado exitosamente',
+    });
+  } catch (error) {
+    console.error('Error al actualizar perfil:', error);
     res.status(500).json({
       error: 'Error interno del servidor',
     });
@@ -584,4 +626,5 @@ module.exports = {
   asignarUsuarioAProyecto,
   desasignarUsuarioDeProyecto,
   obtenerUsuariosAsignados,
+  actualizarPerfilUsuario,
 };

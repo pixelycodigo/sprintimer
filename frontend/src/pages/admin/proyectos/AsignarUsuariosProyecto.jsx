@@ -2,17 +2,19 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { proyectosService } from '../../../services/proyectosService';
 import { usuariosService } from '../../../services/usuariosService';
+import { perfilesTeamService } from '../../../services/perfilesTeamService';
 
 export default function AsignarUsuariosProyecto() {
   const { id } = useParams();
   const [proyecto, setProyecto] = useState(null);
   const [usuarios, setUsuarios] = useState([]);
   const [asignados, setAsignados] = useState([]);
+  const [perfiles, setPerfiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [usuarioId, setUsuarioId] = useState('');
-  const [rol_en_proyecto, setRol_en_proyecto] = useState('miembro');
+  const [perfil_en_proyecto, setPerfil_en_proyecto] = useState('miembro');
 
   useEffect(() => {
     cargarDatos();
@@ -21,14 +23,16 @@ export default function AsignarUsuariosProyecto() {
   const cargarDatos = async () => {
     setLoading(true);
     try {
-      const [proyectoRes, usuariosRes, asignadosRes] = await Promise.all([
+      const [proyectoRes, usuariosRes, asignadosRes, perfilesRes] = await Promise.all([
         proyectosService.obtener(id),
         usuariosService.listar({ limit: 100 }),
         proyectosService.obtenerUsuariosAsignados(id),
+        perfilesTeamService.listar({ activo: true }),
       ]);
       setProyecto(proyectoRes.proyecto);
       setUsuarios(usuariosRes.usuarios);
       setAsignados(asignadosRes.usuarios);
+      setPerfiles(perfilesRes.perfiles || []);
     } catch (err) {
       setError('Error al cargar datos');
     } finally {
@@ -41,9 +45,10 @@ export default function AsignarUsuariosProyecto() {
     if (!usuarioId) return;
 
     try {
-      await proyectosService.asignarUsuario(id, usuarioId, rol_en_proyecto);
+      await proyectosService.asignarUsuario(id, usuarioId, perfil_en_proyecto);
       setSuccess('Usuario asignado exitosamente');
       setUsuarioId('');
+      setPerfil_en_proyecto('miembro');
       cargarDatos();
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
@@ -132,17 +137,24 @@ export default function AsignarUsuariosProyecto() {
 
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                Rol en Proyecto *
+                Perfil en Proyecto *
               </label>
               <select
-                value={rol_en_proyecto}
-                onChange={(e) => setRol_en_proyecto(e.target.value)}
+                value={perfil_en_proyecto}
+                onChange={(e) => setPerfil_en_proyecto(e.target.value)}
                 className="input-base"
               >
-                <option value="miembro">Miembro</option>
-                <option value="lider">Líder</option>
-                <option value="observador">Observador</option>
+                <option value="">Seleccionar perfil</option>
+                {perfiles.map((perfil) => (
+                  <option key={perfil.id} value={perfil.nombre}>
+                    {perfil.nombre.replace(/-/g, ' ').toUpperCase()}
+                  </option>
+                ))}
+                <option value="miembro">Miembro (sin perfil específico)</option>
               </select>
+              <p className="text-xs text-slate-500 mt-1">
+                Selecciona el perfil funcional del miembro en este proyecto
+              </p>
             </div>
 
             <button type="submit" className="btn-primary w-full">

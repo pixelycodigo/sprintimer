@@ -3,28 +3,25 @@
  * @returns { Promise<void> }
  */
 exports.seed = async function(knex) {
-  // Deletes ALL existing entries
-  await knex('roles').del();
-  
-  // Inserts seed entries
+  // Actualiza los roles existentes sin eliminarlos (para no violar FK)
   await knex('roles').insert([
-    { 
-      id: 1, 
-      nombre: 'usuario', 
-      descripcion: 'Usuario que registra tareas y horas', 
-      nivel: 1 
+    {
+      id: 1,
+      nombre: 'team_member',
+      descripcion: 'Miembro del equipo - Registra tareas y horas',
+      nivel: 1
     },
-    { 
-      id: 2, 
-      nombre: 'admin', 
-      descripcion: 'Administrador de proyectos propios', 
-      nivel: 2 
+    {
+      id: 2,
+      nombre: 'admin',
+      descripcion: 'Administrador - Gestiona proyectos y clientes',
+      nivel: 2
     },
-    { 
-      id: 3, 
-      nombre: 'super_admin', 
-      descripcion: 'Administrador global del sistema', 
-      nivel: 3 
+    {
+      id: 3,
+      nombre: 'super_admin',
+      descripcion: 'Super Administrador - Gestiona la plataforma SaaS',
+      nivel: 3
     }
-  ]);
+  ]).onConflict('id').merge(['nombre', 'descripcion', 'nivel']);
 };

@@ -3,45 +3,56 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
 const menuItems = {
-  usuario: [
+  // Super Admin
+  super_admin: [
+    { name: 'Dashboard', path: '/super-admin/dashboard', icon: '📊' },
+    { name: 'Usuarios', path: '/super-admin/usuarios', icon: '👨‍💼' },
+    { name: 'Estadísticas', path: '/super-admin/estadisticas', icon: '📈' },
+    { name: 'Eliminados', path: '/super-admin/eliminados', icon: '🗑️' },
+  ],
+  // Admin
+  admin: [
     { name: 'Dashboard', path: '/admin/dashboard', icon: '📊' },
     { name: 'Clientes', path: '/admin/clientes', icon: '🏢' },
-    { 
-      name: 'Proyectos', 
+    {
+      name: 'Proyectos',
       icon: '📦',
       subItems: [
         { name: 'Lista de Proyectos', path: '/admin/proyectos' },
         { name: 'Actividades', path: '/admin/actividades' },
         { name: 'Hitos', path: '/admin/hitos' },
-        { name: 'Equipo de Trabajo', path: '/admin/team' },
+        { name: 'Sprints', path: '/admin/sprints' },
+        { name: 'Trimestres', path: '/admin/trimestres' },
       ]
     },
-    { 
-      name: 'Configuración', 
+    {
+      name: 'Equipo',
+      icon: '👥',
+      subItems: [
+        { name: 'Mi Equipo', path: '/admin/team' },
+        { name: 'Perfiles', path: '/admin/perfiles' },
+      ]
+    },
+    {
+      name: 'Configuración',
       icon: '⚙️',
       subItems: [
-        { name: 'Gestionar Roles', path: '/admin/roles' },
-        { name: 'Gestionar Monedas', path: '/admin/monedas' },
-        { name: 'Gestionar Bonos', path: '/admin/bonos' },
+        { name: 'Monedas', path: '/admin/monedas' },
+        { name: 'Bonos', path: '/admin/bonos' },
+        { name: 'Costos por Hora', path: '/admin/costos' },
         { name: 'Días Laborales', path: '/admin/dias-laborales' },
-        { name: 'Gestionar Sprints', path: '/admin/sprints' },
-        { name: 'Gestionar Trimestres', path: '/admin/trimestres' },
       ]
     },
     { name: 'Estadísticas', path: '/admin/estadisticas', icon: '📈' },
+    { name: 'Cortes Mensuales', path: '/admin/cortes', icon: '💰' },
     { name: 'Eliminados', path: '/admin/eliminados', icon: '🗑️' },
   ],
+  // Team Member
   team_member: [
-    { name: 'Dashboard', path: '/usuario/dashboard', icon: '📊' },
-    { name: 'Mis Tareas', path: '/usuario/tareas', icon: '✅' },
-    { name: 'Mis Cortes', path: '/usuario/cortes', icon: '💰' },
-    { name: 'Estadísticas', path: '/usuario/estadisticas', icon: '📈' },
-  ],
-  'super_admin': [
-    { name: 'Dashboard', path: '/super-admin/dashboard', icon: '📊' },
-    { name: 'Usuarios', path: '/super-admin/usuarios', icon: '👨‍💼' },
-    { name: 'Estadísticas', path: '/super-admin/estadisticas', icon: '📈' },
-    { name: 'Eliminados', path: '/super-admin/eliminados', icon: '🗑️' },
+    { name: 'Dashboard', path: '/team-member/dashboard', icon: '📊' },
+    { name: 'Mis Tareas', path: '/team-member/tareas', icon: '✅' },
+    { name: 'Mis Cortes', path: '/team-member/cortes', icon: '💰' },
+    { name: 'Estadísticas', path: '/team-member/estadisticas', icon: '📈' },
   ],
 };
 
@@ -52,7 +63,7 @@ function MenuItem({ item, activePath }) {
   // Verificar si algún subitem está activo
   const isSubItemActive = item.subItems?.some(sub => location.pathname === sub.path);
   const isActive = location.pathname === item.path;
-  
+
   // El menú padre debe estar expandido si un subitem está activo
   const shouldExpand = isSubItemActive || activePath === item.name;
 
@@ -123,7 +134,8 @@ export default function Sidebar() {
   const { user, logout } = useAuth();
   const [activePath, setActivePath] = useState('');
 
-  const currentMenu = menuItems[user?.rol] || menuItems.team_member;
+  // Obtener menú según rol
+  const currentMenu = menuItems[user?.rol] || [];
 
   const handleLogout = async () => {
     await logout();

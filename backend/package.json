@@ -10,12 +10,17 @@
     "migrate:rollback": "knex migrate:rollback",
     "migrate:fresh": "knex migrate:fresh",
     "seed": "knex seed:run",
+    "sync-db": "node scripts/sync-db.js",
+    "setup": "npm run migrate && npm run seed && npm run setup-test-users",
+    "seed-examples": "knex seed:run --specific=005_ejemplos.js",
+    "init-all": "node scripts/init-all.js",
     "init-super-admin": "node scripts/init-super-admin.js",
     "init-admin": "node scripts/init-admin.js",
     "seed-admin-data": "node scripts/seed-admin-data.js",
     "seed-eliminados-test": "node scripts/seed-eliminados-test.js",
     "create-super-admin": "node scripts/create-super-admin.js",
-    "cleanup-eliminados": "node scripts/cleanup-eliminados.js"
+    "cleanup-eliminados": "node scripts/cleanup-eliminados.js",
+    "setup-test-users": "node scripts/setup-test-users.js"
   },
   "keywords": [
     "sprintimer",

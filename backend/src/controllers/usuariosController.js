@@ -13,20 +13,21 @@ const listarUsuarios = async (req, res) => {
       limit = 10,
       search = '',
       rol = '',
+      perfil = '',
       activo = '',
       eliminado = false
     } = req.query;
 
-    // Si es superadmin y NO viene de /all, forzar rol 'usuario' (admins)
+    // Si es superadmin y NO viene de /all, forzar rol 'team_member' (miembros del equipo)
     let rolFiltro = rol;
     if (req.usuario.rol === 'super_admin' && !req.path.includes('/all')) {
-      rolFiltro = 'usuario';
+      rolFiltro = 'team_member';
     }
 
-    console.log('Listar usuarios params:', { page, limit, search, rol, rolFiltro, activo, eliminado, path: req.path });
+    console.log('Listar usuarios params:', { page, limit, search, rol, rolFiltro, perfil, activo, eliminado, path: req.path });
 
     const offset = (page - 1) * limit;
-    
+
     // Construir query base
     let query = db('usuarios')
       .select('usuarios.*', 'roles.nombre as rol', 'roles.nivel as rol_nivel',
@@ -34,17 +35,24 @@ const listarUsuarios = async (req, res) => {
       .leftJoin('roles', 'usuarios.rol_id', 'roles.id')
       .leftJoin('usuarios as creador', 'usuarios.creado_por', 'creador.id')
       .where('usuarios.eliminado', eliminado);
-    
+
     // Aplicar filtros
     if (search) {
+      const searchLower = search.toLowerCase();
       query.where((builder) => {
-        builder.where('usuarios.nombre', 'like', `%${search}%`)
-               .orWhere('usuarios.email', 'like', `%${search}%`);
+        builder.whereRaw('LOWER(usuarios.nombre) LIKE ?', [`%${searchLower}%`])
+               .orWhereRaw('LOWER(usuarios.email) LIKE ?', [`%${searchLower}%`])
+               .orWhereRaw('LOWER(usuarios.perfil_en_proyecto) LIKE ?', [`%${searchLower}%`])
+               .orWhereRaw('LOWER(roles.nombre) LIKE ?', [`%${searchLower}%`]);
       });
     }
 
     if (rolFiltro) {
       query.where('roles.nombre', rolFiltro);
+    }
+
+    if (perfil) {
+      query.where('usuarios.perfil_en_proyecto', perfil);
     }
 
     if (activo !== '') {
@@ -58,13 +66,19 @@ const listarUsuarios = async (req, res) => {
 
     // Aplicar filtros al count
     if (search) {
+      const searchLower = search.toLowerCase();
       countQuery.where((builder) => {
-        builder.where('usuarios.nombre', 'like', `%${search}%`)
-               .orWhere('usuarios.email', 'like', `%${search}%`);
+        builder.whereRaw('LOWER(usuarios.nombre) LIKE ?', [`%${searchLower}%`])
+               .orWhereRaw('LOWER(usuarios.email) LIKE ?', [`%${searchLower}%`])
+               .orWhereRaw('LOWER(usuarios.perfil_en_proyecto) LIKE ?', [`%${searchLower}%`])
+               .orWhereRaw('LOWER(roles.nombre) LIKE ?', [`%${searchLower}%`]);
       });
     }
     if (rolFiltro) {
       countQuery.where('roles.nombre', rolFiltro);
+    }
+    if (perfil) {
+      countQuery.where('usuarios.perfil_en_proyecto', perfil);
     }
     if (activo !== '') {
       countQuery.where('usuarios.activo', activo === 'true');
@@ -131,15 +145,16 @@ const obtenerUsuario = async (req, res) => {
  * Crear usuario (Admin o Super Admin)
  */
 const crearUsuario = async (req, res) => {
-  const { 
-    nombre, 
-    email, 
-    password, 
-    rol_id, 
+  const {
+    nombre,
+    email,
+    password,
+    rol_id,
     es_temporal = true,
-    debe_cambiar_password = true 
+    debe_cambiar_password = true,
+    perfil_en_proyecto,
   } = req.body;
-  
+
   try {
     // Validar campos requeridos
     if (!nombre || !email || !password) {
@@ -148,7 +163,7 @@ const crearUsuario = async (req, res) => {
         message: 'Nombre, email y contraseña son requeridos',
       });
     }
-    
+
     // Validar fortaleza de contraseña
     const passwordValidation = validatePasswordStrength(password);
     if (!passwordValidation.isValid) {
@@ -157,7 +172,7 @@ const crearUsuario = async (req, res) => {
         message: passwordValidation.errors,
       });
     }
-    
+
     // Verificar si el email ya existe
     const existingUser = await db('usuarios').where('email', email).first();
     if (existingUser) {
@@ -166,7 +181,7 @@ const crearUsuario = async (req, res) => {
         message: 'Este email ya está registrado',
       });
     }
-    
+
     // Verificar rol
     const rol = await db('roles').where('id', rol_id).first();
     if (!rol) {
@@ -174,7 +189,7 @@ const crearUsuario = async (req, res) => {
         error: 'Rol inválido',
       });
     }
-    
+
     // Verificar permisos según rol del creador
     const creador = req.usuario;
     if (creador.rol === 'admin' && rol.nivel > 2) {
@@ -183,10 +198,10 @@ const crearUsuario = async (req, res) => {
         message: 'Un admin no puede crear este tipo de rol',
       });
     }
-    
+
     // Hashear contraseña
     const passwordHash = await hashPassword(password);
-    
+
     // Crear usuario
     const [usuarioId] = await db('usuarios').insert({
       nombre: nombre.trim(),
@@ -197,6 +212,7 @@ const crearUsuario = async (req, res) => {
       activo: true,
       email_verificado: true, // Confiado por admin
       creado_por: creador.id,
+      perfil_en_proyecto: perfil_en_proyecto || null,
     });
     
     // Enviar email de bienvenida
@@ -230,8 +246,8 @@ const crearUsuario = async (req, res) => {
  */
 const actualizarUsuario = async (req, res) => {
   const { id } = req.params;
-  const { nombre, email, activo, rol_id } = req.body;
-  
+  const { nombre, email, activo, rol_id, perfil_en_proyecto } = req.body;
+
   try {
     // Verificar que el usuario existe
     const usuarioExistente = await db('usuarios').where('id', id).first();
@@ -240,11 +256,11 @@ const actualizarUsuario = async (req, res) => {
         error: 'Usuario no encontrado',
       });
     }
-    
+
     // Verificar permisos
     const creador = req.usuario;
     const usuarioRol = await db('roles').where('id', usuarioExistente.rol_id).first();
-    
+
     // Admin solo puede editar usuarios de nivel igual o menor
     if (creador.rol === 'admin' && usuarioRol.nivel >= creador.rol_nivel) {
       return res.status(403).json({
@@ -252,14 +268,14 @@ const actualizarUsuario = async (req, res) => {
         message: 'No tienes permisos para editar este usuario',
       });
     }
-    
+
     // Verificar email duplicado (si se está cambiando)
     if (email && email !== usuarioExistente.email) {
       const emailExistente = await db('usuarios')
         .where('email', email)
         .where('id', '!=', id)
         .first();
-      
+
       if (emailExistente) {
         return res.status(409).json({
           error: 'Email duplicado',
@@ -267,19 +283,20 @@ const actualizarUsuario = async (req, res) => {
         });
       }
     }
-    
+
     // Preparar datos de actualización
     const datosActualizacion = {};
     if (nombre) datosActualizacion.nombre = nombre.trim();
     if (email) datosActualizacion.email = email.trim();
     if (activo !== undefined) datosActualizacion.activo = activo;
+    if (perfil_en_proyecto !== undefined) datosActualizacion.perfil_en_proyecto = perfil_en_proyecto;
     if (rol_id) {
       // Verificar nuevo rol
       const nuevoRol = await db('roles').where('id', rol_id).first();
       if (!nuevoRol) {
         return res.status(400).json({ error: 'Rol inválido' });
       }
-      
+
       // Admin no puede cambiar rol a uno superior
       if (creador.rol === 'admin' && nuevoRol.nivel > creador.rol_nivel) {
         return res.status(403).json({
@@ -289,12 +306,12 @@ const actualizarUsuario = async (req, res) => {
       }
       datosActualizacion.rol_id = rol_id;
     }
-    
+
     // Actualizar
     await db('usuarios')
       .where('id', id)
       .update(datosActualizacion);
-    
+
     res.json({
       mensaje: 'Usuario actualizado exitosamente',
     });

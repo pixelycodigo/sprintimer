@@ -54,7 +54,7 @@ export const estadisticasService = {
   },
 
   /**
-   * ESTADÍSTICAS DE USUARIO
+   * ESTADÍSTICAS DE USUARIO (TEAM MEMBER)
    */
 
   /**

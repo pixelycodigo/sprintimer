@@ -7,10 +7,20 @@ import api from './api';
 export const actividadesService = {
   /**
    * Listar actividades de un proyecto
+   * @param {number|null} proyecto_id - ID del proyecto o null para todas
+   * @param {object} params - Parámetros adicionales (ej: { todas: true })
    */
   listar: async (proyecto_id, params = {}) => {
+    const queryParams = {};
+    if (proyecto_id) {
+      queryParams.proyecto_id = proyecto_id;
+    }
+    if (params.todas) {
+      queryParams.todas = true;
+    }
+    
     const response = await api.get('/admin/tiempo/actividades', {
-      params: { proyecto_id, ...params }
+      params: queryParams
     });
     return response.data;
   },
@@ -77,15 +87,41 @@ export const actividadesService = {
     const response = await api.get(`/admin/tiempo/proyectos/${proyecto_id}/actividades-asignadas`);
     return response.data;
   },
+
+  /**
+   * Duplicar actividad
+   */
+  duplicar: async (id, data) => {
+    const response = await api.post(`/admin/tiempo/actividades/${id}/duplicar`, data);
+    return response.data;
+  },
+
+  /**
+   * Activar/Desactivar actividad
+   */
+  actualizarEstado: async (id, activo) => {
+    const response = await api.put(`/admin/tiempo/actividades/${id}/estado`, { activo });
+    return response.data;
+  },
 };
 
 export const hitosService = {
   /**
-   * Listar hitos de un proyecto
+   * Listar hitos
+   * @param {number|null} proyecto_id - ID del proyecto o null para todos
+   * @param {object} params - Parámetros adicionales (ej: { todas: true })
    */
   listar: async (proyecto_id, params = {}) => {
+    const queryParams = {};
+    if (proyecto_id) {
+      queryParams.proyecto_id = proyecto_id;
+    }
+    if (params.todas) {
+      queryParams.todas = true;
+    }
+    
     const response = await api.get('/admin/tiempo/hitos', {
-      params: { proyecto_id, ...params }
+      params: queryParams
     });
     return response.data;
   },
@@ -101,11 +137,8 @@ export const hitosService = {
   /**
    * Crear hito
    */
-  crear: async (proyecto_id, data) => {
-    const response = await api.post('/admin/tiempo/hitos', {
-      proyecto_id,
-      ...data
-    });
+  crear: async (data) => {
+    const response = await api.post('/admin/tiempo/hitos', data);
     return response.data;
   },
 

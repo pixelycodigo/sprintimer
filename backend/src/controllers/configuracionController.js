@@ -16,7 +16,7 @@ const obtenerDiasLaborables = async (req, res) => {
     }
     
     // Verificar permisos
-    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
         message: 'No tienes permisos para ver esta configuración',
@@ -90,7 +90,7 @@ const actualizarDiasLaborables = async (req, res) => {
     }
     
     // Verificar permisos
-    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
         message: 'No tienes permisos para configurar este proyecto',
@@ -141,7 +141,7 @@ const obtenerCostosNoLaborables = async (req, res) => {
     }
     
     // Verificar permisos
-    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
         message: 'No tienes permisos para ver esta configuración',
@@ -194,7 +194,7 @@ const actualizarCostosNoLaborables = async (req, res) => {
     }
     
     // Verificar permisos
-    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
         message: 'No tienes permisos para configurar este proyecto',
@@ -293,7 +293,7 @@ const eliminarCostoNoLaborable = async (req, res) => {
     }
     
     // Verificar permisos
-    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
         message: 'No tienes permisos para eliminar esta configuración',

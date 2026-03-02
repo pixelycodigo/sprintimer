@@ -17,15 +17,18 @@ const listarClientes = async (req, res) => {
     
     // Aplicar filtros
     if (search) {
+      const searchLower = search.toLowerCase();
       query.where((builder) => {
-        builder.where('clientes.nombre', 'like', `%${search}%`)
-               .orWhere('clientes.email', 'like', `%${search}%`)
-               .orWhere('clientes.empresa', 'like', `%${search}%`);
+        builder.whereRaw('LOWER(clientes.nombre) LIKE ?', [`%${searchLower}%`])
+               .orWhereRaw('LOWER(clientes.email) LIKE ?', [`%${searchLower}%`])
+               .orWhereRaw('LOWER(clientes.empresa) LIKE ?', [`%${searchLower}%`])
+               .orWhereRaw('LOWER(clientes.telefono) LIKE ?', [`%${searchLower}%`])
+               .orWhereRaw('LOWER(clientes.direccion) LIKE ?', [`%${searchLower}%`]);
       });
     }
     
     // Solo mostrar clientes del admin que los creó (o todos para super_admin)
-    if (req.usuario.rol === 'usuario') {
+    if (req.usuario.rol === 'admin') {
       query.where('clientes.creado_por', req.usuario.id);
     }
 
@@ -36,13 +39,16 @@ const listarClientes = async (req, res) => {
     
     // Aplicar filtros al count
     if (search) {
+      const searchLower = search.toLowerCase();
       countQuery.where((builder) => {
-        builder.where('clientes.nombre', 'like', `%${search}%`)
-               .orWhere('clientes.email', 'like', `%${search}%`)
-               .orWhere('clientes.empresa', 'like', `%${search}%`);
+        builder.whereRaw('LOWER(clientes.nombre) LIKE ?', [`%${searchLower}%`])
+               .orWhereRaw('LOWER(clientes.email) LIKE ?', [`%${searchLower}%`])
+               .orWhereRaw('LOWER(clientes.empresa) LIKE ?', [`%${searchLower}%`])
+               .orWhereRaw('LOWER(clientes.telefono) LIKE ?', [`%${searchLower}%`])
+               .orWhereRaw('LOWER(clientes.direccion) LIKE ?', [`%${searchLower}%`]);
       });
     }
-    if (req.usuario.rol === 'usuario') {
+    if (req.usuario.rol === 'admin') {
       countQuery.where('clientes.creado_por', req.usuario.id);
     }
     
@@ -92,7 +98,7 @@ const obtenerCliente = async (req, res) => {
     }
     
     // Verificar permisos (admin solo ve sus clientes)
-    if (req.usuario.rol === 'usuario' && cliente.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'admin' && cliente.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
         message: 'No tienes permisos para ver este cliente',
@@ -153,8 +159,8 @@ const crearCliente = async (req, res) => {
  */
 const actualizarCliente = async (req, res) => {
   const { id } = req.params;
-  const { nombre, email, empresa, telefono, direccion } = req.body;
-  
+  const { nombre, email, empresa, telefono, direccion, activo } = req.body;
+
   try {
     // Verificar que el cliente existe
     const clienteExistente = await db('clientes').where('id', id).first();
@@ -163,15 +169,15 @@ const actualizarCliente = async (req, res) => {
         error: 'Cliente no encontrado',
       });
     }
-    
+
     // Verificar permisos (admin solo edita sus clientes)
-    if (req.usuario.rol === 'usuario' && clienteExistente.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'admin' && clienteExistente.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
         message: 'No tienes permisos para editar este cliente',
       });
     }
-    
+
     // Preparar datos de actualización
     const datosActualizacion = {};
     if (nombre) datosActualizacion.nombre = nombre.trim();
@@ -179,12 +185,13 @@ const actualizarCliente = async (req, res) => {
     if (empresa !== undefined) datosActualizacion.empresa = empresa ? empresa.trim() : null;
     if (telefono !== undefined) datosActualizacion.telefono = telefono ? telefono.trim() : null;
     if (direccion !== undefined) datosActualizacion.direccion = direccion ? direccion.trim() : null;
-    
+    if (activo !== undefined) datosActualizacion.activo = activo;
+
     // Actualizar
     await db('clientes')
       .where('id', id)
       .update(datosActualizacion);
-    
+
     res.json({
       mensaje: 'Cliente actualizado exitosamente',
     });
@@ -213,7 +220,7 @@ const eliminarCliente = async (req, res) => {
     }
     
     // Verificar permisos (admin solo elimina sus clientes)
-    if (req.usuario.rol === 'usuario' && cliente.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'admin' && cliente.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
         message: 'No tienes permisos para eliminar este cliente',
@@ -287,7 +294,7 @@ const recuperarCliente = async (req, res) => {
     }
     
     // Verificar permisos
-    if (req.usuario.rol === 'usuario' && eliminado.eliminado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'admin' && eliminado.eliminado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
         message: 'No puedes recuperar este cliente',

@@ -341,7 +341,7 @@ const listarCortes = async (req, res) => {
     }
     
     // Solo admin ve sus propios cortes
-    if (req.usuario.rol === 'usuario') {
+    if (req.usuario.rol === 'admin') {
       query.where('proyectos.creado_por', req.usuario.id);
     }
 
@@ -367,7 +367,7 @@ const listarCortes = async (req, res) => {
     if (periodo_hasta) {
       countQuery.where('cortes_mensuales.periodo_inicio', '<=', periodo_hasta);
     }
-    if (req.usuario.rol === 'usuario') {
+    if (req.usuario.rol === 'admin') {
       countQuery.where('proyectos.creado_por', req.usuario.id);
     }
     

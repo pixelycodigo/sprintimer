@@ -10,7 +10,7 @@ const { autenticar, verificarRol } = require('../middleware/auth');
  */
 router.get('/', 
   autenticar, 
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   proyectosController.listarProyectos
 );
 
@@ -21,7 +21,7 @@ router.get('/',
  */
 router.get('/:id', 
   autenticar, 
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   proyectosController.obtenerProyecto
 );
 
@@ -32,7 +32,7 @@ router.get('/:id',
  */
 router.post('/', 
   autenticar, 
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   proyectosController.crearProyecto
 );
 
@@ -43,7 +43,7 @@ router.post('/',
  */
 router.put('/:id', 
   autenticar, 
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   proyectosController.actualizarProyecto
 );
 
@@ -54,7 +54,7 @@ router.put('/:id',
  */
 router.delete('/:id', 
   autenticar, 
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   proyectosController.eliminarProyecto
 );
 
@@ -65,7 +65,7 @@ router.delete('/:id',
  */
 router.post('/:id/recuperar', 
   autenticar, 
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   proyectosController.recuperarProyecto
 );
 
@@ -76,7 +76,7 @@ router.post('/:id/recuperar',
  */
 router.get('/:id/usuarios', 
   autenticar, 
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   proyectosController.obtenerUsuariosAsignados
 );
 
@@ -87,7 +87,7 @@ router.get('/:id/usuarios',
  */
 router.post('/:id/asignar-usuario', 
   autenticar, 
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   proyectosController.asignarUsuarioAProyecto
 );
 
@@ -96,10 +96,21 @@ router.post('/:id/asignar-usuario',
  * @desc    Desasignar usuario de proyecto
  * @access  Privado (Admin, Super Admin)
  */
-router.delete('/:id/desasignar-usuario/:usuario_id', 
-  autenticar, 
-  verificarRol(['usuario', 'super_admin']),
+router.delete('/:id/desasignar-usuario/:usuario_id',
+  autenticar,
+  verificarRol(['admin', 'super_admin']),
   proyectosController.desasignarUsuarioDeProyecto
+);
+
+/**
+ * @route   PUT /api/admin/proyectos/:id/usuarios/:usuario_id
+ * @desc    Actualizar perfil de usuario en proyecto
+ * @access  Privado (Admin, Super Admin)
+ */
+router.put('/:id/usuarios/:usuario_id',
+  autenticar,
+  verificarRol(['admin', 'super_admin']),
+  proyectosController.actualizarPerfilUsuario
 );
 
 module.exports = router;

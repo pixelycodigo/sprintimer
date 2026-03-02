@@ -4,38 +4,52 @@ const db = require('../config/database');
  * Listar hitos de un proyecto
  */
 const listarHitos = async (req, res) => {
-  const { proyecto_id } = req.query;
-  
+  const { proyecto_id, todas } = req.query;
+
   try {
-    if (!proyecto_id) {
+    // Si no se proporciona proyecto_id y no se piden todas, retornar error
+    if (!proyecto_id && !todas) {
       return res.status(400).json({
         error: 'Parámetro requerido',
-        message: 'proyecto_id es requerido',
+        message: 'proyecto_id o todas=true son requeridos',
       });
     }
-    
-    const proyecto = await db('proyectos').where('id', proyecto_id).first();
-    if (!proyecto) {
-      return res.status(404).json({
-        error: 'Proyecto no encontrado',
-      });
-    }
-    
-    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
-      return res.status(403).json({
-        error: 'No autorizado',
-      });
-    }
-    
+
     let query = db('hitos')
-      .select('hitos.*', 'creador.nombre as creado_por_nombre')
+      .select(
+        'hitos.*',
+        'creador.nombre as creado_por_nombre',
+        'proyectos.nombre as proyecto_nombre',
+        'actividades.nombre as actividad_nombre'
+      )
       .leftJoin('usuarios as creador', 'hitos.creado_por', 'creador.id')
-      .where('hitos.proyecto_id', proyecto_id)
-      .where('hitos.eliminado', false)
-      .orderBy('hitos.fecha_limite', 'asc');
+      .leftJoin('proyectos', 'hitos.proyecto_id', 'proyectos.id')
+      .leftJoin('actividades', 'hitos.actividad_id', 'actividades.id')
+      .where('hitos.eliminado', false);
+
+    // Si se proporciona proyecto_id, filtrar por ese proyecto
+    if (proyecto_id) {
+      const proyecto = await db('proyectos').where('id', proyecto_id).first();
+      if (!proyecto) {
+        return res.status(404).json({
+          error: 'Proyecto no encontrado',
+        });
+      }
+
+      if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
+        return res.status(403).json({
+          error: 'No autorizado',
+        });
+      }
+
+      query.andWhere('hitos.proyecto_id', proyecto_id);
+    }
+    // Si todas=true, no filtrar por proyecto
     
+    query.orderBy('hitos.fecha_limite', 'asc');
+
     const hitos = await query;
-    
+
     res.json({
       hitos,
       total: hitos.length,
@@ -74,7 +88,7 @@ const obtenerHito = async (req, res) => {
       });
     }
     
-    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
       });
@@ -110,7 +124,7 @@ const crearHito = async (req, res) => {
       });
     }
     
-    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
       });
@@ -162,7 +176,7 @@ const actualizarHito = async (req, res) => {
       });
     }
     
-    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
       });
@@ -211,7 +225,7 @@ const eliminarHito = async (req, res) => {
       });
     }
     
-    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
       });

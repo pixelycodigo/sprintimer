@@ -10,7 +10,7 @@ const { autenticar, verificarRol, verificarNivelRol } = require('../middleware/a
  */
 router.get('/',
   autenticar,
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   async (req, res) => {
     // Si es superadmin, solo mostrar usuarios con rol 'usuario' (admins)
     if (req.usuario.rol === 'super_admin') {
@@ -41,7 +41,7 @@ router.get('/all',
  */
 router.get('/:id', 
   autenticar, 
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   usuariosController.obtenerUsuario
 );
 
@@ -52,7 +52,7 @@ router.get('/:id',
  */
 router.post('/', 
   autenticar, 
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   usuariosController.crearUsuario
 );
 
@@ -63,7 +63,7 @@ router.post('/',
  */
 router.put('/:id', 
   autenticar, 
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   usuariosController.actualizarUsuario
 );
 
@@ -72,9 +72,9 @@ router.put('/:id',
  * @desc    Eliminar usuario (soft delete)
  * @access  Privado (Admin, Super Admin)
  */
-router.delete('/:id', 
-  autenticar, 
-  verificarRol(['usuario', 'super_admin']),
+router.delete('/:id',
+  autenticar,
+  verificarRol(['admin', 'super_admin']),
   usuariosController.eliminarUsuario
 );
 
@@ -83,9 +83,9 @@ router.delete('/:id',
  * @desc    Recuperar usuario eliminado
  * @access  Privado (Admin, Super Admin)
  */
-router.post('/:id/recuperar', 
-  autenticar, 
-  verificarRol(['usuario', 'super_admin']),
+router.post('/:id/recuperar',
+  autenticar,
+  verificarRol(['admin', 'super_admin']),
   usuariosController.recuperarUsuario
 );
 
@@ -94,9 +94,9 @@ router.post('/:id/recuperar',
  * @desc    Cambiar contraseña de usuario
  * @access  Privado (Admin, Super Admin)
  */
-router.post('/:id/cambiar-password', 
-  autenticar, 
-  verificarRol(['usuario', 'super_admin']),
+router.post('/:id/cambiar-password',
+  autenticar,
+  verificarRol(['admin', 'super_admin']),
   usuariosController.cambiarPasswordUsuario
 );
 

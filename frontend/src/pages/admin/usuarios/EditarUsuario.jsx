@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { usuariosService } from '../../../services/usuariosService';
+import { perfilesTeamService } from '../../../services/perfilesTeamService';
 
 export default function EditarUsuario() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [perfiles, setPerfiles] = useState([]);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [usuario, setUsuario] = useState(null);
@@ -14,22 +16,31 @@ export default function EditarUsuario() {
     nombre: '',
     email: '',
     activo: true,
+    perfil_en_proyecto: '',
   });
 
   useEffect(() => {
-    cargarUsuario();
+    cargarDatos();
   }, [id]);
 
-  const cargarUsuario = async () => {
+  const cargarDatos = async () => {
     setLoading(true);
     try {
-      const response = await usuariosService.obtener(id);
-      setUsuario(response.usuario);
+      // Cargar usuario
+      const usuarioRes = await usuariosService.obtener(id);
+      const usuarioData = usuarioRes.usuario;
+      
+      setUsuario(usuarioData);
       setFormData({
-        nombre: response.usuario.nombre,
-        email: response.usuario.email,
-        activo: response.usuario.activo,
+        nombre: usuarioData.nombre,
+        email: usuarioData.email,
+        activo: usuarioData.activo === true || usuarioData.activo === 1,
+        perfil_en_proyecto: usuarioData.perfil_en_proyecto || '',
       });
+
+      // Cargar perfiles
+      const perfilesRes = await perfilesTeamService.listar({ activo: true });
+      setPerfiles(perfilesRes.perfiles || []);
     } catch (err) {
       setError('Error al cargar usuario');
     } finally {
@@ -45,13 +56,13 @@ export default function EditarUsuario() {
 
     try {
       await usuariosService.actualizar(id, formData);
-      setSuccess('Usuario actualizado exitosamente');
-      
+      setSuccess('Miembro actualizado exitosamente');
+
       setTimeout(() => {
-        navigate('/admin/usuarios');
+        navigate('/admin/team');
       }, 2000);
     } catch (err) {
-      setError(err.response?.data?.message || 'Error al actualizar usuario');
+      setError(err.response?.data?.message || 'Error al actualizar miembro');
     } finally {
       setSaving(false);
     }
@@ -72,13 +83,13 @@ export default function EditarUsuario() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Link to="/admin/usuarios" className="text-slate-400 hover:text-slate-600">
+        <Link to="/admin/team" className="text-slate-400 hover:text-slate-600">
           ←
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Editar Usuario</h1>
+          <h1 className="text-2xl font-bold text-slate-900">Editar Miembro del Equipo</h1>
           <p className="text-slate-600 mt-1">
-            Editando a <span className="font-medium">{usuario?.nombre}</span>
+            Actualiza la información del miembro
           </p>
         </div>
       </div>
@@ -102,7 +113,7 @@ export default function EditarUsuario() {
           {/* Nombre */}
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1.5">
-              Nombre completo
+              Nombre completo *
             </label>
             <input
               type="text"
@@ -117,7 +128,7 @@ export default function EditarUsuario() {
           {/* Email */}
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1.5">
-              Email
+              Email *
             </label>
             <input
               type="email"
@@ -129,72 +140,109 @@ export default function EditarUsuario() {
             />
           </div>
 
-          {/* Estado */}
+          {/* Perfil Funcional */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
-              Estado
+            <label className="block text-sm font-medium text-slate-700 mb-1.5">
+              Perfil Funcional
             </label>
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={formData.activo}
-                onChange={(e) => setFormData({ ...formData, activo: e.target.checked })}
-                className="w-4 h-4 text-slate-900 focus:ring-slate-900 border-slate-300 rounded"
-              />
-              <div>
-                <span className="text-sm font-medium text-slate-900">
-                  {formData.activo ? 'Activo' : 'Inactivo'}
-                </span>
-                <p className="text-xs text-slate-600">
-                  {formData.activo 
-                    ? 'El usuario puede iniciar sesión y acceder al sistema' 
-                    : 'El usuario no puede iniciar sesión'}
-                </p>
-              </div>
-            </label>
-          </div>
-
-          {/* Info de solo lectura */}
-          <div className="bg-slate-50 p-4 rounded-lg space-y-3">
-            <div className="flex justify-between text-sm">
-              <span className="text-slate-600">Rol:</span>
-              <span className="font-medium text-slate-900 capitalize">
-                {usuario?.rol?.replace('_', ' ')}
-              </span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-slate-600">Creado:</span>
-              <span className="font-medium text-slate-900">
-                {new Date(usuario?.fecha_creacion).toLocaleDateString('es-ES')}
-              </span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-slate-600">Último login:</span>
-              <span className="font-medium text-slate-900">
-                {usuario?.ultimo_login 
-                  ? new Date(usuario.ultimo_login).toLocaleDateString('es-ES')
-                  : 'Nunca'}
-              </span>
-            </div>
-            <p className="text-xs text-slate-500 pt-2 border-t border-slate-200">
-              ℹ️ Para cambiar el rol o la contraseña, usa las opciones específicas en el menú de acciones.
+            <select
+              value={formData.perfil_en_proyecto}
+              onChange={(e) => setFormData({ ...formData, perfil_en_proyecto: e.target.value })}
+              className="input-base"
+            >
+              <option value="">Sin perfil específico</option>
+              {perfiles.map((perfil) => (
+                <option key={perfil.id} value={perfil.nombre}>
+                  {perfil.nombre.replace(/-/g, ' ')}
+                </option>
+              ))}
+            </select>
+            <p className="text-xs text-slate-500 mt-1">
+              Perfil asignado al miembro (puede cambiarse en la asignación a proyectos)
             </p>
           </div>
 
-          {/* Submit */}
+          {/* Estado */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">
+              Estado *
+            </label>
+            <div className="space-y-2">
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="activo"
+                  checked={formData.activo === true}
+                  onChange={(e) => setFormData({ ...formData, activo: e.target.value === 'true' })}
+                  value="true"
+                  className="w-4 h-4 text-slate-900 focus:ring-slate-900"
+                />
+                <span className="text-sm text-slate-700">
+                  <strong>Activo</strong> - El miembro puede acceder a la plataforma
+                </span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="activo"
+                  checked={formData.activo === false}
+                  onChange={(e) => setFormData({ ...formData, activo: e.target.value === 'true' })}
+                  value="false"
+                  className="w-4 h-4 text-slate-900 focus:ring-slate-900"
+                />
+                <span className="text-sm text-slate-700">
+                  <strong>Inactivo</strong> - El miembro no puede acceder
+                </span>
+              </label>
+            </div>
+          </div>
+
+          {/* Info Box */}
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <p className="text-sm text-blue-800">
+              <strong>💡 Información:</strong> El perfil funcional se asigna cuando el miembro 
+              es asignado a un proyecto. Este campo es opcional y sirve como referencia.
+            </p>
+          </div>
+
+          {/* Actions */}
           <div className="flex gap-3 pt-4 border-t border-slate-200">
             <button
               type="submit"
               disabled={saving}
-              className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-primary"
             >
               {saving ? 'Guardando...' : 'Guardar Cambios'}
             </button>
-            <Link to="/admin/usuarios" className="btn-secondary">
+            <button
+              type="button"
+              onClick={() => navigate('/admin/team')}
+              className="btn-secondary"
+              disabled={saving}
+            >
               Cancelar
-            </Link>
+            </button>
           </div>
         </form>
+      </div>
+
+      {/* Additional Actions */}
+      <div className="card-base p-6">
+        <h3 className="text-lg font-semibold text-slate-900 mb-4">Acciones Adicionales</h3>
+        <div className="space-y-3">
+          <Link
+            to={`/admin/team/${id}/cambiar-password`}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 text-amber-700 rounded-lg hover:bg-amber-100 transition-colors text-sm font-medium"
+          >
+            🔑 Cambiar contraseña
+          </Link>
+          <Link
+            to={`/admin/team/${id}`}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium"
+          >
+            👁️ Ver detalles completos
+          </Link>
+        </div>
       </div>
     </div>
   );

@@ -11,12 +11,12 @@ const db = require('../config/database');
  */
 router.get('/roles',
   autenticar,
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   async (req, res) => {
     try {
       const roles = await db('roles')
         .select('roles.*', db.raw('COUNT(usuarios.id) as total_usuarios'))
-        .leftJoin('usuario', 'usuarios.rol_id', 'roles.id')
+        .leftJoin('usuarios', 'usuarios.rol_id', 'roles.id')
         .groupBy('roles.id')
         .orderBy('roles.nivel', 'asc');
 
@@ -171,7 +171,7 @@ router.delete('/roles/:id',
  */
 router.get('/proyectos/:id/dias-laborables', 
   autenticar, 
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   configuracionController.obtenerDiasLaborables
 );
 
@@ -182,7 +182,7 @@ router.get('/proyectos/:id/dias-laborables',
  */
 router.put('/proyectos/:id/dias-laborables', 
   autenticar, 
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   configuracionController.actualizarDiasLaborables
 );
 
@@ -193,7 +193,7 @@ router.put('/proyectos/:id/dias-laborables',
  */
 router.get('/proyectos/:id/costos-no-laborables', 
   autenticar, 
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   configuracionController.obtenerCostosNoLaborables
 );
 
@@ -204,7 +204,7 @@ router.get('/proyectos/:id/costos-no-laborables',
  */
 router.post('/proyectos/:id/costos-no-laborables', 
   autenticar, 
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   configuracionController.actualizarCostosNoLaborables
 );
 
@@ -215,7 +215,7 @@ router.post('/proyectos/:id/costos-no-laborables',
  */
 router.delete('/costos-no-laborables/:id', 
   autenticar, 
-  verificarRol(['usuario', 'super_admin']),
+  verificarRol(['admin', 'super_admin']),
   configuracionController.eliminarCostoNoLaborable
 );
 
