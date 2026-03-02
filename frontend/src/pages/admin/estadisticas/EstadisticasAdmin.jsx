@@ -54,7 +54,7 @@ export default function EstadisticasAdmin() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="card-base p-6">
           <div className="flex items-center justify-between">
             <div>
@@ -79,48 +79,6 @@ export default function EstadisticasAdmin() {
             </div>
             <div className="w-12 h-12 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
               📦
-            </div>
-          </div>
-        </div>
-
-        <div className="card-base p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-slate-600">Tareas</p>
-              <p className="text-3xl font-bold text-slate-900 data-number mt-1">
-                {resumen?.total_tareas || 0}
-              </p>
-            </div>
-            <div className="w-12 h-12 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
-              ✅
-            </div>
-          </div>
-        </div>
-
-        <div className="card-base p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-slate-600">Horas Totales</p>
-              <p className="text-3xl font-bold text-slate-900 data-number mt-1">
-                {resumen?.total_horas?.toFixed(2) || '0.00'}h
-              </p>
-            </div>
-            <div className="w-12 h-12 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-xl">
-              ⏱️
-            </div>
-          </div>
-        </div>
-
-        <div className="card-base p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-slate-600">Cortes Pendientes</p>
-              <p className="text-3xl font-bold text-slate-900 data-number mt-1">
-                {resumen?.cortes_pendientes || 0}
-              </p>
-            </div>
-            <div className="w-12 h-12 rounded-lg bg-red-50 text-red-600 flex items-center justify-center text-xl">
-              💰
             </div>
           </div>
         </div>

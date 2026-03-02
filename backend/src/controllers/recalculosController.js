@@ -214,7 +214,7 @@ const listarRecalculos = async (req, res) => {
     let query = db('cortes_recalculados')
       .select('cortes_recalculados.*',
               'usuarios.nombre as recalculado_por_nombre')
-      .leftJoin('usuarios', 'cortes_recalculados.recalculado_por', 'usuarios.id');
+      .leftJoin('usuario', 'cortes_recalculados.recalculado_por', 'usuarios.id');
     
     if (corte_id) {
       query.where('cortes_recalculados.corte_id', corte_id);

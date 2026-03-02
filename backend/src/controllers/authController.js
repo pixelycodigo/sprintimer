@@ -38,7 +38,7 @@ const registro = async (req, res) => {
     }
     
     // Obtener rol de admin
-    const adminRole = await db('roles').where('nombre', 'admin').first();
+    const adminRole = await db('roles').where('nombre', 'usuario').first();
     if (!adminRole) {
       return res.status(500).json({
         error: 'Error de configuración',
@@ -329,7 +329,7 @@ const restablecerPassword = async (req, res) => {
     
     // Actualizar contraseña en transacción
     await db.transaction(async (trx) => {
-      await trx('usuarios')
+      await trx('usuario')
         .where('id', tokenRecord.usuario_id)
         .update({
           password_hash: passwordHash,
@@ -375,7 +375,7 @@ const verificarEmail = async (req, res) => {
     
     // Actualizar usuario y token en transacción
     await db.transaction(async (trx) => {
-      await trx('usuarios')
+      await trx('usuario')
         .where('id', tokenRecord.usuario_id)
         .update({ email_verificado: true });
       

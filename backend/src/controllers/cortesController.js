@@ -103,7 +103,7 @@ const generarCorteIndividual = async (usuario_id, proyecto_id, periodo_inicio, p
     }
     
     // Obtener usuario
-    const usuario = await trx('usuarios')
+    const usuario = await trx('usuario')
       .select('usuarios.*', 'roles.nombre as rol')
       .leftJoin('roles', 'usuarios.rol_id', 'roles.id')
       .where('usuarios.id', usuario_id)
@@ -315,7 +315,7 @@ const listarCortes = async (req, res) => {
               'proyectos.nombre as proyecto_nombre',
               'monedas.codigo as moneda_codigo',
               'monedas.simbolo as moneda_simbolo')
-      .leftJoin('usuarios', 'cortes_mensuales.usuario_id', 'usuarios.id')
+      .leftJoin('usuario', 'cortes_mensuales.usuario_id', 'usuarios.id')
       .leftJoin('proyectos', 'cortes_mensuales.proyecto_id', 'proyectos.id')
       .leftJoin('monedas', 'cortes_mensuales.moneda_id', 'monedas.id');
     
@@ -341,12 +341,37 @@ const listarCortes = async (req, res) => {
     }
     
     // Solo admin ve sus propios cortes
-    if (req.usuario.rol === 'admin') {
+    if (req.usuario.rol === 'usuario') {
       query.where('proyectos.creado_por', req.usuario.id);
     }
+
+    // Obtener total (usando una query separada para evitar error de GROUP BY)
+    const countQuery = db('cortes_mensuales')
+      .leftJoin('usuario', 'cortes_mensuales.usuario_id', 'usuarios.id')
+      .leftJoin('proyectos', 'cortes_mensuales.proyecto_id', 'proyectos.id')
+      .where('cortes_mensuales.eliminado', eliminado);
     
-    // Obtener total
-    const totalResult = await query.clone().count('* as total').first();
+    // Aplicar filtros al count
+    if (usuario_id) {
+      countQuery.where('cortes_mensuales.usuario_id', usuario_id);
+    }
+    if (proyecto_id) {
+      countQuery.where('cortes_mensuales.proyecto_id', proyecto_id);
+    }
+    if (estado) {
+      countQuery.where('cortes_mensuales.estado', estado);
+    }
+    if (periodo_desde) {
+      countQuery.where('cortes_mensuales.periodo_fin', '>=', periodo_desde);
+    }
+    if (periodo_hasta) {
+      countQuery.where('cortes_mensuales.periodo_inicio', '<=', periodo_hasta);
+    }
+    if (req.usuario.rol === 'usuario') {
+      countQuery.where('proyectos.creado_por', req.usuario.id);
+    }
+    
+    const totalResult = await countQuery.count('* as total').first();
     const total = parseInt(totalResult.total);
     
     // Aplicar paginación
@@ -386,7 +411,7 @@ const obtenerDetalleCorte = async (req, res) => {
               'proyectos.nombre as proyecto_nombre',
               'monedas.codigo as moneda_codigo',
               'monedas.simbolo as moneda_simbolo')
-      .leftJoin('usuarios', 'cortes_mensuales.usuario_id', 'usuarios.id')
+      .leftJoin('usuario', 'cortes_mensuales.usuario_id', 'usuarios.id')
       .leftJoin('proyectos', 'cortes_mensuales.proyecto_id', 'proyectos.id')
       .leftJoin('monedas', 'cortes_mensuales.moneda_id', 'monedas.id')
       .where('cortes_mensuales.id', id)

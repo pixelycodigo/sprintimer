@@ -8,66 +8,66 @@ const { autenticar, verificarRol } = require('../middleware/auth');
 /**
  * Rutas de Estadísticas para Administrador
  */
-router.get('/admin/resumen', 
-  autenticar, 
-  verificarRol(['admin', 'super_admin']),
+router.get('/resumen',
+  autenticar,
+  verificarRol(['usuario', 'super_admin']),
   estadisticasAdminController.obtenerResumenGeneral
 );
 
-router.get('/admin/horas-por-usuario', 
-  autenticar, 
-  verificarRol(['admin', 'super_admin']),
+router.get('/horas-por-usuario',
+  autenticar,
+  verificarRol(['usuario', 'super_admin']),
   estadisticasAdminController.horasPorUsuario
 );
 
-router.get('/admin/horas-por-proyecto', 
-  autenticar, 
-  verificarRol(['admin', 'super_admin']),
+router.get('/horas-por-proyecto',
+  autenticar,
+  verificarRol(['usuario', 'super_admin']),
   estadisticasAdminController.horasPorProyecto
 );
 
-router.get('/admin/progreso-sprints', 
-  autenticar, 
-  verificarRol(['admin', 'super_admin']),
+router.get('/progreso-sprints',
+  autenticar,
+  verificarRol(['usuario', 'super_admin']),
   estadisticasAdminController.progresoSprints
 );
 
-router.get('/admin/tareas-completadas', 
-  autenticar, 
-  verificarRol(['admin', 'super_admin']),
+router.get('/tareas-completadas',
+  autenticar,
+  verificarRol(['usuario', 'super_admin']),
   estadisticasAdminController.tareasCompletadasPorUsuario
 );
 
-router.get('/admin/horas-por-dia', 
-  autenticar, 
-  verificarRol(['admin', 'super_admin']),
+router.get('/horas-por-dia',
+  autenticar,
+  verificarRol(['usuario', 'super_admin']),
   estadisticasAdminController.horasPorDia
 );
 
 /**
  * Rutas de Estadísticas para Usuario
  */
-router.get('/usuario/resumen', 
+router.get('/resumen',
   autenticar,
   estadisticasUsuarioController.obtenerResumenUsuario
 );
 
-router.get('/usuario/horas-semanales', 
+router.get('/horas-semanales',
   autenticar,
   estadisticasUsuarioController.horasSemanales
 );
 
-router.get('/usuario/historial-tareas', 
+router.get('/historial-tareas',
   autenticar,
   estadisticasUsuarioController.historialTareas
 );
 
-router.get('/usuario/progreso-actividades', 
+router.get('/progreso-actividades',
   autenticar,
   estadisticasUsuarioController.progresoPorActividad
 );
 
-router.get('/usuario/horas-por-mes', 
+router.get('/horas-por-mes',
   autenticar,
   estadisticasUsuarioController.horasPorMes
 );
@@ -75,17 +75,17 @@ router.get('/usuario/horas-por-mes',
 /**
  * Rutas de Planificación
  */
-router.get('/usuario/planificacion-diaria', 
+router.get('/planificacion-diaria',
   autenticar,
   planificacionController.obtenerPlanificacionDiaria
 );
 
-router.get('/usuario/calendario-semanal', 
+router.get('/calendario-semanal',
   autenticar,
   planificacionController.obtenerCalendarioSemanal
 );
 
-router.get('/usuario/distribucion-horas', 
+router.get('/distribucion-horas',
   autenticar,
   planificacionController.distribucionHorasPorProyecto
 );

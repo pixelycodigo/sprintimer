@@ -9,7 +9,7 @@ export const estadisticasService = {
    * Obtener resumen general
    */
   obtenerResumenAdmin: async (params = {}) => {
-    const response = await api.get('/admin/estadisticas/admin/resumen', { params });
+    const response = await api.get('/admin/estadisticas/resumen', { params });
     return response.data;
   },
 
@@ -17,7 +17,7 @@ export const estadisticasService = {
    * Horas por usuario (gráfico de barras)
    */
   horasPorUsuario: async (params = {}) => {
-    const response = await api.get('/admin/estadisticas/admin/horas-por-usuario', { params });
+    const response = await api.get('/admin/estadisticas/horas-por-usuario', { params });
     return response.data;
   },
 
@@ -25,7 +25,7 @@ export const estadisticasService = {
    * Horas por proyecto (gráfico de pastel)
    */
   horasPorProyecto: async (params = {}) => {
-    const response = await api.get('/admin/estadisticas/admin/horas-por-proyecto', { params });
+    const response = await api.get('/admin/estadisticas/horas-por-proyecto', { params });
     return response.data;
   },
 
@@ -33,7 +33,7 @@ export const estadisticasService = {
    * Progreso de sprints (estimado vs real)
    */
   progresoSprints: async (params = {}) => {
-    const response = await api.get('/admin/estadisticas/admin/progreso-sprints', { params });
+    const response = await api.get('/admin/estadisticas/progreso-sprints', { params });
     return response.data;
   },
 
@@ -41,7 +41,7 @@ export const estadisticasService = {
    * Tareas completadas por usuario
    */
   tareasCompletadas: async (params = {}) => {
-    const response = await api.get('/admin/estadisticas/admin/tareas-completadas', { params });
+    const response = await api.get('/admin/estadisticas/tareas-completadas', { params });
     return response.data;
   },
 
@@ -49,7 +49,7 @@ export const estadisticasService = {
    * Horas por día (últimos 30 días)
    */
   horasPorDia: async (params = {}) => {
-    const response = await api.get('/admin/estadisticas/admin/horas-por-dia', { params });
+    const response = await api.get('/admin/estadisticas/horas-por-dia', { params });
     return response.data;
   },
 
@@ -61,7 +61,7 @@ export const estadisticasService = {
    * Obtener resumen personal
    */
   obtenerResumenUsuario: async (params = {}) => {
-    const response = await api.get('/usuario/estadisticas/usuario/resumen', { params });
+    const response = await api.get('/usuario/estadisticas/resumen', { params });
     return response.data;
   },
 
@@ -69,7 +69,7 @@ export const estadisticasService = {
    * Horas semanales (últimas 4 semanas)
    */
   horasSemanales: async (params = {}) => {
-    const response = await api.get('/usuario/estadisticas/usuario/horas-semanales', { params });
+    const response = await api.get('/usuario/estadisticas/horas-semanales', { params });
     return response.data;
   },
 
@@ -77,7 +77,7 @@ export const estadisticasService = {
    * Historial de tareas
    */
   historialTareas: async (params = {}) => {
-    const response = await api.get('/usuario/estadisticas/usuario/historial-tareas', { params });
+    const response = await api.get('/usuario/estadisticas/historial-tareas', { params });
     return response.data;
   },
 
@@ -85,7 +85,7 @@ export const estadisticasService = {
    * Progreso por actividad
    */
   progresoActividades: async (params = {}) => {
-    const response = await api.get('/usuario/estadisticas/usuario/progreso-actividades', { params });
+    const response = await api.get('/usuario/estadisticas/progreso-actividades', { params });
     return response.data;
   },
 
@@ -93,7 +93,7 @@ export const estadisticasService = {
    * Horas por mes (últimos 12 meses)
    */
   horasPorMes: async (params = {}) => {
-    const response = await api.get('/usuario/estadisticas/usuario/horas-por-mes', { params });
+    const response = await api.get('/usuario/estadisticas/horas-por-mes', { params });
     return response.data;
   },
 
@@ -105,7 +105,7 @@ export const estadisticasService = {
    * Planificación diaria (horas recomendadas)
    */
   planificacionDiaria: async () => {
-    const response = await api.get('/usuario/estadisticas/usuario/planificacion-diaria');
+    const response = await api.get('/usuario/estadisticas/planificacion-diaria');
     return response.data;
   },
 
@@ -113,7 +113,7 @@ export const estadisticasService = {
    * Calendario semanal de horas
    */
   calendarioSemanal: async (params = {}) => {
-    const response = await api.get('/usuario/estadisticas/usuario/calendario-semanal', { params });
+    const response = await api.get('/usuario/estadisticas/calendario-semanal', { params });
     return response.data;
   },
 
@@ -121,7 +121,7 @@ export const estadisticasService = {
    * Distribución de horas por proyecto
    */
   distribucionHoras: async (params = {}) => {
-    const response = await api.get('/usuario/estadisticas/usuario/distribucion-horas', { params });
+    const response = await api.get('/usuario/estadisticas/distribucion-horas', { params });
     return response.data;
   },
 };

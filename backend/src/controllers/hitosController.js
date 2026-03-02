@@ -21,7 +21,7 @@ const listarHitos = async (req, res) => {
       });
     }
     
-    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
       });
@@ -74,7 +74,7 @@ const obtenerHito = async (req, res) => {
       });
     }
     
-    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
       });
@@ -110,7 +110,7 @@ const crearHito = async (req, res) => {
       });
     }
     
-    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
       });
@@ -162,7 +162,7 @@ const actualizarHito = async (req, res) => {
       });
     }
     
-    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
       });
@@ -211,7 +211,7 @@ const eliminarHito = async (req, res) => {
       });
     }
     
-    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
       });

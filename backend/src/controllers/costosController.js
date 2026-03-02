@@ -212,7 +212,7 @@ const crearCosto = async (req, res) => {
       
       // Insertar nuevo costo
       const fechaInicio = es_retroactivo 
-        ? (await trx('usuarios').where('id', usuario_id).first()).fecha_creacion 
+        ? (await trx('usuario').where('id', usuario_id).first()).fecha_creacion 
         : new Date();
       
       const [costoId] = await trx('costos_por_hora').insert({

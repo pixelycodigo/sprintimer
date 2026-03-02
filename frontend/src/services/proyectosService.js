@@ -161,6 +161,14 @@ export const proyectosService = {
     const response = await api.post(`/admin/proyectos/${proyectoId}/costos-no-laborables`, data);
     return response.data;
   },
+
+  /**
+   * Eliminar costo no laboral
+   */
+  eliminarCostoNoLaborable: async (costoId) => {
+    const response = await api.delete(`/admin/proyectos/costos-no-laborables/${costoId}`);
+    return response.data;
+  },
 };
 
 export default { clientesService, proyectosService };

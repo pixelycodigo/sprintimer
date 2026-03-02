@@ -21,7 +21,7 @@ const listarSprints = async (req, res) => {
       });
     }
     
-    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
       });
@@ -105,7 +105,7 @@ const obtenerSprint = async (req, res) => {
       });
     }
     
-    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
       });
@@ -168,7 +168,7 @@ const crearSprint = async (req, res) => {
       });
     }
     
-    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
       });
@@ -231,7 +231,7 @@ const actualizarSprint = async (req, res) => {
       });
     }
     
-    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
       });
@@ -297,7 +297,7 @@ const eliminarSprint = async (req, res) => {
       });
     }
     
-    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
       });

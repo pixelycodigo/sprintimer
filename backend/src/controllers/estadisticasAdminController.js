@@ -91,7 +91,7 @@ const horasPorUsuario = async (req, res) => {
       .sum('tareas.horas_registradas as total_horas')
       .count('tareas.id as total_tareas')
       .leftJoin('actividades', 'tareas.actividad_id', 'actividades.id')
-      .leftJoin('usuarios', 'tareas.usuario_id', 'usuarios.id')
+      .leftJoin('usuario', 'tareas.usuario_id', 'usuarios.id')
       .where('usuarios.eliminado', false)
       .groupBy('usuarios.id', 'usuarios.nombre', 'usuarios.email');
     
@@ -238,7 +238,7 @@ const tareasCompletadasPorUsuario = async (req, res) => {
     let query = db('tareas')
       .select('usuarios.id', 'usuarios.nombre')
       .count('tareas.id as total_tareas')
-      .leftJoin('usuarios', 'tareas.usuario_id', 'usuarios.id')
+      .leftJoin('usuario', 'tareas.usuario_id', 'usuarios.id')
       .where('tareas.estado', 'completada')
       .where('usuarios.eliminado', false)
       .groupBy('usuarios.id', 'usuarios.nombre');

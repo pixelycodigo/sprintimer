@@ -4,31 +4,26 @@ const db = require('../config/database');
  * Listar elementos eliminados (con filtros)
  */
 const listarEliminados = async (req, res) => {
-  const { 
-    page = 1, 
-    limit = 20, 
-    entidad = '', 
+  const {
+    page = 1,
+    limit = 20,
+    entidad = '',
     estado = '',
     fecha_desde = '',
     fecha_hasta = ''
   } = req.query;
-  
+
   try {
     const offset = (page - 1) * limit;
-    
+
     let query = db('eliminados')
-      .select('eliminados.*',
-              'eliminator.nombre as eliminado_por_nombre',
-              'eliminator.email as eliminado_por_email',
-              'recuperador.nombre as recuperado_por_nombre')
-      .leftJoin('usuarios as eliminator', 'eliminados.eliminado_por', 'eliminator.id')
-      .leftJoin('usuarios as recuperador', 'eliminados.recuperado_por', 'recuperador.id');
-    
+      .select('eliminados.*');
+
     // Aplicar filtros
-    if (entidad) {
+    if (entidad && entidad !== '') {
       query.where('eliminados.entidad', entidad);
     }
-    
+
     if (estado === 'recuperable') {
       query.where('eliminados.puede_recuperar', true)
            .where('eliminados.recuperado', false);
@@ -37,39 +32,56 @@ const listarEliminados = async (req, res) => {
     } else if (estado === 'vencido') {
       query.where('eliminados.fecha_eliminacion_permanente', '<', new Date());
     }
-    
+
     if (fecha_desde) {
       query.where('eliminados.fecha_eliminacion', '>=', new Date(fecha_desde));
     }
-    
+
     if (fecha_hasta) {
       query.where('eliminados.fecha_eliminacion', '<=', new Date(fecha_hasta));
     }
-    
+
     // Solo admin ve sus propios eliminados
-    if (req.usuario.rol === 'admin') {
+    if (req.usuario.rol === 'usuario') {
       query.where('eliminados.eliminado_por', req.usuario.id);
     }
-    
-    // Obtener total
-    const totalResult = await query.clone().count('* as total').first();
+
+    // Obtener total (query separada para evitar error de GROUP BY)
+    const countQuery = db('eliminados');
+    if (entidad && entidad !== '') {
+      countQuery.where('eliminados.entidad', entidad);
+    }
+    if (req.usuario.rol === 'usuario') {
+      countQuery.where('eliminados.eliminado_por', req.usuario.id);
+    }
+    const totalResult = await countQuery.count('* as total').first();
     const total = parseInt(totalResult.total);
-    
+
     // Aplicar paginación
-    const eliminados = await query
+    const eliminadosRaw = await query
       .limit(parseInt(limit))
       .offset(offset)
       .orderBy('eliminados.fecha_eliminacion', 'desc');
-    
-    // Parsear datos originales para cada eliminado
-    const eliminadosConDatos = eliminados.map(item => ({
-      ...item,
-      datos_originales: typeof item.datos_originales === 'string' 
-        ? JSON.parse(item.datos_originales) 
-        : item.datos_originales,
-      dias_restantes: Math.max(0, Math.ceil((new Date(item.fecha_eliminacion_permanente) - new Date()) / (1000 * 60 * 60 * 24))),
-    }));
-    
+
+    console.log('eliminadosRaw:', eliminadosRaw.length);
+
+    // Convertir datos_originales a JSON si es string
+    const eliminadosConDatos = eliminadosRaw.map(item => {
+      let datosOriginales = item.datos_originales;
+      if (typeof datosOriginales === 'string') {
+        try {
+          datosOriginales = JSON.parse(datosOriginales);
+        } catch (e) {
+          datosOriginales = {};
+        }
+      }
+      return {
+        ...item,
+        datos_originales: datosOriginales,
+        dias_restantes: Math.max(0, Math.ceil((new Date(item.fecha_eliminacion_permanente) - new Date()) / (1000 * 60 * 60 * 24))),
+      };
+    });
+
     res.json({
       eliminados: eliminadosConDatos,
       pagination: {
@@ -83,6 +95,7 @@ const listarEliminados = async (req, res) => {
     console.error('Error al listar eliminados:', error);
     res.status(500).json({
       error: 'Error interno del servidor',
+      message: error.message,
     });
   }
 };
@@ -111,7 +124,7 @@ const obtenerDetalleEliminado = async (req, res) => {
     }
     
     // Verificar permisos
-    if (req.usuario.rol === 'admin' && eliminado.eliminado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && eliminado.eliminado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
         message: 'No tienes permisos para ver este registro',
@@ -164,7 +177,7 @@ const recuperarEliminado = async (req, res) => {
     }
     
     // Verificar permisos
-    if (req.usuario.rol === 'admin' && eliminado.eliminado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && eliminado.eliminado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
       });
@@ -246,7 +259,7 @@ const eliminarPermanenteIndividual = async (req, res) => {
     }
     
     // Verificar permisos
-    if (req.usuario.rol === 'admin' && eliminado.eliminado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && eliminado.eliminado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
       });
@@ -318,7 +331,7 @@ const eliminarPermanenteMultiple = async (req, res) => {
     
     // Verificar permisos para cada uno
     for (const eliminado of eliminados) {
-      if (req.usuario.rol === 'admin' && eliminado.eliminado_por !== req.usuario.id) {
+      if (req.usuario.rol === 'usuario' && eliminado.eliminado_por !== req.usuario.id) {
         return res.status(403).json({
           error: 'No autorizado',
           message: `No tienes permisos para eliminar el registro ${eliminado.id}`,
@@ -409,7 +422,7 @@ const vaciarTodosEliminados = async (req, res) => {
     let query = db('eliminados');
     
     // Solo admin ve sus propios eliminados
-    if (req.usuario.rol === 'admin') {
+    if (req.usuario.rol === 'usuario') {
       query.where('eliminados.eliminado_por', req.usuario.id);
     }
     
@@ -548,7 +561,7 @@ const obtenerResumenPapelera = async (req, res) => {
     // Total de eliminados
     let queryTotal = db('eliminados');
     
-    if (req.usuario.rol === 'admin') {
+    if (req.usuario.rol === 'usuario') {
       queryTotal.where('eliminados.eliminado_por', req.usuario.id);
     }
     
@@ -559,7 +572,7 @@ const obtenerResumenPapelera = async (req, res) => {
       .where('puede_recuperar', true)
       .where('recuperado', false);
     
-    if (req.usuario.rol === 'admin') {
+    if (req.usuario.rol === 'usuario') {
       queryRecuperables.where('eliminados.eliminado_por', req.usuario.id);
     }
     
@@ -574,7 +587,7 @@ const obtenerResumenPapelera = async (req, res) => {
       .where('puede_recuperar', true)
       .where('recuperado', false);
     
-    if (req.usuario.rol === 'admin') {
+    if (req.usuario.rol === 'usuario') {
       queryProximos.where('eliminados.eliminado_por', req.usuario.id);
     }
     
@@ -585,7 +598,7 @@ const obtenerResumenPapelera = async (req, res) => {
       .select('entidad')
       .count('* as total');
     
-    if (req.usuario.rol === 'admin') {
+    if (req.usuario.rol === 'usuario') {
       queryDesglose.where('eliminados.eliminado_por', req.usuario.id);
     }
     

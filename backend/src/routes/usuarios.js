@@ -8,10 +8,30 @@ const { autenticar, verificarRol, verificarNivelRol } = require('../middleware/a
  * @desc    Listar usuarios (con paginación y filtros)
  * @access  Privado (Admin, Super Admin)
  */
-router.get('/', 
-  autenticar, 
-  verificarRol(['admin', 'super_admin']),
-  usuariosController.listarUsuarios
+router.get('/',
+  autenticar,
+  verificarRol(['usuario', 'super_admin']),
+  async (req, res) => {
+    // Si es superadmin, solo mostrar usuarios con rol 'usuario' (admins)
+    if (req.usuario.rol === 'super_admin') {
+      req.query.rol = 'usuario';
+    }
+    await usuariosController.listarUsuarios(req, res);
+  }
+);
+
+/**
+ * @route   GET /api/super-admin/usuarios/all
+ * @desc    Listar todos los usuarios (admins + team members)
+ * @access  Privado (Super Admin)
+ */
+router.get('/all',
+  autenticar,
+  verificarRol(['super_admin']),
+  async (req, res) => {
+    // Superadmin puede ver todos los usuarios sin filtro de rol
+    await usuariosController.listarUsuarios(req, res);
+  }
 );
 
 /**
@@ -21,7 +41,7 @@ router.get('/',
  */
 router.get('/:id', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   usuariosController.obtenerUsuario
 );
 
@@ -32,7 +52,7 @@ router.get('/:id',
  */
 router.post('/', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   usuariosController.crearUsuario
 );
 
@@ -43,7 +63,7 @@ router.post('/',
  */
 router.put('/:id', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   usuariosController.actualizarUsuario
 );
 
@@ -54,7 +74,7 @@ router.put('/:id',
  */
 router.delete('/:id', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   usuariosController.eliminarUsuario
 );
 
@@ -65,7 +85,7 @@ router.delete('/:id',
  */
 router.post('/:id/recuperar', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   usuariosController.recuperarUsuario
 );
 
@@ -76,7 +96,7 @@ router.post('/:id/recuperar',
  */
 router.post('/:id/cambiar-password', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   usuariosController.cambiarPasswordUsuario
 );
 

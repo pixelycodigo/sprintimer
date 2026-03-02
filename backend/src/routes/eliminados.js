@@ -8,9 +8,9 @@ const { autenticar, verificarRol } = require('../middleware/auth');
  * @desc    Listar elementos eliminados (con filtros)
  * @access  Privado (Admin, Super Admin)
  */
-router.get('/eliminados', 
-  autenticar, 
-  verificarRol(['admin', 'super_admin']),
+router.get('/',
+  autenticar,
+  verificarRol(['usuario', 'super_admin']),
   eliminadosController.listarEliminados
 );
 
@@ -19,9 +19,9 @@ router.get('/eliminados',
  * @desc    Obtener resumen de la papelera
  * @access  Privado (Admin, Super Admin)
  */
-router.get('/eliminados/resumen', 
-  autenticar, 
-  verificarRol(['admin', 'super_admin']),
+router.get('/resumen',
+  autenticar,
+  verificarRol(['usuario', 'super_admin']),
   eliminadosController.obtenerResumenPapelera
 );
 
@@ -30,9 +30,9 @@ router.get('/eliminados/resumen',
  * @desc    Obtener detalle de un elemento eliminado
  * @access  Privado (Admin, Super Admin)
  */
-router.get('/eliminados/:id', 
-  autenticar, 
-  verificarRol(['admin', 'super_admin']),
+router.get('/:id',
+  autenticar,
+  verificarRol(['usuario', 'super_admin']),
   eliminadosController.obtenerDetalleEliminado
 );
 
@@ -41,9 +41,9 @@ router.get('/eliminados/:id',
  * @desc    Recuperar elemento eliminado
  * @access  Privado (Admin, Super Admin)
  */
-router.post('/eliminados/:id/recuperar', 
-  autenticar, 
-  verificarRol(['admin', 'super_admin']),
+router.post('/:id/recuperar',
+  autenticar,
+  verificarRol(['usuario', 'super_admin']),
   eliminadosController.recuperarEliminado
 );
 
@@ -54,7 +54,7 @@ router.post('/eliminados/:id/recuperar',
  */
 router.delete('/eliminados/:id/permanente', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   eliminadosController.eliminarPermanenteIndividual
 );
 
@@ -65,7 +65,7 @@ router.delete('/eliminados/:id/permanente',
  */
 router.post('/eliminados/eliminar-multiple', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   eliminadosController.eliminarPermanenteMultiple
 );
 
@@ -76,7 +76,7 @@ router.post('/eliminados/eliminar-multiple',
  */
 router.delete('/eliminados/vaciar-todos', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   eliminadosController.vaciarTodosEliminados
 );
 
@@ -87,7 +87,7 @@ router.delete('/eliminados/vaciar-todos',
  */
 router.get('/eliminados/configuracion/dias', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   eliminadosController.obtenerConfiguracion
 );
 
@@ -98,7 +98,7 @@ router.get('/eliminados/configuracion/dias',
  */
 router.put('/eliminados/configuracion/dias/:entidad', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   eliminadosController.actualizarConfiguracion
 );
 

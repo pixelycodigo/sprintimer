@@ -42,12 +42,34 @@ const listarProyectos = async (req, res) => {
     }
     
     // Solo mostrar proyectos del admin que los creó (o todos para super_admin)
-    if (req.usuario.rol === 'admin') {
+    if (req.usuario.rol === 'usuario') {
       query.where('proyectos.creado_por', req.usuario.id);
     }
+
+    // Obtener total (usando una query separada para evitar error de GROUP BY)
+    const countQuery = db('proyectos')
+      .leftJoin('clientes', 'proyectos.cliente_id', 'clientes.id')
+      .leftJoin('usuarios as creador', 'proyectos.creado_por', 'creador.id')
+      .where('proyectos.eliminado', eliminado);
     
-    // Obtener total
-    const totalResult = await query.clone().count('* as total').first();
+    // Aplicar filtros al count
+    if (search) {
+      countQuery.where((builder) => {
+        builder.where('proyectos.nombre', 'like', `%${search}%`)
+               .orWhere('proyectos.descripcion', 'like', `%${search}%`);
+      });
+    }
+    if (estado) {
+      countQuery.where('proyectos.estado', estado);
+    }
+    if (cliente_id) {
+      countQuery.where('proyectos.cliente_id', cliente_id);
+    }
+    if (req.usuario.rol === 'usuario') {
+      countQuery.where('proyectos.creado_por', req.usuario.id);
+    }
+    
+    const totalResult = await countQuery.count('* as total').first();
     const total = parseInt(totalResult.total);
     
     // Aplicar paginación
@@ -97,7 +119,7 @@ const obtenerProyecto = async (req, res) => {
     }
     
     // Verificar permisos (admin solo ve sus proyectos)
-    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
         message: 'No tienes permisos para ver este proyecto',
@@ -145,7 +167,7 @@ const crearProyecto = async (req, res) => {
     }
     
     // Verificar permisos (admin solo usa sus clientes)
-    if (req.usuario.rol === 'admin' && cliente.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && cliente.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
         message: 'No puedes usar este cliente',
@@ -206,7 +228,7 @@ const actualizarProyecto = async (req, res) => {
     }
     
     // Verificar permisos (admin solo edita sus proyectos)
-    if (req.usuario.rol === 'admin' && proyectoExistente.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && proyectoExistente.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
         message: 'No tienes permisos para editar este proyecto',
@@ -220,7 +242,7 @@ const actualizarProyecto = async (req, res) => {
         return res.status(404).json({ error: 'Cliente no encontrado' });
       }
       
-      if (req.usuario.rol === 'admin' && cliente.creado_por !== req.usuario.id) {
+      if (req.usuario.rol === 'usuario' && cliente.creado_por !== req.usuario.id) {
         return res.status(403).json({
           error: 'No autorizado',
           message: 'No puedes usar este cliente',
@@ -272,7 +294,7 @@ const eliminarProyecto = async (req, res) => {
     }
     
     // Verificar permisos (admin solo elimina sus proyectos)
-    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
         message: 'No tienes permisos para eliminar este proyecto',
@@ -347,7 +369,7 @@ const recuperarProyecto = async (req, res) => {
     }
     
     // Verificar permisos
-    if (req.usuario.rol === 'admin' && eliminado.eliminado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && eliminado.eliminado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
         message: 'No puedes recuperar este proyecto',
@@ -419,7 +441,7 @@ const asignarUsuarioAProyecto = async (req, res) => {
     }
     
     // Verificar permisos
-    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
         message: 'No tienes permisos para asignar usuarios a este proyecto',
@@ -482,7 +504,7 @@ const desasignarUsuarioDeProyecto = async (req, res) => {
     }
     
     // Verificar permisos
-    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
         message: 'No tienes permisos para desasignar usuarios de este proyecto',
@@ -522,7 +544,7 @@ const obtenerUsuariosAsignados = async (req, res) => {
     }
     
     // Verificar permisos
-    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
         message: 'No tienes permisos para ver los usuarios de este proyecto',
@@ -535,7 +557,7 @@ const obtenerUsuariosAsignados = async (req, res) => {
               'usuarios.nombre', 
               'usuarios.email',
               'roles.nombre as rol')
-      .leftJoin('usuarios', 'usuarios_proyectos.usuario_id', 'usuarios.id')
+      .leftJoin('usuario', 'usuarios_proyectos.usuario_id', 'usuarios.id')
       .leftJoin('roles', 'usuarios.rol_id', 'roles.id')
       .where('usuarios_proyectos.proyecto_id', id)
       .where('usuarios_proyectos.activo', true);

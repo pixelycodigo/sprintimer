@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { usuariosService } from '../../../services/usuariosService';
 
-export default function ListaUsuarios() {
+export default function ListaUsuariosSuperAdmin() {
   const [usuarios, setUsuarios] = useState([]);
   const [pagination, setPagination] = useState({
     page: 1,
@@ -13,9 +13,9 @@ export default function ListaUsuarios() {
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     search: '',
-    rol: '',
     activo: '',
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     cargarUsuarios();
@@ -29,12 +29,10 @@ export default function ListaUsuarios() {
         ...filters,
       };
       const response = await usuariosService.listar(params);
-      console.log('Usuarios cargados:', response);
       setUsuarios(response.usuarios || []);
       setPagination(response.pagination || { page: 1, limit: 10, total: 0, totalPages: 0 });
     } catch (error) {
       console.error('Error al cargar usuarios:', error);
-      console.error('Error details:', error.response?.data);
       setUsuarios([]);
     } finally {
       setLoading(false);
@@ -52,15 +50,51 @@ export default function ListaUsuarios() {
     cargarUsuarios();
   };
 
+  const handleEliminar = async (id) => {
+    if (!confirm('¿Estás seguro de eliminar este usuario?')) return;
+    try {
+      await usuariosService.eliminar(id, 'Eliminado desde superadmin');
+      cargarUsuarios();
+    } catch (error) {
+      console.error('Error al eliminar:', error);
+    }
+  };
+
+  const handleToggleActivo = async (id, activo) => {
+    const accion = activo ? 'suspender' : 'activar';
+    if (!confirm(`¿${activo ? 'Suspender' : 'Activar'} este usuario?`)) return;
+    try {
+      await usuariosService.actualizar(id, { activo: !activo });
+      cargarUsuarios();
+    } catch (error) {
+      console.error('Error al actualizar:', error);
+    }
+  };
+
+  const handleModoAdmin = (usuario) => {
+    // Guardar el ID del admin seleccionado para actuar en su nombre
+    localStorage.setItem('adminSeleccionado', usuario.id);
+    localStorage.setItem('adminSeleccionadoNombre', usuario.nombre);
+    // Redirigir al dashboard del admin seleccionado
+    navigate('/admin/dashboard');
+  };
+
+  const getOrigenLabel = (creado_por) => {
+    if (!creado_por) return 'Registro directo';
+    return `Creado por Super Admin`;
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Usuarios</h1>
-          <p className="text-slate-600 mt-1">Gestiona los usuarios del sistema</p>
+          <h1 className="text-2xl font-bold text-slate-900">Usuarios de la Plataforma</h1>
+          <p className="text-slate-600 mt-1">
+            Gestiona los administradores que tienen cuentas en la plataforma
+          </p>
         </div>
-        <Link to="/admin/usuarios/crear" className="btn-primary">
+        <Link to="/super-admin/usuarios/crear" className="btn-primary">
           <span className="text-lg mr-2">+</span>
           Nuevo Usuario
         </Link>
@@ -80,19 +114,6 @@ export default function ListaUsuarios() {
               className="input-base"
             />
           </div>
-
-          {/* Rol */}
-          <select
-            name="rol"
-            value={filters.rol}
-            onChange={handleFilterChange}
-            className="input-base w-40"
-          >
-            <option value="">Todos los roles</option>
-            <option value="usuario">Usuario</option>
-            <option value="admin">Admin</option>
-            <option value="super_admin">Super Admin</option>
-          </select>
 
           {/* Estado */}
           <select
@@ -114,7 +135,7 @@ export default function ListaUsuarios() {
             <button
               type="button"
               onClick={() => {
-                setFilters({ search: '', rol: '', activo: '' });
+                setFilters({ search: '', activo: '' });
               }}
               className="btn-secondary"
             >
@@ -134,16 +155,16 @@ export default function ListaUsuarios() {
                   Usuario
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                  Rol
+                  Email
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                  Origen
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
                   Estado
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                  Creado Por
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                  Fecha
+                  Fecha Registro
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">
                   Acciones
@@ -162,19 +183,8 @@ export default function ListaUsuarios() {
                 </tr>
               ) : usuarios.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center">
-                    <div className="text-center">
-                      <span className="text-4xl">❓</span>
-                      <h3 className="mt-4 text-lg font-semibold text-slate-900">
-                        No se encontraron usuarios
-                      </h3>
-                      <p className="mt-2 text-slate-600">
-                        Verifica los filtros o crea un nuevo usuario
-                      </p>
-                      <p className="mt-4 text-xs text-slate-400">
-                        Debug: pagination={JSON.stringify(pagination)}
-                      </p>
-                    </div>
+                  <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
+                    No se encontraron usuarios
                   </td>
                 </tr>
               ) : (
@@ -189,22 +199,16 @@ export default function ListaUsuarios() {
                           <div className="text-sm font-medium text-slate-900">
                             {usuario.nombre}
                           </div>
-                          <div className="text-sm text-slate-500">{usuario.email}</div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${
-                          usuario.rol === 'super_admin'
-                            ? 'bg-purple-50 text-purple-700'
-                            : usuario.rol === 'admin'
-                            ? 'bg-blue-50 text-blue-700'
-                            : 'bg-slate-100 text-slate-700'
-                        }`}
-                      >
-                        {usuario.rol.replace('_', ' ')}
-                      </span>
+                      <div className="text-sm text-slate-600">{usuario.email}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-slate-600">
+                        {getOrigenLabel(usuario.creado_por)}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-2">
@@ -219,28 +223,42 @@ export default function ListaUsuarios() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                      {usuario.creado_por_nombre || '—'}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
                       {new Date(usuario.fecha_creacion).toLocaleDateString('es-ES')}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex justify-end gap-2">
-                        <Link
-                          to={`/admin/usuarios/${usuario.id}`}
-                          className="text-slate-600 hover:text-slate-900"
+                        <button
+                          onClick={() => handleModoAdmin(usuario)}
+                          className="text-blue-600 hover:text-blue-900"
+                          title="Entrar en modo administrador"
                         >
-                          👁️
-                        </Link>
+                          👤
+                        </button>
                         <Link
-                          to={`/admin/usuarios/${usuario.id}/editar`}
+                          to={`/super-admin/usuarios/${usuario.id}/editar`}
                           className="text-slate-600 hover:text-slate-900"
+                          title="Editar"
                         >
                           ✏️
                         </Link>
+                        <Link
+                          to={`/super-admin/usuarios/${usuario.id}/cambiar-password`}
+                          className="text-slate-600 hover:text-slate-900"
+                          title="Cambiar contraseña"
+                        >
+                          🔑
+                        </Link>
+                        <button
+                          onClick={() => handleToggleActivo(usuario.id, usuario.activo)}
+                          className={usuario.activo ? 'text-amber-600 hover:text-amber-900' : 'text-emerald-600 hover:text-emerald-900'}
+                          title={usuario.activo ? 'Suspender' : 'Activar'}
+                        >
+                          {usuario.activo ? '⏸️' : '▶️'}
+                        </button>
                         <button
                           onClick={() => handleEliminar(usuario.id)}
                           className="text-red-600 hover:text-red-900"
+                          title="Eliminar"
                         >
                           🗑️
                         </button>
@@ -252,38 +270,35 @@ export default function ListaUsuarios() {
             </tbody>
           </table>
         </div>
-
-        {/* Pagination */}
-        {pagination.totalPages > 1 && (
-          <div className="px-6 py-4 border-t border-slate-200 flex items-center justify-between">
-            <div className="text-sm text-slate-600">
-              Mostrando{' '}
-              <span className="font-medium">{(pagination.page - 1) * pagination.limit + 1}</span>{' '}
-              a{' '}
-              <span className="font-medium">
-                {Math.min(pagination.page * pagination.limit, pagination.total)}
-              </span>{' '}
-              de <span className="font-medium">{pagination.total}</span> usuarios
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setPagination((prev) => ({ ...prev, page: prev.page - 1 }))}
-                disabled={pagination.page === 1}
-                className="btn-secondary disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Anterior
-              </button>
-              <button
-                onClick={() => setPagination((prev) => ({ ...prev, page: prev.page + 1 }))}
-                disabled={pagination.page === pagination.totalPages}
-                className="btn-secondary disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Siguiente
-              </button>
-            </div>
-          </div>
-        )}
       </div>
+
+      {/* Pagination */}
+      {pagination.totalPages > 1 && (
+        <div className="card-base p-4 flex items-center justify-between">
+          <p className="text-sm text-slate-600">
+            Mostrando {pagination.total} usuarios
+          </p>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setPagination((p) => ({ ...p, page: p.page - 1 }))}
+              disabled={pagination.page === 1}
+              className="btn-secondary disabled:opacity-50"
+            >
+              Anterior
+            </button>
+            <span className="px-4 py-2 text-sm text-slate-600">
+              Página {pagination.page} de {pagination.totalPages}
+            </span>
+            <button
+              onClick={() => setPagination((p) => ({ ...p, page: p.page + 1 }))}
+              disabled={pagination.page === pagination.totalPages}
+              className="btn-secondary disabled:opacity-50"
+            >
+              Siguiente
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

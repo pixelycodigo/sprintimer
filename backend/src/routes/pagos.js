@@ -12,31 +12,31 @@ const { autenticar, verificarRol } = require('../middleware/auth');
  */
 router.get('/monedas', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   monedasController.listarMonedas
 );
 
 router.get('/monedas/:id', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   monedasController.obtenerMoneda
 );
 
 router.post('/monedas', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   monedasController.crearMoneda
 );
 
 router.put('/monedas/:id', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   monedasController.actualizarMoneda
 );
 
 router.delete('/monedas/:id', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   monedasController.eliminarMoneda
 );
 
@@ -45,25 +45,25 @@ router.delete('/monedas/:id',
  */
 router.get('/usuarios/:usuario_id/costos', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   costosController.listarCostos
 );
 
 router.get('/usuarios/:usuario_id/costo-vigente', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   costosController.obtenerCostoVigente
 );
 
 router.post('/usuarios/:usuario_id/costos', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   costosController.crearCosto
 );
 
 router.delete('/costos/:id', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   costosController.eliminarCosto
 );
 
@@ -72,31 +72,31 @@ router.delete('/costos/:id',
  */
 router.get('/bonos', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   bonosController.listarBonos
 );
 
 router.get('/usuarios/:usuario_id/bonos', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   bonosController.listarBonosUsuario
 );
 
 router.post('/usuarios/:usuario_id/bonos', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   bonosController.asignarBono
 );
 
 router.delete('/bonos-usuarios/:id', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   bonosController.eliminarBonoUsuario
 );
 
 router.get('/bonos/aplicables', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   bonosController.obtenerBonosAplicables
 );
 
@@ -105,25 +105,25 @@ router.get('/bonos/aplicables',
  */
 router.post('/cortes/generar', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   cortesController.generarCortes
 );
 
 router.get('/cortes', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   cortesController.listarCortes
 );
 
 router.get('/cortes/:id', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   cortesController.obtenerDetalleCorte
 );
 
 router.put('/cortes/:id/estado', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   cortesController.actualizarEstadoCorte
 );
 
@@ -132,13 +132,13 @@ router.put('/cortes/:id/estado',
  */
 router.post('/cortes/:id/recalcular', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   recalculosController.recalcularCorte
 );
 
 router.get('/cortes/:id/recalculos', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   recalculosController.listarRecalculos
 );
 

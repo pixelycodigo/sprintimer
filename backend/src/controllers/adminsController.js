@@ -290,7 +290,7 @@ const eliminarAdmin = async (req, res) => {
       });
       
       // Marcar como eliminado
-      await trx('usuarios')
+      await trx('usuario')
         .where('id', id)
         .update({
           eliminado: true,
@@ -338,7 +338,7 @@ const recuperarAdmin = async (req, res) => {
     // Recuperar en transacción
     await db.transaction(async (trx) => {
       // Actualizar admin
-      await trx('usuarios')
+      await trx('usuario')
         .where('id', id)
         .update({
           eliminado: false,

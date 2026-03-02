@@ -21,7 +21,7 @@ const listarActividades = async (req, res) => {
       });
     }
     
-    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
       });
@@ -97,7 +97,7 @@ const obtenerActividad = async (req, res) => {
       });
     }
     
-    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
       });
@@ -162,7 +162,7 @@ const crearActividad = async (req, res) => {
       });
     }
     
-    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
       });
@@ -213,7 +213,7 @@ const actualizarActividad = async (req, res) => {
       });
     }
     
-    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
       });
@@ -261,7 +261,7 @@ const eliminarActividad = async (req, res) => {
       });
     }
     
-    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
       });
@@ -387,7 +387,7 @@ const asignarSprints = async (req, res) => {
       });
     }
     
-    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
       });

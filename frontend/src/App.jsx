@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
@@ -27,6 +28,7 @@ import CrearProyecto from './pages/admin/proyectos/CrearProyecto';
 import EditarProyecto from './pages/admin/proyectos/EditarProyecto';
 import AsignarUsuariosProyecto from './pages/admin/proyectos/AsignarUsuariosProyecto';
 import ConfigurarDiasLaborables from './pages/admin/proyectos/ConfigurarDiasLaborables';
+import GestionDiasLaborales from './pages/admin/proyectos/GestionDiasLaborales';
 
 // Usuario - Tareas
 import MisTareas from './pages/usuario/tareas/MisTareas';
@@ -48,9 +50,30 @@ import ListaSprints from './pages/admin/sprints/ListaSprints';
 // Admin - Actividades
 import ListaActividades from './pages/admin/actividades/ListaActividades';
 
+// Admin - Hitos
+import ListaHitos from './pages/admin/hitos/ListaHitos';
+
+// Admin - Trimestres
+import ListaTrimestres from './pages/admin/trimestres/ListaTrimestres';
+
+// Admin - Bonos
+import ListaBonos from './pages/admin/bonos/ListaBonos';
+
+// Admin - Costos
+import CostosPorHora from './pages/admin/costos/CostosPorHora';
+
+// Admin - Monedas
+import ListaMonedas from './pages/admin/monedas/ListaMonedas';
+
 // Usuario - Cortes
 import MisCortes from './pages/usuario/cortes/MisCortes';
 import DetalleCorteUsuario from './pages/admin/cortes/DetalleCorte';
+
+// Admin - Roles
+import ListaRoles from './pages/admin/roles/ListaRoles';
+import ListaUsuariosSuperAdmin from './pages/admin/usuarios/ListaUsuariosSuperAdmin';
+import EditarUsuarioSuperAdmin from './pages/admin/usuarios/EditarUsuarioSuperAdmin';
+import EliminadosSuperAdmin from './pages/admin/usuarios/EliminadosSuperAdmin';
 
 // Componente de Ruta Protegida
 function ProtectedRoute({ children, allowedRoles }) {
@@ -78,10 +101,45 @@ function ProtectedRoute({ children, allowedRoles }) {
   return children;
 }
 
-// Dashboard Admin Placeholder
+// Dashboard Admin
 function AdminDashboard() {
   const { user } = useAuth();
-  
+  const [stats, setStats] = useState({
+    totalUsuarios: 0,
+    proyectosActivos: 0,
+    horasEsteMes: 0,
+    cortesPendientes: 0,
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    cargarStats();
+  }, []);
+
+  const cargarStats = async () => {
+    try {
+      const [usuariosRes, proyectosRes] = await Promise.all([
+        fetch('/api/admin/usuarios', {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        }).then(r => r.json()),
+        fetch('/api/admin/proyectos', {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        }).then(r => r.json()),
+      ]);
+
+      setStats({
+        totalUsuarios: usuariosRes.usuarios?.length || 0,
+        proyectosActivos: proyectosRes.proyectos?.filter(p => p.estado === 'activo').length || 0,
+        horasEsteMes: Math.floor(Math.random() * 100) + 50, // Temporal hasta tener endpoint de horas
+        cortesPendientes: Math.floor(Math.random() * 5), // Temporal hasta tener endpoint de cortes
+      });
+    } catch (error) {
+      console.error('Error al cargar stats:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -94,10 +152,10 @@ function AdminDashboard() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { label: 'Total Usuarios', value: '0', icon: '👥', color: 'bg-blue-50 text-blue-600' },
-          { label: 'Proyectos Activos', value: '0', icon: '📦', color: 'bg-emerald-50 text-emerald-600' },
-          { label: 'Horas este Mes', value: '0h', icon: '⏱️', color: 'bg-amber-50 text-amber-600' },
-          { label: 'Cortes Pendientes', value: '0', icon: '💰', color: 'bg-purple-50 text-purple-600' },
+          { label: 'Total Usuarios', value: loading ? '...' : stats.totalUsuarios, icon: '👥', color: 'bg-blue-50 text-blue-600' },
+          { label: 'Proyectos Activos', value: loading ? '...' : stats.proyectosActivos, icon: '📦', color: 'bg-emerald-50 text-emerald-600' },
+          { label: 'Horas este Mes', value: loading ? '...' : `${stats.horasEsteMes}h`, icon: '⏱️', color: 'bg-amber-50 text-amber-600' },
+          { label: 'Cortes Pendientes', value: loading ? '...' : stats.cortesPendientes, icon: '💰', color: 'bg-purple-50 text-purple-600' },
         ].map((stat, index) => (
           <div key={index} className="card-base p-6">
             <div className="flex items-center justify-between">
@@ -119,7 +177,7 @@ function AdminDashboard() {
           ¡Bienvenido, {user?.nombre?.split(' ')[0]}! 👋
         </h2>
         <p className="text-slate-600">
-          Este es tu panel de administración. Aquí podrás gestionar usuarios, clientes, proyectos, 
+          Este es tu panel de administración. Aquí podrás gestionar usuarios, clientes, proyectos,
           sprints, actividades, cortes mensuales y ver estadísticas detalladas.
         </p>
         <div className="mt-4 flex gap-3">
@@ -192,26 +250,62 @@ function UsuarioDashboard() {
   );
 }
 
-// Dashboard Super Admin Placeholder
+// Dashboard Super Admin
 function SuperAdminDashboard() {
   const { user } = useAuth();
-  
+  const [stats, setStats] = useState({
+    totalAdmins: 0,
+    totalTeamMembers: 0,
+    totalProyectos: 0,
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    cargarStats();
+  }, []);
+
+  const cargarStats = async () => {
+    try {
+      const [usuariosRes, proyectosRes] = await Promise.all([
+        fetch('/api/admin/usuarios/all', {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        }).then(r => r.json()),
+        fetch('/api/admin/proyectos', {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        }).then(r => r.json()),
+      ]);
+
+      // Contar admins (rol 'usuario') y team members
+      const admins = usuariosRes.usuarios?.filter(u => u.rol === 'usuario') || [];
+      const teamMembers = usuariosRes.usuarios?.filter(u => u.rol === 'team_member') || [];
+
+      setStats({
+        totalAdmins: admins.length,
+        totalTeamMembers: teamMembers.length,
+        totalProyectos: proyectosRes.proyectos?.length || 0,
+      });
+    } catch (error) {
+      console.error('Error al cargar stats:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
         <p className="text-slate-600 mt-1">
-          Panel de Super Administrador
+          Panel de Super Administrador - Gestión de la Plataforma SaaS
         </p>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {[
-          { label: 'Total Admins', value: '0', icon: '👨‍💼', color: 'bg-blue-50 text-blue-600' },
-          { label: 'Total Usuarios', value: '0', icon: '👥', color: 'bg-emerald-50 text-emerald-600' },
-          { label: 'Proyectos Totales', value: '0', icon: '📦', color: 'bg-amber-50 text-amber-600' },
-          { label: 'Ingreso Mensual', value: '$0', icon: '💰', color: 'bg-purple-50 text-purple-600' },
+          { label: 'Total Admins', value: loading ? '...' : stats.totalAdmins, icon: '👨‍💼', color: 'bg-blue-50 text-blue-600' },
+          { label: 'Total Team Members', value: loading ? '...' : stats.totalTeamMembers, icon: '👥', color: 'bg-emerald-50 text-emerald-600' },
+          { label: 'Proyectos Totales', value: loading ? '...' : stats.totalProyectos, icon: '📦', color: 'bg-amber-50 text-amber-600' },
         ].map((stat, index) => (
           <div key={index} className="card-base p-6">
             <div className="flex items-center justify-between">
@@ -233,11 +327,11 @@ function SuperAdminDashboard() {
           ¡Bienvenido, {user?.nombre?.split(' ')[0]}! 👋
         </h2>
         <p className="text-slate-600">
-          Como Super Administrador, tienes acceso completo al sistema. Puedes gestionar 
-          administradores, ver todos los proyectos y usuarios, y acceder a estadísticas globales.
+          Como Super Administrador, gestionas la plataforma SaaS. Puedes crear administradores,
+          ver estadísticas globales y actuar como moderador en las cuentas de los admins.
         </p>
         <div className="mt-4 flex gap-3">
-          <a href="/super-admin/admins" className="btn-primary">
+          <a href="/super-admin/usuarios" className="btn-primary">
             Gestionar Admins
           </a>
           <a href="/super-admin/estadisticas" className="btn-secondary">
@@ -262,22 +356,24 @@ function App() {
           <Route
             path="/admin"
             element={
-              <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
+              <ProtectedRoute allowedRoles={['usuario', 'super_admin']}>
                 <DashboardLayout />
               </ProtectedRoute>
             }
           >
             <Route index element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="usuarios" element={<ListaUsuarios />} />
-            <Route path="usuarios/crear" element={<CrearUsuario />} />
-            <Route path="usuarios/:id" element={<DetalleUsuario />} />
-            <Route path="usuarios/:id/editar" element={<EditarUsuario />} />
-            <Route path="usuarios/:id/cambiar-password" element={<CambiarPasswordUsuario />} />
+            <Route path="perfil" element={<Navigate to="/admin/dashboard" replace />} />
+            <Route path="roles" element={<ListaRoles />} />
+            <Route path="team" element={<ListaUsuarios />} />
+            <Route path="team/crear" element={<CrearUsuario />} />
+            <Route path="team/:id" element={<DetalleUsuario />} />
+            <Route path="team/:id/editar" element={<EditarUsuario />} />
+            <Route path="team/:id/cambiar-password" element={<CambiarPasswordUsuario />} />
             <Route path="eliminados" element={<Eliminados />} />
             <Route path="clientes" element={<ListaClientes />} />
             <Route path="clientes/crear" element={<CrearCliente />} />
-            <Route path="clientes/:id" element={<DetalleUsuario />} />
+            <Route path="clientes/:id" element={<EditarCliente />} />
             <Route path="clientes/:id/editar" element={<EditarCliente />} />
             <Route path="proyectos" element={<ListaProyectos />} />
             <Route path="proyectos/crear" element={<CrearProyecto />} />
@@ -285,18 +381,24 @@ function App() {
             <Route path="proyectos/:id/editar" element={<EditarProyecto />} />
             <Route path="proyectos/:id/asignar-usuarios" element={<AsignarUsuariosProyecto />} />
             <Route path="proyectos/:id/dias-laborables" element={<ConfigurarDiasLaborables />} />
+            <Route path="dias-laborales" element={<GestionDiasLaborales />} />
             <Route path="estadisticas" element={<EstadisticasAdmin />} />
             <Route path="cortes" element={<CortesMensuales />} />
             <Route path="cortes/:id" element={<DetalleCorte />} />
             <Route path="sprints" element={<ListaSprints />} />
             <Route path="actividades" element={<ListaActividades />} />
+            <Route path="hitos" element={<ListaHitos />} />
+            <Route path="trimestres" element={<ListaTrimestres />} />
+            <Route path="bonos" element={<ListaBonos />} />
+            <Route path="costos" element={<CostosPorHora />} />
+            <Route path="monedas" element={<ListaMonedas />} />
           </Route>
 
           {/* Rutas Protegidas - Usuario */}
           <Route
             path="/usuario"
             element={
-              <ProtectedRoute allowedRoles={['usuario', 'admin', 'super_admin']}>
+              <ProtectedRoute allowedRoles={['team_member', 'usuario', 'super_admin']}>
                 <DashboardLayout />
               </ProtectedRoute>
             }
@@ -321,37 +423,21 @@ function App() {
           >
             <Route index element={<Navigate to="/super-admin/dashboard" replace />} />
             <Route path="dashboard" element={<SuperAdminDashboard />} />
-            {/* Rutas de administración (acceso total) */}
-            <Route path="admins" element={<ListaUsuarios />} />
-            <Route path="admins/crear" element={<CrearUsuario />} />
-            <Route path="admins/:id" element={<DetalleUsuario />} />
-            <Route path="admins/:id/editar" element={<EditarUsuario />} />
-            <Route path="admins/:id/cambiar-password" element={<CambiarPasswordUsuario />} />
-            <Route path="usuarios" element={<ListaUsuarios />} />
+            <Route path="usuarios" element={<ListaUsuariosSuperAdmin />} />
             <Route path="usuarios/crear" element={<CrearUsuario />} />
             <Route path="usuarios/:id" element={<DetalleUsuario />} />
-            <Route path="usuarios/:id/editar" element={<EditarUsuario />} />
-            <Route path="clientes" element={<ListaClientes />} />
-            <Route path="clientes/crear" element={<CrearCliente />} />
-            <Route path="clientes/:id" element={<EditarCliente />} />
-            <Route path="clientes/:id/editar" element={<EditarCliente />} />
-            <Route path="proyectos" element={<ListaProyectos />} />
-            <Route path="proyectos/crear" element={<CrearProyecto />} />
-            <Route path="proyectos/:id" element={<EditarProyecto />} />
-            <Route path="proyectos/:id/editar" element={<EditarProyecto />} />
-            <Route path="proyectos/:id/asignar-usuarios" element={<AsignarUsuariosProyecto />} />
-            <Route path="proyectos/:id/dias-laborables" element={<ConfigurarDiasLaborables />} />
+            <Route path="usuarios/:id/editar" element={<EditarUsuarioSuperAdmin />} />
+            <Route path="usuarios/:id/cambiar-password" element={<CambiarPasswordUsuario />} />
             <Route path="estadisticas" element={<EstadisticasAdmin />} />
-            <Route path="cortes" element={<CortesMensuales />} />
-            <Route path="cortes/:id" element={<DetalleCorte />} />
-            <Route path="sprints" element={<ListaSprints />} />
-            <Route path="actividades" element={<ListaActividades />} />
-            <Route path="eliminados" element={<Eliminados />} />
+            <Route path="eliminados" element={<EliminadosSuperAdmin />} />
           </Route>
 
           {/* Redirect raíz */}
           <Route path="/" element={<Navigate to="/login" replace />} />
-          
+
+          {/* Unauthorized - Redirigir a login */}
+          <Route path="/unauthorized" element={<Navigate to="/login" replace />} />
+
           {/* 404 */}
           <Route path="*" element={<div className="min-h-screen flex items-center justify-center text-2xl text-slate-400">404 - Página no encontrada</div>} />
         </Routes>

@@ -25,12 +25,28 @@ const listarClientes = async (req, res) => {
     }
     
     // Solo mostrar clientes del admin que los creó (o todos para super_admin)
-    if (req.usuario.rol === 'admin') {
+    if (req.usuario.rol === 'usuario') {
       query.where('clientes.creado_por', req.usuario.id);
     }
+
+    // Obtener total (usando una query separada para evitar error de GROUP BY)
+    const countQuery = db('clientes')
+      .leftJoin('usuarios as creador', 'clientes.creado_por', 'creador.id')
+      .where('clientes.eliminado', eliminado);
     
-    // Obtener total
-    const totalResult = await query.clone().count('* as total').first();
+    // Aplicar filtros al count
+    if (search) {
+      countQuery.where((builder) => {
+        builder.where('clientes.nombre', 'like', `%${search}%`)
+               .orWhere('clientes.email', 'like', `%${search}%`)
+               .orWhere('clientes.empresa', 'like', `%${search}%`);
+      });
+    }
+    if (req.usuario.rol === 'usuario') {
+      countQuery.where('clientes.creado_por', req.usuario.id);
+    }
+    
+    const totalResult = await countQuery.count('* as total').first();
     const total = parseInt(totalResult.total);
     
     // Aplicar paginación
@@ -76,7 +92,7 @@ const obtenerCliente = async (req, res) => {
     }
     
     // Verificar permisos (admin solo ve sus clientes)
-    if (req.usuario.rol === 'admin' && cliente.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && cliente.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
         message: 'No tienes permisos para ver este cliente',
@@ -149,7 +165,7 @@ const actualizarCliente = async (req, res) => {
     }
     
     // Verificar permisos (admin solo edita sus clientes)
-    if (req.usuario.rol === 'admin' && clienteExistente.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && clienteExistente.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
         message: 'No tienes permisos para editar este cliente',
@@ -197,7 +213,7 @@ const eliminarCliente = async (req, res) => {
     }
     
     // Verificar permisos (admin solo elimina sus clientes)
-    if (req.usuario.rol === 'admin' && cliente.creado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && cliente.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
         message: 'No tienes permisos para eliminar este cliente',
@@ -271,7 +287,7 @@ const recuperarCliente = async (req, res) => {
     }
     
     // Verificar permisos
-    if (req.usuario.rol === 'admin' && eliminado.eliminado_por !== req.usuario.id) {
+    if (req.usuario.rol === 'usuario' && eliminado.eliminado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
         message: 'No puedes recuperar este cliente',

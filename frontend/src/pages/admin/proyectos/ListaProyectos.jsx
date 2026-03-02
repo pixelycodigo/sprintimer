@@ -156,6 +156,37 @@ export default function ListaProyectos() {
                   🗑️
                 </button>
               </div>
+
+              {/* Accesos rápidos a configuraciones */}
+              <div className="mt-4 pt-4 border-t border-slate-200">
+                <p className="text-xs text-slate-500 mb-2 font-medium">Configuraciones:</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <Link
+                    to={`/admin/proyectos/${proyecto.id}/sprints`}
+                    className="text-xs px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded text-center text-slate-700"
+                  >
+                    📅 Sprints
+                  </Link>
+                  <Link
+                    to={`/admin/proyectos/${proyecto.id}/actividades`}
+                    className="text-xs px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded text-center text-slate-700"
+                  >
+                    ✅ Actividades
+                  </Link>
+                  <Link
+                    to={`/admin/proyectos/${proyecto.id}/hitos`}
+                    className="text-xs px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded text-center text-slate-700"
+                  >
+                    🎯 Hitos
+                  </Link>
+                  <Link
+                    to={`/admin/proyectos/${proyecto.id}/trimestres`}
+                    className="text-xs px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded text-center text-slate-700"
+                  >
+                    📆 Trimestres
+                  </Link>
+                </div>
+              </div>
             </div>
           ))
         )}

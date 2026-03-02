@@ -8,15 +8,23 @@ const crypto = require('crypto');
  */
 const listarUsuarios = async (req, res) => {
   try {
-    const { 
-      page = 1, 
-      limit = 10, 
-      search = '', 
+    const {
+      page = 1,
+      limit = 10,
+      search = '',
       rol = '',
       activo = '',
-      eliminado = false 
+      eliminado = false
     } = req.query;
-    
+
+    // Si es superadmin y NO viene de /all, forzar rol 'usuario' (admins)
+    let rolFiltro = rol;
+    if (req.usuario.rol === 'super_admin' && !req.path.includes('/all')) {
+      rolFiltro = 'usuario';
+    }
+
+    console.log('Listar usuarios params:', { page, limit, search, rol, rolFiltro, activo, eliminado, path: req.path });
+
     const offset = (page - 1) * limit;
     
     // Construir query base
@@ -34,17 +42,35 @@ const listarUsuarios = async (req, res) => {
                .orWhere('usuarios.email', 'like', `%${search}%`);
       });
     }
-    
-    if (rol) {
-      query.where('roles.nombre', rol);
+
+    if (rolFiltro) {
+      query.where('roles.nombre', rolFiltro);
     }
-    
+
     if (activo !== '') {
       query.where('usuarios.activo', activo === 'true');
     }
+
+    // Obtener total (usando una query separada para evitar error de GROUP BY)
+    const countQuery = db('usuarios')
+      .leftJoin('roles', 'usuarios.rol_id', 'roles.id')
+      .where('usuarios.eliminado', eliminado);
+
+    // Aplicar filtros al count
+    if (search) {
+      countQuery.where((builder) => {
+        builder.where('usuarios.nombre', 'like', `%${search}%`)
+               .orWhere('usuarios.email', 'like', `%${search}%`);
+      });
+    }
+    if (rolFiltro) {
+      countQuery.where('roles.nombre', rolFiltro);
+    }
+    if (activo !== '') {
+      countQuery.where('usuarios.activo', activo === 'true');
+    }
     
-    // Obtener total
-    const totalResult = await query.clone().count('* as total').first();
+    const totalResult = await countQuery.count('* as total').first();
     const total = parseInt(totalResult.total);
     
     // Aplicar paginación
@@ -336,7 +362,7 @@ const eliminarUsuario = async (req, res) => {
       });
       
       // Marcar como eliminado
-      await trx('usuarios')
+      await trx('usuario')
         .where('id', id)
         .update({
           eliminado: true,
@@ -384,7 +410,7 @@ const recuperarUsuario = async (req, res) => {
     // Recuperar en transacción
     await db.transaction(async (trx) => {
       // Actualizar usuario
-      await trx('usuarios')
+      await trx('usuario')
         .where('id', id)
         .update({
           eliminado: false,

@@ -10,7 +10,7 @@ const { autenticar, verificarRol } = require('../middleware/auth');
  */
 router.get('/', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   clientesController.listarClientes
 );
 
@@ -21,7 +21,7 @@ router.get('/',
  */
 router.get('/:id', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   clientesController.obtenerCliente
 );
 
@@ -32,7 +32,7 @@ router.get('/:id',
  */
 router.post('/', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   clientesController.crearCliente
 );
 
@@ -43,7 +43,7 @@ router.post('/',
  */
 router.put('/:id', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   clientesController.actualizarCliente
 );
 
@@ -54,7 +54,7 @@ router.put('/:id',
  */
 router.delete('/:id', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   clientesController.eliminarCliente
 );
 
@@ -65,7 +65,7 @@ router.delete('/:id',
  */
 router.post('/:id/recuperar', 
   autenticar, 
-  verificarRol(['admin', 'super_admin']),
+  verificarRol(['usuario', 'super_admin']),
   clientesController.recuperarCliente
 );
 

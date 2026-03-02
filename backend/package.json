@@ -12,6 +12,8 @@
     "seed": "knex seed:run",
     "init-super-admin": "node scripts/init-super-admin.js",
     "init-admin": "node scripts/init-admin.js",
+    "seed-admin-data": "node scripts/seed-admin-data.js",
+    "seed-eliminados-test": "node scripts/seed-eliminados-test.js",
     "create-super-admin": "node scripts/create-super-admin.js",
     "cleanup-eliminados": "node scripts/cleanup-eliminados.js"
   },
