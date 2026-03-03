@@ -1,8 +1,8 @@
-# 📋 Diseño: Refactorización de Base de Datos - SprinTimer
+# 📋 Diseño: Refactorización de Base de Datos - SprinTask
 
 **Fecha:** 2 de Marzo, 2026  
 **Estado:** ✅ Aprobado  
-**Autor:** Team SprinTimer
+**Autor:** Team SprinTask
 
 ---
 
@@ -316,7 +316,7 @@ permisos: ['proyectos.ver', 'proyectos.crear', 'tareas.eliminar', etc]
 
 ## 📌 Notas Importantes
 
-1. **super_admin@sprintimer.com** se mantiene como está (rol_id=3)
+1. **super_admin@sprintask.com** se mantiene como está (rol_id=3)
 2. **usuarios** tabla NO se renombra - mantiene todos los usuarios con login
 3. **rol_id** es el discriminador: 1=team_member, 2=admin, 3=super_admin
 4. **team_projects** usa `usuario_id` no `team_member_id` (para simplificar)

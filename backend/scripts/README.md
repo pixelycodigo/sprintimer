@@ -1,4 +1,4 @@
-# 📚 Scripts de SprinTimer Backend
+# 📚 Scripts de SprinTask Backend
 
 ## 🔧 Scripts Disponibles
 
@@ -68,8 +68,8 @@ npm run setup-test-users
 ```
 
 Crea:
-- `superadmin@sprintimer.com` (rol: super_admin)
-- `admin@sprintimer.com` (rol: admin)
+- `superadmin@sprintask.com` (rol: super_admin)
+- `admin@sprintask.com` (rol: admin)
 
 Contraseña: `Admin1234!`
 
@@ -136,8 +136,8 @@ npm run setup-test-users
 
 | Usuario | Email | Contraseña | Rol | Dashboard |
 |---------|-------|------------|-----|-----------|
-| Super Admin | superadmin@sprintimer.com | Admin1234! | super_admin | `/super-admin/dashboard` |
-| Admin | admin@sprintimer.com | Admin1234! | admin | `/admin/dashboard` |
+| Super Admin | superadmin@sprintask.com | Admin1234! | super_admin | `/super-admin/dashboard` |
+| Admin | admin@sprintask.com | Admin1234! | admin | `/admin/dashboard` |
 
 ---
 

@@ -66,9 +66,18 @@ import EditarTrimestre from './pages/admin/trimestres/EditarTrimestre';
 
 // Admin - Bonos
 import ListaBonos from './pages/admin/bonos/ListaBonos';
+import CrearBono from './pages/admin/bonos/CrearBono';
+import EditarBono from './pages/admin/bonos/EditarBono';
+
+// Admin - Seniorities
+import ListaSeniorities from './pages/admin/seniorities/ListaSeniorities';
+import CrearSeniority from './pages/admin/seniorities/CrearSeniority';
+import EditarSeniority from './pages/admin/seniorities/EditarSeniority';
 
 // Admin - Costos
-import CostosPorHora from './pages/admin/costos/CostosPorHora';
+import CostosPorHora from './pages/admin/costoHora/CostosPorHora';
+import CrearCosto from './pages/admin/costoHora/CrearCosto';
+import EditarCosto from './pages/admin/costoHora/EditarCosto';
 
 // Admin - Monedas
 import ListaMonedas from './pages/admin/monedas/ListaMonedas';
@@ -82,6 +91,8 @@ import DetalleCorteTeamMember from './pages/admin/cortes/DetalleCorte';
 // Admin - Roles (Perfiles)
 import ListaRoles from './pages/admin/roles/ListaRoles';
 import PerfilesEquipo from './pages/admin/perfiles/PerfilesEquipo';
+import CrearPerfil from './pages/admin/perfiles/CrearPerfil';
+import EditarPerfil from './pages/admin/perfiles/EditarPerfil';
 import ListaUsuariosSuperAdmin from './pages/admin/usuarios/ListaUsuariosSuperAdmin';
 import EditarUsuarioSuperAdmin from './pages/admin/usuarios/EditarUsuarioSuperAdmin';
 import EliminadosSuperAdmin from './pages/admin/usuarios/EliminadosSuperAdmin';
@@ -415,6 +426,8 @@ function App() {
             <Route path="perfil" element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="roles" element={<ListaRoles />} />
             <Route path="perfiles" element={<PerfilesEquipo />} />
+            <Route path="perfiles-team/crear" element={<CrearPerfil />} />
+            <Route path="perfiles-team/:id/editar" element={<EditarPerfil />} />
             <Route path="team" element={<ListaUsuarios />} />
             <Route path="team/crear" element={<CrearUsuario />} />
             <Route path="team/:id" element={<DetalleUsuario />} />
@@ -448,7 +461,14 @@ function App() {
             <Route path="trimestres/crear" element={<CrearTrimestre />} />
             <Route path="trimestres/:id/editar" element={<EditarTrimestre />} />
             <Route path="bonos" element={<ListaBonos />} />
-            <Route path="costos" element={<CostosPorHora />} />
+            <Route path="bonos/crear" element={<CrearBono />} />
+            <Route path="bonos/:id/editar" element={<EditarBono />} />
+            <Route path="seniorities" element={<ListaSeniorities />} />
+            <Route path="seniorities/crear" element={<CrearSeniority />} />
+            <Route path="seniorities/:id/editar" element={<EditarSeniority />} />
+            <Route path="costoHora" element={<CostosPorHora />} />
+            <Route path="costoHora/crear" element={<CrearCosto />} />
+            <Route path="costoHora/:id/editar" element={<EditarCosto />} />
             <Route path="monedas" element={<ListaMonedas />} />
             <Route path="monedas/crear" element={<CrearMoneda />} />
             <Route path="monedas/:id/editar" element={<EditarMoneda />} />

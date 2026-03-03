@@ -4,7 +4,7 @@
  * Uso: node scripts/init-admin.js
  *
  * Crea un administrador con credenciales por defecto:
- *   Email: admin@sprintimer.com
+ *   Email: admin@sprintask.com
  *   Password: Admin1234!
  */
 
@@ -36,7 +36,7 @@ async function initAdmin() {
     // Credenciales por defecto
     const defaultCredentials = {
       nombre: 'Administrador',
-      email: 'admin@sprintimer.com',
+      email: 'admin@sprintask.com',
       password: 'Admin1234!',
     };
 

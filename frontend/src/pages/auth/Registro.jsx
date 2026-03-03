@@ -85,7 +85,7 @@ export default function Registro() {
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <Link to="/login" className="inline-flex items-center gap-2">
           <span className="text-4xl">⏱️</span>
-          <span className="font-bold text-xl text-gradient">SprinTimer</span>
+          <span className="font-bold text-xl text-gradient">SprinTask</span>
         </Link>
         <p className="mt-2 text-sm text-slate-600">
           Crea tu cuenta de Administrador
@@ -278,7 +278,7 @@ export default function Registro() {
 
       {/* Footer */}
       <p className="mt-8 text-center text-xs text-slate-400">
-        © 2026 SprinTimer. Gestión de proyectos freelance simplificada.
+        © 2026 SprinTask. Gestión de proyectos freelance simplificada.
       </p>
     </div>
   );

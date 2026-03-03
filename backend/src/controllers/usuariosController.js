@@ -31,9 +31,17 @@ const listarUsuarios = async (req, res) => {
     // Construir query base
     let query = db('usuarios')
       .select('usuarios.*', 'roles.nombre as rol', 'roles.nivel as rol_nivel',
-              'creador.nombre as creado_por_nombre', 'creador.email as creado_por_email')
+              'creador.nombre as creado_por_nombre', 'creador.email as creado_por_email',
+              'seniorities.nombre as seniority_nombre', 'seniorities.color as seniority_color',
+              'costos.costo_hora', 'monedas.codigo as moneda_codigo')
       .leftJoin('roles', 'usuarios.rol_id', 'roles.id')
       .leftJoin('usuarios as creador', 'usuarios.creado_por', 'creador.id')
+      .leftJoin('seniorities', 'usuarios.seniority_id', 'seniorities.id')
+      .leftJoin('costos_por_hora as costos', function() {
+        this.on('costos.usuario_id', 'usuarios.id')
+            .andOn('costos.eliminado', '=', 0);
+      })
+      .leftJoin('monedas', 'costos.moneda_id', 'monedas.id')
       .where('usuarios.eliminado', eliminado);
 
     // Aplicar filtros
@@ -57,6 +65,11 @@ const listarUsuarios = async (req, res) => {
 
     if (activo !== '') {
       query.where('usuarios.activo', activo === 'true');
+    }
+
+    // Filtro por seniority
+    if (req.query.seniority) {
+      query.where('seniorities.nombre', req.query.seniority);
     }
 
     // Obtener total (usando una query separada para evitar error de GROUP BY)
@@ -83,18 +96,58 @@ const listarUsuarios = async (req, res) => {
     if (activo !== '') {
       countQuery.where('usuarios.activo', activo === 'true');
     }
-    
+
     const totalResult = await countQuery.count('* as total').first();
     const total = parseInt(totalResult.total);
-    
+
     // Aplicar paginación
     const usuarios = await query
       .limit(parseInt(limit))
       .offset(offset)
       .orderBy('usuarios.fecha_creacion', 'desc');
-    
+
+    // Obtener perfiles asignados desde team_projects para cada usuario
+    const usuariosConPerfil = await Promise.all(usuarios.map(async (usuario) => {
+      // Obtener perfil asignado
+      const asignacion = await db('team_projects')
+        .select('perfiles_team.nombre as perfil_nombre')
+        .leftJoin('perfiles_team', 'team_projects.perfil_team_id', 'perfiles_team.id')
+        .where('team_projects.usuario_id', usuario.id)
+        .where('team_projects.activo', true)
+        .first();
+
+      // Obtener proyectos asignados
+      const proyectos = await db('team_projects')
+        .select('proyectos.id', 'proyectos.nombre as proyecto_nombre')
+        .leftJoin('proyectos', 'team_projects.proyecto_id', 'proyectos.id')
+        .where('team_projects.usuario_id', usuario.id)
+        .where('team_projects.activo', true)
+        .where('proyectos.eliminado', false);
+
+      // Obtener actividades asignadas (a través de tareas)
+      const actividades = await db('tareas')
+        .select('actividades.id', 'actividades.nombre as actividad_nombre')
+        .distinct('actividades.id', 'actividades.nombre')
+        .innerJoin('actividades', 'tareas.actividad_id', 'actividades.id')
+        .where('tareas.usuario_id', usuario.id)
+        .where('actividades.eliminado', false)
+        .where('actividades.activo', true);
+
+      return {
+        ...usuario,
+        perfil_en_proyecto: asignacion?.perfil_nombre || usuario.perfil_en_proyecto,
+        seniority_id: usuario.seniority_id,
+        seniority_nombre: usuario.seniority_nombre,
+        seniority_color: usuario.seniority_color,
+        costo_hora: usuario.costo_hora,
+        moneda_codigo: usuario.moneda_codigo,
+        proyectos: proyectos || [],
+        actividades: actividades || [],
+      };
+    }));
+
     res.json({
-      usuarios,
+      usuarios: usuariosConPerfil,
       pagination: {
         page: parseInt(page),
         limit: parseInt(limit),
@@ -116,8 +169,9 @@ const listarUsuarios = async (req, res) => {
  */
 const obtenerUsuario = async (req, res) => {
   const { id } = req.params;
-  
+
   try {
+    // Obtener usuario con rol
     const usuario = await db('usuarios')
       .select('usuarios.*', 'roles.nombre as rol', 'roles.nivel as rol_nivel',
               'creador.nombre as creado_por_nombre', 'creador.email as creado_por_email')
@@ -125,14 +179,28 @@ const obtenerUsuario = async (req, res) => {
       .leftJoin('usuarios as creador', 'usuarios.creado_por', 'creador.id')
       .where('usuarios.id', id)
       .first();
-    
+
     if (!usuario) {
       return res.status(404).json({
         error: 'Usuario no encontrado',
       });
     }
-    
-    res.json({ usuario });
+
+    // Obtener perfil asignado desde team_projects (primer proyecto activo)
+    const asignacion = await db('team_projects')
+      .select('perfiles_team.nombre as perfil_en_proyecto')
+      .leftJoin('perfiles_team', 'team_projects.perfil_team_id', 'perfiles_team.id')
+      .where('team_projects.usuario_id', id)
+      .where('team_projects.activo', true)
+      .first();
+
+    // Si tiene asignación, usar ese perfil, si no, mantener el que venga de la BD
+    const usuarioConPerfil = {
+      ...usuario,
+      perfil_en_proyecto: asignacion?.perfil_en_proyecto || usuario.perfil_en_proyecto,
+    };
+
+    res.json({ usuario: usuarioConPerfil });
   } catch (error) {
     console.error('Error al obtener usuario:', error);
     res.status(500).json({
@@ -152,7 +220,8 @@ const crearUsuario = async (req, res) => {
     rol_id,
     es_temporal = true,
     debe_cambiar_password = true,
-    perfil_en_proyecto,
+    seniority_id,
+    costo_por_hora_id,
   } = req.body;
 
   try {
@@ -202,41 +271,64 @@ const crearUsuario = async (req, res) => {
     // Hashear contraseña
     const passwordHash = await hashPassword(password);
 
-    // Crear usuario
-    const [usuarioId] = await db('usuarios').insert({
-      nombre: nombre.trim(),
-      email: email.trim(),
-      password_hash: passwordHash,
-      rol_id,
-      debe_cambiar_password: es_temporal ? true : debe_cambiar_password,
-      activo: true,
-      email_verificado: true, // Confiado por admin
-      creado_por: creador.id,
-      perfil_en_proyecto: perfil_en_proyecto || null,
+    // Crear usuario y asignaciones en transacción
+    const [usuarioId] = await db.transaction(async (trx) => {
+      // Crear usuario
+      const [id] = await trx('usuarios').insert({
+        nombre: nombre.trim(),
+        email: email.trim(),
+        password_hash: passwordHash,
+        rol_id,
+        debe_cambiar_password: es_temporal ? true : debe_cambiar_password,
+        activo: true,
+        email_verificado: true,
+        creado_por: creador.id,
+        seniority_id: seniority_id || null,
+      });
+
+      // Si se proporcionó costo_por_hora_id y seniority_id, crear costo para el usuario
+      if (costo_por_hora_id && seniority_id) {
+        // Obtener el costo base
+        const costoBase = await trx('costos_por_hora').where('id', costo_por_hora_id).first();
+        if (costoBase) {
+          // Crear costo para el usuario
+          await trx('costos_por_hora').insert({
+            usuario_id: id,
+            tipo: costoBase.tipo,
+            costo_hora: costoBase.costo_hora,
+            costo_min: costoBase.costo_min,
+            costo_max: costoBase.costo_max,
+            moneda_id: costoBase.moneda_id,
+            seniority_id: seniority_id,
+            creado_por: creador.id,
+          });
+        }
+      }
+
+      return id;
     });
-    
-    // Enviar email de bienvenida
-    await enviarEmailBienvenida(
-      email.trim(), 
-      nombre.trim(), 
-      { email: email.trim(), password }, 
-      es_temporal
-    );
-    
+
+    // Obtener usuario creado para respuesta
+    const usuario = await db('usuarios')
+      .select('usuarios.*', 'roles.nombre as rol')
+      .leftJoin('roles', 'usuarios.rol_id', 'roles.id')
+      .where('usuarios.id', usuarioId)
+      .first();
+
     res.status(201).json({
       mensaje: `Usuario ${es_temporal ? 'creado con contraseña temporal' : 'creado exitosamente'}`,
       usuario: {
-        id: usuarioId,
-        nombre: nombre.trim(),
-        email: email.trim(),
-        rol: rol.nombre,
+        id: usuario.id,
+        nombre: usuario.nombre,
+        email: usuario.email,
+        rol: usuario.rol,
       },
     });
   } catch (error) {
     console.error('Error al crear usuario:', error);
     res.status(500).json({
       error: 'Error interno del servidor',
-      message: 'Error al crear usuario',
+      message: error.message || 'Error al crear usuario',
     });
   }
 };
@@ -246,7 +338,7 @@ const crearUsuario = async (req, res) => {
  */
 const actualizarUsuario = async (req, res) => {
   const { id } = req.params;
-  const { nombre, email, activo, rol_id, perfil_en_proyecto } = req.body;
+  const { nombre, email, activo, seniority_id, costo_por_hora_id, costo_hora_personalizado, perfil_team_id } = req.body;
 
   try {
     // Verificar que el usuario existe
@@ -289,36 +381,73 @@ const actualizarUsuario = async (req, res) => {
     if (nombre) datosActualizacion.nombre = nombre.trim();
     if (email) datosActualizacion.email = email.trim();
     if (activo !== undefined) datosActualizacion.activo = activo;
-    if (perfil_en_proyecto !== undefined) datosActualizacion.perfil_en_proyecto = perfil_en_proyecto;
-    if (rol_id) {
-      // Verificar nuevo rol
-      const nuevoRol = await db('roles').where('id', rol_id).first();
-      if (!nuevoRol) {
-        return res.status(400).json({ error: 'Rol inválido' });
+    
+    // Actualizar seniority si se proporcionó
+    if (seniority_id !== undefined) {
+      if (seniority_id) {
+        // Verificar que el seniority existe
+        const seniority = await db('seniorities').where('id', seniority_id).first();
+        if (!seniority) {
+          return res.status(404).json({
+            error: 'Seniority no encontrado',
+          });
+        }
       }
-
-      // Admin no puede cambiar rol a uno superior
-      if (creador.rol === 'admin' && nuevoRol.nivel > creador.rol_nivel) {
-        return res.status(403).json({
-          error: 'No autorizado',
-          message: 'No puedes asignar este rol',
-        });
-      }
-      datosActualizacion.rol_id = rol_id;
+      datosActualizacion.seniority_id = seniority_id || null;
     }
 
-    // Actualizar
+    // Actualizar usuario
     await db('usuarios')
       .where('id', id)
       .update(datosActualizacion);
 
+    // Actualizar costo por hora si se proporcionó
+    if (costo_por_hora_id !== undefined) {
+      // Eliminar costos anteriores del usuario
+      await db('costos_por_hora')
+        .where('usuario_id', id)
+        .del();
+
+      // Si se seleccionó un costo, crearlo
+      if (costo_por_hora_id) {
+        const costoBase = await db('costos_por_hora').where('id', costo_por_hora_id).first();
+        if (costoBase) {
+          // Obtener el costo personalizado si es variable
+          const costoFinal = costoBase.tipo === 'variable' && costo_hora_personalizado
+            ? parseFloat(costo_hora_personalizado)
+            : null;
+          
+          await db('costos_por_hora').insert({
+            usuario_id: id,
+            tipo: costoBase.tipo,
+            costo_hora: costoBase.tipo === 'fijo' ? costoBase.costo_hora : costoFinal,
+            costo_min: costoBase.tipo === 'variable' ? costoBase.costo_min : null,
+            costo_max: costoBase.tipo === 'variable' ? costoBase.costo_max : null,
+            moneda_id: costoBase.moneda_id,
+            seniority_id: seniority_id || null,
+            creado_por: creador.id,
+          });
+        }
+      }
+    }
+
+    // Obtener usuario actualizado para retornar
+    const usuarioActualizado = await db('usuarios')
+      .select('usuarios.*', 'roles.nombre as rol', 'seniorities.nombre as seniority_nombre')
+      .leftJoin('roles', 'usuarios.rol_id', 'roles.id')
+      .leftJoin('seniorities', 'usuarios.seniority_id', 'seniorities.id')
+      .where('usuarios.id', id)
+      .first();
+
     res.json({
       mensaje: 'Usuario actualizado exitosamente',
+      usuario: usuarioActualizado,
     });
   } catch (error) {
     console.error('Error al actualizar usuario:', error);
     res.status(500).json({
       error: 'Error interno del servidor',
+      message: error.message,
     });
   }
 };

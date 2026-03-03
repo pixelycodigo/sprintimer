@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { usuariosService } from '../../../services/usuariosService';
 import { perfilesTeamService } from '../../../services/perfilesTeamService';
-import Modal from '../../../components/Modal';
+import { senioritiesService } from '../../../services/senioritiesService';
 
 export default function ListaUsuarios() {
   const [usuarios, setUsuarios] = useState([]);
   const [perfiles, setPerfiles] = useState([]);
+  const [seniorities, setSeniorities] = useState([]);
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
@@ -17,11 +18,16 @@ export default function ListaUsuarios() {
   const [filters, setFilters] = useState({
     search: '',
     perfil: '',
+    seniority: '',
     activo: '',
   });
   const [activeFilters, setActiveFilters] = useState(filters);
+  const [success, setSuccess] = useState('');
+  const [error, setError] = useState('');
   const [usuarioEliminar, setUsuarioEliminar] = useState(null);
   const [showModalEliminar, setShowModalEliminar] = useState(false);
+  const [motivo, setMotivo] = useState('');
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     cargarDatos();
@@ -38,18 +44,17 @@ export default function ListaUsuarios() {
       });
       const miembros = usuariosRes.usuarios || [];
 
-      // Transformar datos para mostrar perfil
-      const miembrosConPerfil = miembros.map(miembro => ({
-        ...miembro,
-        perfil: miembro.perfil_en_proyecto || 'Sin perfil',
-      }));
-
-      setUsuarios(miembrosConPerfil);
+      // El backend ya devuelve el perfil desde team_projects en perfil_en_proyecto
+      setUsuarios(miembros);
       setPagination(usuariosRes.pagination || { page: 1, limit: 10, total: 0, totalPages: 0 });
 
-      // Cargar perfiles disponibles
-      const perfilesRes = await perfilesTeamService.listar({ activo: true });
+      // Cargar perfiles y seniorities disponibles para filtros
+      const [perfilesRes, senioritiesRes] = await Promise.all([
+        perfilesTeamService.listar({ activo: true }),
+        senioritiesService.listar({ activo: true })
+      ]);
       setPerfiles(perfilesRes.perfiles || []);
+      setSeniorities(senioritiesRes.seniorities || []);
     } catch (error) {
       console.error('Error al cargar datos:', error);
       setUsuarios([]);
@@ -70,7 +75,7 @@ export default function ListaUsuarios() {
   };
 
   const handleClearFilters = () => {
-    const cleanFilters = { search: '', perfil: '', activo: '' };
+    const cleanFilters = { search: '', perfil: '', seniority: '', activo: '' };
     setFilters(cleanFilters);
     setActiveFilters(cleanFilters);
     setPagination((prev) => ({ ...prev, page: 1 }));
@@ -84,16 +89,22 @@ export default function ListaUsuarios() {
   const confirmarEliminar = async () => {
     if (!usuarioEliminar) return;
 
+    setDeleting(true);
     try {
       // Soft delete - se mueve a eliminados
-      await usuariosService.eliminar(usuarioEliminar.id, 'Eliminado desde el frontend');
-      setSuccess('Miembro movido a eliminados');
-      setUsuarioEliminar(null);
+      await usuariosService.eliminar(usuarioEliminar.id, motivo);
+      setSuccess('Integrante movido a eliminados');
       setShowModalEliminar(false);
+      setUsuarioEliminar(null);
+      setMotivo('');
       cargarDatos();
       setTimeout(() => setSuccess(''), 3000);
     } catch (error) {
       console.error('Error al eliminar:', error);
+      setError(error.response?.data?.message || 'Error al eliminar integrante');
+      setTimeout(() => setError(''), 5000);
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -102,16 +113,29 @@ export default function ListaUsuarios() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Miembros del Equipo</h1>
+          <h1 className="text-2xl font-bold text-slate-900">Integrantes del Equipo</h1>
           <p className="text-slate-600 mt-1">
-            Gestiona los miembros de tu equipo y sus perfiles
+            Gestiona los integrantes de tu equipo y sus perfiles
           </p>
         </div>
         <Link to="/admin/team/crear" className="btn-primary">
           <span className="text-lg mr-2">+</span>
-          Nuevo Miembro
+          Nuevo Integrante
         </Link>
       </div>
+
+      {/* Alertas */}
+      {error && (
+        <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+          {error}
+        </div>
+      )}
+
+      {success && (
+        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-lg text-sm text-emerald-700">
+          {success}
+        </div>
+      )}
 
       {/* Filters */}
       <div className="card-base p-4">
@@ -139,6 +163,21 @@ export default function ListaUsuarios() {
             {perfiles.map((perfil) => (
               <option key={perfil.id} value={perfil.nombre}>
                 {perfil.nombre.replace(/-/g, ' ')}
+              </option>
+            ))}
+          </select>
+
+          {/* Seniority */}
+          <select
+            name="seniority"
+            value={filters.seniority}
+            onChange={handleFilterChange}
+            className="input-base w-48"
+          >
+            <option value="">Todos los seniorities</option>
+            {seniorities.map((s) => (
+              <option key={s.id} value={s.nombre}>
+                {s.nombre}
               </option>
             ))}
           </select>
@@ -178,16 +217,25 @@ export default function ListaUsuarios() {
             <thead className="bg-slate-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                  Miembro
+                  Integrante
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
                   Perfil
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                  Estado
+                  Seniority
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                  Fecha
+                  Proyectos
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                  Actividades
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                  Costo/Hora
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                  Estado
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">
                   Acciones
@@ -197,20 +245,20 @@ export default function ListaUsuarios() {
             <tbody className="bg-white divide-y divide-slate-200">
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center">
+                  <td colSpan={9} className="px-6 py-12 text-center">
                     <div className="flex justify-center">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-900"></div>
                     </div>
-                    <p className="mt-2 text-slate-600">Cargando miembros...</p>
+                    <p className="mt-2 text-slate-600">Cargando integrantes...</p>
                   </td>
                 </tr>
               ) : usuarios.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center">
+                  <td colSpan={9} className="px-6 py-12 text-center">
                     <div className="text-center">
                       <span className="text-6xl">🔍</span>
                       <h3 className="mt-4 text-lg font-semibold text-slate-900">
-                        No se encontraron miembros
+                        No se encontraron integrantes
                       </h3>
                       <p className="mt-2 text-slate-600">
                         Intenta con otros filtros o limpia los filtros actuales
@@ -244,8 +292,69 @@ export default function ListaUsuarios() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
-                        {usuario.perfil_en_proyecto || usuario.perfil || 'Sin perfil'}
+                        {usuario.perfil_en_proyecto || 'Sin perfil'}
                       </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {usuario.seniority_id ? (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" style={{
+                          backgroundColor: usuario.seniority_color + '20',
+                          color: usuario.seniority_color
+                        }}>
+                          {usuario.seniority_nombre}
+                        </span>
+                      ) : (
+                        <span className="text-slate-400 text-sm">—</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex flex-wrap gap-1 max-w-xs">
+                        {usuario.proyectos && usuario.proyectos.length > 0 ? (
+                          usuario.proyectos.map((proyecto) => (
+                            <span
+                              key={proyecto.id}
+                              className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-700"
+                              title={proyecto.proyecto_nombre}
+                            >
+                              {proyecto.proyecto_nombre.length > 15
+                                ? proyecto.proyecto_nombre.substring(0, 15) + '...'
+                                : proyecto.proyecto_nombre}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-slate-400 text-sm">—</span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex flex-wrap gap-1 max-w-xs">
+                        {usuario.actividades && usuario.actividades.length > 0 ? (
+                          usuario.actividades.map((actividad) => (
+                            <span
+                              key={actividad.id}
+                              className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700"
+                              title={actividad.actividad_nombre}
+                            >
+                              {actividad.actividad_nombre.length > 15
+                                ? actividad.actividad_nombre.substring(0, 15) + '...'
+                                : actividad.actividad_nombre}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
+                            Sin Actividades
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      {usuario.costo_hora ? (
+                        <span className="font-semibold text-slate-900">
+                          {usuario.costo_hora} {usuario.moneda_codigo || 'PEN'}/hora
+                        </span>
+                      ) : (
+                        <span className="text-slate-400">—</span>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-2">
@@ -256,12 +365,6 @@ export default function ListaUsuarios() {
                           {usuario.activo ? 'Activo' : 'Inactivo'}
                         </span>
                       </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
-                      {usuario.fecha_creacion 
-                        ? new Date(usuario.fecha_creacion).toLocaleDateString('es-ES')
-                        : '—'
-                      }
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex justify-end gap-2">
@@ -307,7 +410,7 @@ export default function ListaUsuarios() {
           <div className="px-6 py-4 border-t border-slate-200 flex items-center justify-between">
             <div className="text-sm text-slate-600">
               Mostrando <span className="font-medium">{usuarios.length}</span> de{' '}
-              <span className="font-medium">{pagination.total}</span> miembros
+              <span className="font-medium">{pagination.total}</span> integrantes
             </div>
             <div className="flex gap-2">
               <button
@@ -333,64 +436,69 @@ export default function ListaUsuarios() {
       </div>
 
       {/* Modal Eliminar */}
-      <Modal
-        isOpen={showModalEliminar}
-        onClose={() => {
-          setShowModalEliminar(false);
-          setUsuarioEliminar(null);
-        }}
-        title="Eliminar Miembro del Equipo"
-        footer={
-          <div className="flex gap-3 justify-end">
-            <button
-              type="button"
-              onClick={() => {
-                setShowModalEliminar(false);
-                setUsuarioEliminar(null);
-              }}
-              className="btn-secondary"
-            >
-              Cancelar
-            </button>
-            <button
-              type="button"
-              onClick={confirmarEliminar}
-              className="btn-primary bg-red-600 hover:bg-red-700 text-white"
-            >
-              🗑️ Eliminar
-            </button>
-          </div>
-        }
-      >
-        <div className="space-y-3">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-2xl">
-              ⚠️
-            </div>
-            <div>
-              <p className="font-medium text-slate-900">
-                {usuarioEliminar?.nombre}
-              </p>
-              <p className="text-sm text-slate-500">
-                {usuarioEliminar?.email}
-              </p>
-            </div>
-          </div>
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-            <p className="text-sm text-amber-800">
-              <strong>⚠️ Atención:</strong> El miembro se moverá a la papelera de eliminados. 
-              Podrás recuperarlo o eliminarlo permanentemente desde allí.
+      {showModalEliminar && usuarioEliminar && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="card-base p-6 max-w-md w-full mx-4 animate-scale-in">
+            <h3 className="text-lg font-bold text-slate-900 mb-2">
+              ⚠️ Eliminar Integrante
+            </h3>
+            <p className="text-slate-600 mb-4">
+              ¿Estás seguro de eliminar a <strong>{usuarioEliminar.nombre}</strong>?
             </p>
+
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
+              <p className="text-sm text-amber-800">
+                <strong>Esta acción:</strong>
+              </p>
+              <ul className="text-sm text-amber-700 mt-2 space-y-1 list-disc list-inside">
+                <li>Desactivará su cuenta inmediatamente</li>
+                <li>El usuario no podrá iniciar sesión</li>
+                <li>Los datos se conservarán por 30 días</li>
+                <li>Podrás recuperarlo durante este período</li>
+              </ul>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                Motivo (opcional)
+              </label>
+              <textarea
+                value={motivo}
+                onChange={(e) => setMotivo(e.target.value)}
+                className="input-base min-h-[80px]"
+                placeholder="Ej: El integrante ya no trabaja en el proyecto..."
+              />
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={confirmarEliminar}
+                disabled={deleting}
+                className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-700 transition-colors disabled:opacity-50"
+              >
+                {deleting ? 'Eliminando...' : 'Eliminar'}
+              </button>
+              <button
+                onClick={() => {
+                  setShowModalEliminar(false);
+                  setUsuarioEliminar(null);
+                  setMotivo('');
+                }}
+                className="flex-1 btn-secondary"
+              >
+                Cancelar
+              </button>
+            </div>
           </div>
         </div>
-      </Modal>
+      )}
 
       {/* Info Box */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
         <p className="text-sm text-blue-800">
-          <strong>💡 Información:</strong> Esta vista muestra solo los miembros del equipo (team members).
+          <strong>💡 Información:</strong> Esta vista muestra solo los integrantes del equipo (team members).
           Los administradores de la plataforma se gestionan desde otra sección.
-          Para asignar un perfil a un miembro, asígnalo a un proyecto con un perfil específico.
+          Para asignar un perfil a un integrante, asígnalo a un proyecto con un perfil específico.
         </p>
       </div>
     </div>

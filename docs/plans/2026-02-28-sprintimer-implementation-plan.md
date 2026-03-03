@@ -1,7 +1,7 @@
-# SprinTimer - Plan de Implementación
+# SprinTask - Plan de Implementación
 
 **Fecha:** 28 de Febrero, 2026  
-**Proyecto:** SprinTimer SaaS  
+**Proyecto:** SprinTask SaaS  
 **Stack:** React + Vite + Tailwind CSS | Node.js + Express | MySQL
 
 ---

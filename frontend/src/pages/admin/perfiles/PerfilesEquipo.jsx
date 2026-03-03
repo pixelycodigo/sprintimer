@@ -39,6 +39,14 @@ export default function PerfilesEquipo() {
   };
 
   const handleToggleActivo = async (perfil) => {
+    // No permitir desactivar si está en uso
+    if (perfil.en_uso && perfil.activo) {
+      const miembroText = perfil.total_en_uso === 1 ? 'miembro' : 'miembros';
+      setError(`El perfil está en uso en ${perfil.total_en_uso} ${miembroText}. Debes desvincularlo de todos los miembros del equipo antes de desactivarlo.`);
+      setTimeout(() => setError(''), 5000);
+      return;
+    }
+
     try {
       await perfilesTeamService.actualizar(perfil.id, { activo: !perfil.activo });
       setSuccess(`Perfil ${perfil.activo ? 'desactivado' : 'activado'} exitosamente`);
@@ -195,7 +203,7 @@ export default function PerfilesEquipo() {
                   <tr key={perfil.id} className="hover:bg-slate-50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm">
+                        <div className="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-sm">
                           {perfil.nombre.charAt(0).toUpperCase()}
                         </div>
                         <div className="ml-4">

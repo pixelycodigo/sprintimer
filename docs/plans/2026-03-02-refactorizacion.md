@@ -247,22 +247,22 @@ const impersonarAdmin = async (req, res, next) => {
 
 ```
 Super Admin:
-- Email: superadmin@sprintimer.com
+- Email: superadmin@sprintask.com
 - Password: Admin1234!
 
 Admin (Usuario):
-- Email: admin@sprintimer.com
+- Email: admin@sprintask.com
 - Password: Admin1234!
 
 Team Members:
-- carlos.mendoza@sprintimer.com / Usuario123!
-- maria.rodriguez@sprintimer.com / Usuario123!
-- juan.perez@sprintimer.com / Usuario123!
-- ana.garcia@sprintimer.com / Usuario123!
-- luis.torres@sprintimer.com / Usuario123!
-- sofia.lopez@sprintimer.com / Usuario123!
-- diego.ramirez@sprintimer.com / Usuario123!
-- elena.vargas@sprintimer.com / Usuario123!
+- carlos.mendoza@sprintask.com / Usuario123!
+- maria.rodriguez@sprintask.com / Usuario123!
+- juan.perez@sprintask.com / Usuario123!
+- ana.garcia@sprintask.com / Usuario123!
+- luis.torres@sprintask.com / Usuario123!
+- sofia.lopez@sprintask.com / Usuario123!
+- diego.ramirez@sprintask.com / Usuario123!
+- elena.vargas@sprintask.com / Usuario123!
 ```
 
 ### Casos de Prueba
@@ -485,9 +485,9 @@ router.get('/all',
 
 | Nombre | Email | Eliminado hace | Eliminación en | Motivo |
 |--------|-------|---------------|---------------|--------|
-| Roberto Fernández | roberto.fernandez@sprintimer.com | 5 días | 25 días | Solicitud propia |
-| Patricia Gómez | patricia.gomez@sprintimer.com | 15 días | 15 días | Violación de políticas |
-| Carlos Mendoza | carlos.mendoza.2@sprintimer.com | 25 días | ⚠️ 5 días | Proyecto cancelado |
+| Roberto Fernández | roberto.fernandez@sprintask.com | 5 días | 25 días | Solicitud propia |
+| Patricia Gómez | patricia.gomez@sprintask.com | 15 días | 15 días | Violación de políticas |
+| Carlos Mendoza | carlos.mendoza.2@sprintask.com | 25 días | ⚠️ 5 días | Proyecto cancelado |
 
 **Total:** 2 admins eliminados activos en la BD (Roberto ya existía)
 

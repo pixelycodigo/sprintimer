@@ -1,4 +1,4 @@
-# 🔄 Sincronización Rápida - SprinTimer
+# 🔄 Sincronización Rápida - SprinTask
 
 **Para sincronizar entre computadoras:**
 

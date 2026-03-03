@@ -37,7 +37,7 @@ async function initSuperAdmin() {
 
     const [usuarioId] = await db('usuarios').insert({
       nombre: 'Super Admin',
-      email: 'admin@sprintimer.com',
+      email: 'admin@sprintask.com',
       password_hash: passwordHash,
       rol_id: superAdminRole.id,
       debe_cambiar_password: false,
@@ -49,7 +49,7 @@ async function initSuperAdmin() {
     console.log('╔═══════════════════════════════════════════════════════════╗');
     console.log('║   ✅ ¡Super Admin creado exitosamente!                    ║');
     console.log('╚═══════════════════════════════════════════════════════════╝\n');
-    console.log('   📧 Email:     admin@sprintimer.com');
+    console.log('   📧 Email:     admin@sprintask.com');
     console.log('   🔑 Contraseña: admin123');
     console.log('   👤 Nombre:    Super Admin\n');
     console.log('   Inicia sesión en: http://localhost:5173/login\n');

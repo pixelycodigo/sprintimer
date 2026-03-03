@@ -1,4 +1,4 @@
-# SprinTimer - Diseño Completo del Sistema
+# SprinTask - Diseño Completo del Sistema
 
 **Fecha:** 28 de Febrero, 2026  
 **Versión:** 1.0.0  
@@ -8,7 +8,7 @@
 
 ## 📋 Resumen Ejecutivo
 
-SprinTimer es una plataforma SaaS para freelancers que gestiona proyectos, sprints, actividades, tareas, registro de horas y cálculo de pagos con cortes mensuales.
+SprinTask es una plataforma SaaS para freelancers que gestiona proyectos, sprints, actividades, tareas, registro de horas y cálculo de pagos con cortes mensuales.
 
 ---
 

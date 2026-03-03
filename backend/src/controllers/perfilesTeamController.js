@@ -39,11 +39,11 @@ const listarPerfiles = async (req, res) => {
 
     const perfiles = await query.orderBy('perfiles_team.nombre', 'asc');
 
-    // Verificar si cada perfil está en uso
+    // Verificar si cada perfil está en uso (contar usuarios únicos, no asignaciones)
     const perfilesConUso = await Promise.all(perfiles.map(async (perfil) => {
       const enUso = await db('team_projects')
         .where('perfil_team_id', perfil.id)
-        .count('* as total')
+        .countDistinct('usuario_id as total')
         .first();
 
       const totalEnUso = parseInt(enUso.total);
@@ -177,6 +177,23 @@ const actualizarPerfil = async (req, res) => {
       });
     }
 
+    // Validar desactivación de perfil en uso (contar usuarios únicos)
+    if (activo === false && perfil.activo === true) {
+      const enUso = await db('team_projects')
+        .where('perfil_team_id', id)
+        .countDistinct('usuario_id as total')
+        .first();
+
+      const totalEnUso = parseInt(enUso.total);
+
+      if (totalEnUso > 0) {
+        return res.status(400).json({
+          error: 'Perfil en uso',
+          message: `El perfil está siendo utilizado en ${totalEnUso} miembro(s) del equipo. Debes desvincularlo antes de desactivarlo.`,
+        });
+      }
+    }
+
     // Verificar nombre duplicado (si se está actualizando el nombre)
     if (nombre !== undefined && nombre !== perfil.nombre) {
       const existing = await db('perfiles_team')
@@ -239,10 +256,10 @@ const eliminarPerfil = async (req, res) => {
       });
     }
 
-    // Verificar si está en uso
+    // Verificar si está en uso (contar usuarios únicos)
     const enUso = await db('team_projects')
       .where('perfil_team_id', id)
-      .count('* as total')
+      .countDistinct('usuario_id as total')
       .first();
 
     const totalEnUso = parseInt(enUso.total);

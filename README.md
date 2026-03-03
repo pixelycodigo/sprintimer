@@ -1,8 +1,15 @@
-# 🚀 SprinTimer
+# 🚀 SprinTask
 
 **Plataforma SaaS para gestión de proyectos freelance**
 
-SprinTimer es una plataforma completa para freelancers que necesitan gestionar proyectos, sprints, actividades, tareas, registro de horas y cálculo de pagos con cortes mensuales.
+> ## 📝 Nota de Cambio de Nombre
+> **Fecha:** 3 de Marzo, 2026
+> 
+> Este proyecto anteriormente se llamaba **SprinTimer**. El nombre ha sido cambiado a **SprinTask** para reflejar mejor su propósito como herramienta de gestión de tareas y proyectos.
+> 
+> Todos los correos electrónicos del dominio `@sprintimer.com` han sido actualizados a `@sprintask.com`.
+
+SprinTask es una plataforma completa para freelancers que necesitan gestionar proyectos, sprints, actividades, tareas, registro de horas y cálculo de pagos con cortes mensuales.
 
 ---
 
@@ -366,4 +373,4 @@ ISC
 
 ---
 
-**SprinTimer** - Gestión de proyectos freelance simplificada.
+**SprinTask** - Gestión de proyectos freelance simplificada.

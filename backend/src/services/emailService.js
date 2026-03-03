@@ -20,9 +20,9 @@ const enviarEmailBienvenida = async (destinatario, nombre, credenciales, esTempo
   const transporter = createTransporter();
   
   const mailOptions = {
-    from: `"SprinTimer" <${process.env.EMAIL_USER}>`,
+    from: `"SprinTask" <${process.env.EMAIL_USER}>`,
     to: destinatario,
-    subject: '🔐 Tu cuenta de SprinTimer está lista',
+    subject: '🔐 Tu cuenta de SprinTask está lista',
     html: `
       <!DOCTYPE html>
       <html>
@@ -44,14 +44,14 @@ const enviarEmailBienvenida = async (destinatario, nombre, credenciales, esTempo
         <body>
           <div class="container">
             <div class="header">
-              <h1>🚀 Bienvenido a SprinTimer</h1>
+              <h1>🚀 Bienvenido a SprinTask</h1>
               <p>Tu cuenta ha sido creada exitosamente</p>
             </div>
             
             <div class="content">
               <p>Hola <strong>${nombre}</strong>,</p>
               
-              <p>Has sido registrado en <strong>SprinTimer</strong>, la plataforma para gestionar proyectos freelance.</p>
+              <p>Has sido registrado en <strong>SprinTask</strong>, la plataforma para gestionar proyectos freelance.</p>
               
               <div class="credentials">
                 <h3 style="margin-top: 0;">🔑 Tus Credenciales de Acceso</h3>
@@ -79,7 +79,7 @@ const enviarEmailBienvenida = async (destinatario, nombre, credenciales, esTempo
               
               <div class="footer">
                 <p>Si tienes alguna pregunta, contacta a tu administrador.</p>
-                <p><strong>SprinTimer</strong> - Gestión de proyectos freelance simplificada</p>
+                <p><strong>SprinTask</strong> - Gestión de proyectos freelance simplificada</p>
               </div>
             </div>
           </div>
@@ -107,9 +107,9 @@ const enviarEmailVerificacion = async (destinatario, nombre, token) => {
   const verificationUrl = `${process.env.FRONTEND_URL}/verificar-email?token=${token}`;
   
   const mailOptions = {
-    from: `"SprinTimer" <${process.env.EMAIL_USER}>`,
+    from: `"SprinTask" <${process.env.EMAIL_USER}>`,
     to: destinatario,
-    subject: '📧 Verifica tu email - SprinTimer',
+    subject: '📧 Verifica tu email - SprinTask',
     html: `
       <!DOCTYPE html>
       <html>
@@ -133,7 +133,7 @@ const enviarEmailVerificacion = async (destinatario, nombre, token) => {
             <div class="content">
               <p>Hola <strong>${nombre}</strong>,</p>
               
-              <p>¡Gracias por registrarte en <strong>SprinTimer</strong>!</p>
+              <p>¡Gracias por registrarte en <strong>SprinTask</strong>!</p>
               
               <p>Para comenzar a gestionar tus proyectos y equipo, necesitamos verificar tu email.</p>
               
@@ -149,7 +149,7 @@ const enviarEmailVerificacion = async (destinatario, nombre, token) => {
               <p style="word-break: break-all; color: #667eea;">${verificationUrl}</p>
               
               <div class="footer">
-                <p><strong>SprinTimer</strong> - Gestión de proyectos freelance simplificada</p>
+                <p><strong>SprinTask</strong> - Gestión de proyectos freelance simplificada</p>
               </div>
             </div>
           </div>
@@ -177,9 +177,9 @@ const enviarEmailRecuperacion = async (destinatario, nombre, token) => {
   const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
   
   const mailOptions = {
-    from: `"SprinTimer" <${process.env.EMAIL_USER}>`,
+    from: `"SprinTask" <${process.env.EMAIL_USER}>`,
     to: destinatario,
-    subject: '🔒 Recuperar Contraseña - SprinTimer',
+    subject: '🔒 Recuperar Contraseña - SprinTask',
     html: `
       <!DOCTYPE html>
       <html>
@@ -203,7 +203,7 @@ const enviarEmailRecuperacion = async (destinatario, nombre, token) => {
             <div class="content">
               <p>Hola <strong>${nombre}</strong>,</p>
               
-              <p>Hemos recibido una solicitud para restablecer tu contraseña de SprinTimer.</p>
+              <p>Hemos recibido una solicitud para restablecer tu contraseña de SprinTask.</p>
               
               <div class="warning">
                 <strong>⚠️ Importante:</strong> Este enlace expira en 1 hora.
@@ -216,7 +216,7 @@ const enviarEmailRecuperacion = async (destinatario, nombre, token) => {
               <p style="margin-top: 30px;">Si no solicitaste este cambio, puedes ignorar este email. Tu contraseña permanecerá sin cambios.</p>
               
               <div class="footer">
-                <p><strong>SprinTimer</strong> - Gestión de proyectos freelance simplificada</p>
+                <p><strong>SprinTask</strong> - Gestión de proyectos freelance simplificada</p>
               </div>
             </div>
           </div>
@@ -242,9 +242,9 @@ const enviarEmailReactivacion = async (destinatario, nombre, recuperadoPor) => {
   const transporter = createTransporter();
   
   const mailOptions = {
-    from: `"SprinTimer" <${process.env.EMAIL_USER}>`,
+    from: `"SprinTask" <${process.env.EMAIL_USER}>`,
     to: destinatario,
-    subject: '✅ Tu cuenta de SprinTimer ha sido reactivada',
+    subject: '✅ Tu cuenta de SprinTask ha sido reactivada',
     html: `
       <!DOCTYPE html>
       <html>
@@ -268,7 +268,7 @@ const enviarEmailReactivacion = async (destinatario, nombre, recuperadoPor) => {
             <div class="content">
               <p>Hola <strong>${nombre}</strong>,</p>
               
-              <p>¡Buenas noticias! Tu cuenta de <strong>SprinTimer</strong> ha sido reactivada por <strong>${recuperadoPor}</strong>.</p>
+              <p>¡Buenas noticias! Tu cuenta de <strong>SprinTask</strong> ha sido reactivada por <strong>${recuperadoPor}</strong>.</p>
               
               <div class="info">
                 <strong>💡 ¿Qué puedes hacer ahora?</strong>
@@ -284,7 +284,7 @@ const enviarEmailReactivacion = async (destinatario, nombre, recuperadoPor) => {
               </div>
               
               <div class="footer">
-                <p><strong>SprinTimer</strong> - Gestión de proyectos freelance simplificada</p>
+                <p><strong>SprinTask</strong> - Gestión de proyectos freelance simplificada</p>
               </div>
             </div>
           </div>

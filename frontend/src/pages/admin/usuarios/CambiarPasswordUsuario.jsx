@@ -40,9 +40,9 @@ export default function CambiarPasswordUsuario() {
     try {
       await usuariosService.cambiarPassword(id, formData.password, formData.es_temporal);
       setSuccess(`Contraseña ${formData.es_temporal ? 'temporal' : 'fija'} establecida exitosamente`);
-      
+
       setTimeout(() => {
-        navigate(`/admin/usuarios/${id}`);
+        navigate(`/admin/team/${id}`);
       }, 2000);
     } catch (err) {
       setError(err.response?.data?.message || 'Error al cambiar contraseña');
@@ -55,7 +55,7 @@ export default function CambiarPasswordUsuario() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Link to={`/admin/usuarios/${id}`} className="text-slate-400 hover:text-slate-600">
+        <Link to={`/admin/team/${id}`} className="text-slate-400 hover:text-slate-600">
           ←
         </Link>
         <div>

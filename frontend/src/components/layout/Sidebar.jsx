@@ -31,6 +31,7 @@ const menuItems = {
       subItems: [
         { name: 'Mi Equipo', path: '/admin/team' },
         { name: 'Perfiles', path: '/admin/perfiles' },
+        { name: 'Seniorities', path: '/admin/seniorities' },
       ]
     },
     {
@@ -39,7 +40,7 @@ const menuItems = {
       subItems: [
         { name: 'Monedas', path: '/admin/monedas' },
         { name: 'Bonos', path: '/admin/bonos' },
-        { name: 'Costos por Hora', path: '/admin/costos' },
+        { name: 'Costo por Hora', path: '/admin/costoHora' },
         { name: 'Días Laborales', path: '/admin/dias-laborales' },
       ]
     },
@@ -159,7 +160,7 @@ export default function Sidebar() {
       <div className="h-16 flex items-center px-6 border-b border-slate-200">
         <Link to="/" className="flex items-center gap-2">
           <span className="text-2xl">⏱️</span>
-          <span className="font-bold text-lg text-gradient">SprinTimer</span>
+          <span className="font-bold text-lg text-gradient">SprinTask</span>
         </Link>
       </div>
 

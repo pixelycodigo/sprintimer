@@ -1,4 +1,4 @@
-# 🚀 SprinTimer - Fases de Implementación del Backend
+# 🚀 SprinTask - Fases de Implementación del Backend
 
 **Fecha de finalización:** 1 de Marzo, 2026  
 **Estado:** ✅ Backend 100% Completado  
@@ -577,7 +577,7 @@ PUT    /api/admin/eliminados/configuracion/dias/:entidad → Actualizar
 
 ## 🎉 Backend Completado
 
-**El backend de SprinTimer está 100% funcional y listo para ser consumido por el frontend.**
+**El backend de SprinTask está 100% funcional y listo para ser consumido por el frontend.**
 
 ### Características Principales
 

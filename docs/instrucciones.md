@@ -1,4 +1,4 @@
-# 🚀 SprinTimer - Instrucciones de Instalación y Configuración
+# 🚀 SprinTask - Instrucciones de Instalación y Configuración
 
 **Fecha de creación:** 1 de Marzo, 2026  
 **Versión:** 1.0.0  
@@ -167,7 +167,7 @@ Abre `/backend/.env` y configura:
 
 ```env
 # ============================================
-# CONFIGURACIÓN DEL BACKEND - SprinTimer
+# CONFIGURACIÓN DEL BACKEND - SprinTask
 # ============================================
 
 # Puerto del servidor
@@ -649,6 +649,6 @@ ISC
 
 ---
 
-**SprinTimer** - Gestión de proyectos freelance simplificada.
+**SprinTask** - Gestión de proyectos freelance simplificada.
 
 **Última actualización:** 1 de Marzo, 2026

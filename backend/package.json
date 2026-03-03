@@ -1,7 +1,7 @@
 {
-  "name": "sprintimer-backend",
+  "name": "sprintask-backend",
   "version": "1.0.0",
-  "description": "Backend para SprinTimer - Plataforma de gestión de proyectos freelance",
+  "description": "Backend para SprinTask - Plataforma de gestión de proyectos freelance",
   "main": "server.js",
   "scripts": {
     "dev": "nodemon server.js",
@@ -23,7 +23,7 @@
     "setup-test-users": "node scripts/setup-test-users.js"
   },
   "keywords": [
-    "sprintimer",
+    "sprintask",
     "freelance",
     "project-management",
     "time-tracking"

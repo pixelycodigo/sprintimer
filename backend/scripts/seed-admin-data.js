@@ -48,14 +48,14 @@ async function seedAdminData() {
 
     // Datos para 8 usuarios
     const usuariosData = [
-      { nombre: 'Carlos Mendoza', email: 'carlos.mendoza@sprintimer.com', rol: 'dev_frontend' },
-      { nombre: 'María Rodríguez', email: 'maria.rodriguez@sprintimer.com', rol: 'dev_backend' },
-      { nombre: 'Juan Pérez', email: 'juan.perez@sprintimer.com', rol: 'dev_fullstack' },
-      { nombre: 'Ana García', email: 'ana.garcia@sprintimer.com', rol: 'ux_designer' },
-      { nombre: 'Luis Torres', email: 'luis.torres@sprintimer.com', rol: 'ui_designer' },
-      { nombre: 'Sofía López', email: 'sofia.lopez@sprintimer.com', rol: 'qa_engineer' },
-      { nombre: 'Diego Ramírez', email: 'diego.ramirez@sprintimer.com', rol: 'devops' },
-      { nombre: 'Elena Vargas', email: 'elena.vargas@sprintimer.com', rol: 'tech_lead' },
+      { nombre: 'Carlos Mendoza', email: 'carlos.mendoza@sprintask.com', rol: 'dev_frontend' },
+      { nombre: 'María Rodríguez', email: 'maria.rodriguez@sprintask.com', rol: 'dev_backend' },
+      { nombre: 'Juan Pérez', email: 'juan.perez@sprintask.com', rol: 'dev_fullstack' },
+      { nombre: 'Ana García', email: 'ana.garcia@sprintask.com', rol: 'ux_designer' },
+      { nombre: 'Luis Torres', email: 'luis.torres@sprintask.com', rol: 'ui_designer' },
+      { nombre: 'Sofía López', email: 'sofia.lopez@sprintask.com', rol: 'qa_engineer' },
+      { nombre: 'Diego Ramírez', email: 'diego.ramirez@sprintask.com', rol: 'devops' },
+      { nombre: 'Elena Vargas', email: 'elena.vargas@sprintask.com', rol: 'tech_lead' },
     ];
 
     const passwordHash = await bcrypt.hash('Usuario123!', 10);
@@ -456,11 +456,11 @@ async function seedAdminData() {
     console.log(`   💵 3 Bonos disponibles`);
     console.log('\n🔐 CREDENCIALES DE USUARIOS:');
     console.log('   ─────────────────────────────────────────────────────');
-    console.log('   Email: {nombre.apellido}@sprintimer.com');
+    console.log('   Email: {nombre.apellido}@sprintask.com');
     console.log('   Password: Usuario123!');
     console.log('\n   Ejemplos:');
-    console.log('   - carlos.mendoza@sprintimer.com / Usuario123!');
-    console.log('   - maria.rodriguez@sprintimer.com / Usuario123!');
+    console.log('   - carlos.mendoza@sprintask.com / Usuario123!');
+    console.log('   - maria.rodriguez@sprintask.com / Usuario123!');
     console.log('\n');
 
     process.exit(0);

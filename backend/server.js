@@ -26,9 +26,9 @@ app.use((req, res, next) => {
 
 // Ruta de health check
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'ok', 
-    message: 'SprinTimer API está funcionando',
+  res.json({
+    status: 'ok',
+    message: 'SprinTask API está funcionando',
     timestamp: new Date().toISOString()
   });
 });
@@ -77,7 +77,7 @@ app.listen(PORT, () => {
   console.log(`
 ╔═══════════════════════════════════════════════════════════╗
 ║                                                           ║
-║   🚀 SprinTimer API - Servidor en ejecución              ║
+║   🚀 SprinTask API - Servidor en ejecución              ║
 ║                                                           ║
 ║   Puerto: ${PORT}                                          ║
 ║   Entorno: ${process.env.NODE_ENV || 'development'}                              ║

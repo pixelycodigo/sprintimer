@@ -5,15 +5,49 @@ const costosController = require('../controllers/costosController');
 const bonosController = require('../controllers/bonosController');
 const cortesController = require('../controllers/cortesController');
 const recalculosController = require('../controllers/recalculosController');
+const senioritiesController = require('../controllers/senioritiesController');
 const { autenticar, verificarRol } = require('../middleware/auth');
 
 /**
  * Rutas para Monedas
  */
-router.get('/monedas', 
-  autenticar, 
+router.get('/monedas',
+  autenticar,
   verificarRol(['admin', 'super_admin']),
   monedasController.listarMonedas
+);
+
+/**
+ * Rutas para Seniorities
+ */
+router.get('/seniorities',
+  autenticar,
+  verificarRol(['admin', 'super_admin']),
+  senioritiesController.listarSeniorities
+);
+
+router.get('/seniorities/:id',
+  autenticar,
+  verificarRol(['admin', 'super_admin']),
+  senioritiesController.obtenerSeniority
+);
+
+router.post('/seniorities',
+  autenticar,
+  verificarRol(['admin', 'super_admin']),
+  senioritiesController.crearSeniority
+);
+
+router.put('/seniorities/:id',
+  autenticar,
+  verificarRol(['admin', 'super_admin']),
+  senioritiesController.actualizarSeniority
+);
+
+router.delete('/seniorities/:id',
+  autenticar,
+  verificarRol(['admin', 'super_admin']),
+  senioritiesController.eliminarSeniority
 );
 
 router.get('/monedas/:id', 
@@ -43,8 +77,38 @@ router.delete('/monedas/:id',
 /**
  * Rutas para Costos por Hora
  */
-router.get('/usuarios/:usuario_id/costos', 
-  autenticar, 
+router.get('/costos',
+  autenticar,
+  verificarRol(['admin', 'super_admin']),
+  costosController.listarCostos
+);
+
+router.get('/costos/:id',
+  autenticar,
+  verificarRol(['admin', 'super_admin']),
+  costosController.obtenerCosto
+);
+
+router.put('/costos/:id',
+  autenticar,
+  verificarRol(['admin', 'super_admin']),
+  costosController.actualizarCosto
+);
+
+router.post('/costos',
+  autenticar,
+  verificarRol(['admin', 'super_admin']),
+  costosController.crearCosto
+);
+
+router.delete('/costos/:id',
+  autenticar,
+  verificarRol(['admin', 'super_admin']),
+  costosController.eliminarCosto
+);
+
+router.get('/usuarios/:usuario_id/costos',
+  autenticar,
   verificarRol(['admin', 'super_admin']),
   costosController.listarCostos
 );
@@ -71,13 +135,37 @@ router.delete('/costos/:id',
  * Rutas para Bonos
  */
 router.get('/bonos', 
-  autenticar, 
+  autenticar,
   verificarRol(['admin', 'super_admin']),
   bonosController.listarBonos
 );
 
+router.get('/bonos/:id',
+  autenticar,
+  verificarRol(['admin', 'super_admin']),
+  bonosController.obtenerBono
+);
+
+router.post('/bonos',
+  autenticar,
+  verificarRol(['admin', 'super_admin']),
+  bonosController.crearBono
+);
+
+router.put('/bonos/:id',
+  autenticar,
+  verificarRol(['admin', 'super_admin']),
+  bonosController.actualizarBono
+);
+
+router.delete('/bonos/:id',
+  autenticar,
+  verificarRol(['admin', 'super_admin']),
+  bonosController.eliminarBono
+);
+
 router.get('/usuarios/:usuario_id/bonos', 
-  autenticar, 
+  autenticar,
   verificarRol(['admin', 'super_admin']),
   bonosController.listarBonosUsuario
 );

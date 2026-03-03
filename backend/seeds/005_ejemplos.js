@@ -1,5 +1,5 @@
 /**
- * Seed de Datos de Ejemplo para SprinTimer
+ * Seed de Datos de Ejemplo para SprinTask
  * 
  * Uso: npm run seed-examples
  */
@@ -15,12 +15,12 @@ exports.seed = async function(knex) {
     const adminPassword = await bcrypt.hash('Admin1234!', 10);
     const adminRole = await knex('roles').where('nombre', 'admin').first();
     
-    const adminExists = await knex('usuarios').where('email', 'admin@sprintimer.com').first();
+    const adminExists = await knex('usuarios').where('email', 'admin@sprintask.com').first();
     
     if (!adminExists) {
       await knex('usuarios').insert({
         nombre: 'Administrador de Prueba',
-        email: 'admin@sprintimer.com',
+        email: 'admin@sprintask.com',
         password_hash: adminPassword,
         rol_id: adminRole.id,
         debe_cambiar_password: false,
@@ -28,7 +28,7 @@ exports.seed = async function(knex) {
         email_verificado: true,
         creado_por: null,
       });
-      console.log('   ✅ Admin creado: admin@sprintimer.com / Admin1234!');
+      console.log('   ✅ Admin creado: admin@sprintask.com / Admin1234!');
     } else {
       console.log('   ⏭️  Admin ya existe');
     }
@@ -39,9 +39,9 @@ exports.seed = async function(knex) {
     const teamPassword = await bcrypt.hash('Team1234!', 10);
     
     const teamMembers = [
-      { nombre: 'Juan Pérez', email: 'juan@sprintimer.com' },
-      { nombre: 'María García', email: 'maria@sprintimer.com' },
-      { nombre: 'Carlos López', email: 'carlos@sprintimer.com' },
+      { nombre: 'Juan Pérez', email: 'juan@sprintask.com' },
+      { nombre: 'María García', email: 'maria@sprintask.com' },
+      { nombre: 'Carlos López', email: 'carlos@sprintask.com' },
     ];
 
     for (const member of teamMembers) {
@@ -64,7 +64,7 @@ exports.seed = async function(knex) {
     }
 
     // Obtener usuarios creados
-    const adminUser = await knex('usuarios').where('email', 'admin@sprintimer.com').first();
+    const adminUser = await knex('usuarios').where('email', 'admin@sprintask.com').first();
     const allTeamMembers = await knex('usuarios').where('rol_id', teamMemberRole.id);
 
     // 3. Crear Clientes
@@ -402,10 +402,10 @@ exports.seed = async function(knex) {
     console.log('   🎁 Bonos: 1');
     console.log('   ✅ Tareas: 3');
     console.log('\n🔐 Credenciales:');
-    console.log('   Admin: admin@sprintimer.com / Admin1234!');
-    console.log('   Team: juan@sprintimer.com / Team1234!');
-    console.log('         maria@sprintimer.com / Team1234!');
-    console.log('         carlos@sprintimer.com / Team1234!');
+    console.log('   Admin: admin@sprintask.com / Admin1234!');
+    console.log('   Team: juan@sprintask.com / Team1234!');
+    console.log('         maria@sprintask.com / Team1234!');
+    console.log('         carlos@sprintask.com / Team1234!');
     console.log('');
 
   } catch (error) {

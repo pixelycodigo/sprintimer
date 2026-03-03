@@ -47,7 +47,7 @@ export default function Login() {
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <span className="text-5xl">⏱️</span>
         <h1 className="mt-4 text-3xl font-bold text-gradient">
-          SprinTimer
+          SprinTask
         </h1>
         <p className="mt-2 text-sm text-slate-600">
           Gestión de proyectos freelance
@@ -159,7 +159,7 @@ export default function Login() {
               </div>
               <div className="relative flex justify-center text-sm">
                 <span className="px-2 bg-white text-slate-500">
-                  ¿Nuevo en SprinTimer?
+                  ¿Nuevo en SprinTask?
                 </span>
               </div>
             </div>
@@ -187,7 +187,7 @@ export default function Login() {
 
       {/* Footer */}
       <p className="mt-8 text-center text-xs text-slate-400">
-        © 2026 SprinTimer. Gestión de proyectos freelance simplificada.
+        © 2026 SprinTask. Gestión de proyectos freelance simplificada.
       </p>
     </div>
   );

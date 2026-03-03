@@ -1,4 +1,4 @@
-# 📊 SprinTimer - Resumen de Avance
+# 📊 SprinTask - Resumen de Avance
 
 **Fecha:** 2 de Marzo, 2026  
 **Estado:** ✅ Backend y Frontend Completados

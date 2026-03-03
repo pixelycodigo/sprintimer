@@ -6,33 +6,11 @@ import api from './api';
 
 export const costosService = {
   /**
-   * Listar costos por hora de un usuario
-   */
-  listarPorUsuario: async (usuario_id, params = {}) => {
-    const response = await api.get(`/admin/pagos/usuarios/${usuario_id}/costos`, { params });
-    return response.data;
-  },
-
-  /**
-   * Listar todos los costos (obtiene de todos los usuarios)
+   * Listar todos los costos
    */
   listar: async (params = {}) => {
-    // Nota: El backend no tiene una ruta para listar todos los costos
-    // Obtenemos la lista de usuarios y luego sus costos
-    const usuariosRes = await api.get('/admin/usuarios', { params: { limit: 100 } });
-    const usuarios = usuariosRes.data.usuarios || [];
-    
-    const allCostos = [];
-    for (const usuario of usuarios) {
-      try {
-        const costosRes = await api.get(`/admin/pagos/usuarios/${usuario.id}/costos`);
-        const costos = costosRes.data.costos || [];
-        allCostos.push(...costos.map(c => ({...c, usuario_nombre: usuario.nombre, usuario_email: usuario.email})));
-      } catch (error) {
-        // Si no tiene costos, continuar
-      }
-    }
-    return { costos: allCostos, total: allCostos.length };
+    const response = await api.get('/admin/pagos/costos', { params });
+    return response.data;
   },
 
   /**
@@ -46,8 +24,8 @@ export const costosService = {
   /**
    * Crear costo por hora
    */
-  crear: async (usuario_id, data) => {
-    const response = await api.post(`/admin/pagos/usuarios/${usuario_id}/costos`, data);
+  crear: async (data) => {
+    const response = await api.post('/admin/pagos/costos', data);
     return response.data;
   },
 
@@ -60,18 +38,12 @@ export const costosService = {
   },
 
   /**
-   * Eliminar costo por hora
+   * Eliminar costo por hora (soft delete)
    */
-  eliminar: async (id) => {
-    const response = await api.delete(`/admin/pagos/costos/${id}`);
-    return response.data;
-  },
-
-  /**
-   * Obtener costo vigente de un usuario
-   */
-  obtenerCostoVigente: async (usuario_id) => {
-    const response = await api.get(`/admin/pagos/usuarios/${usuario_id}/costo-vigente`);
+  eliminar: async (id, motivo = '') => {
+    const response = await api.delete(`/admin/pagos/costos/${id}`, {
+      data: { motivo }
+    });
     return response.data;
   },
 };

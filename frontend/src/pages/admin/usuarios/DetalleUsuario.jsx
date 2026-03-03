@@ -32,7 +32,7 @@ export default function DetalleUsuario() {
     try {
       await usuariosService.eliminar(id, motivo);
       setShowDeleteModal(false);
-      navigate('/admin/usuarios');
+      navigate('/admin/team');
     } catch (error) {
       console.error('Error al eliminar:', error);
     } finally {
@@ -55,8 +55,8 @@ export default function DetalleUsuario() {
     return (
       <div className="text-center py-12">
         <p className="text-slate-600">Usuario no encontrado</p>
-        <Link to="/admin/usuarios" className="btn-primary mt-4 inline-block">
-          Volver a usuarios
+        <Link to="/admin/team" className="btn-primary mt-4 inline-block">
+          Volver a team members
         </Link>
       </div>
     );
@@ -67,7 +67,7 @@ export default function DetalleUsuario() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Link to="/admin/usuarios" className="text-slate-400 hover:text-slate-600">
+          <Link to="/admin/team" className="text-slate-400 hover:text-slate-600">
             ←
           </Link>
           <div className="flex items-center gap-4">
@@ -81,7 +81,7 @@ export default function DetalleUsuario() {
           </div>
         </div>
         <div className="flex gap-3">
-          <Link to={`/admin/usuarios/${id}/editar`} className="btn-secondary">
+          <Link to={`/admin/team/${id}/editar`} className="btn-secondary">
             ✏️ Editar
           </Link>
           <button onClick={() => setShowDeleteModal(true)} className="btn-secondary text-red-600 hover:bg-red-50">
@@ -92,16 +92,16 @@ export default function DetalleUsuario() {
 
       {/* Info Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {/* Rol */}
+        {/* Perfil */}
         <div className="card-base p-6">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xl">
-              👤
+            <div className="w-12 h-12 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-xl">
+              📋
             </div>
             <div>
-              <p className="text-sm text-slate-600">Rol</p>
-              <p className="text-lg font-bold text-slate-900 capitalize">
-                {usuario.rol?.replace('_', ' ')}
+              <p className="text-sm text-slate-600">Perfil</p>
+              <p className="text-lg font-bold text-slate-900">
+                {usuario.perfil_en_proyecto || 'Sin asignar'}
               </p>
             </div>
           </div>

@@ -1,7 +1,7 @@
 /**
  * Script para configurar usuarios de prueba
- * - superadmin@sprintimer.com (rol: super_admin)
- * - admin@sprintimer.com (rol: admin)
+ * - superadmin@sprintask.com (rol: super_admin)
+ * - admin@sprintask.com (rol: admin)
  */
 
 require('dotenv').config();
@@ -27,34 +27,34 @@ async function setupTestUsers() {
 
     // Actualizar usuario existente a superadmin
     await db('usuarios')
-      .where('email', 'admin@sprintimer.com')
+      .where('email', 'admin@sprintask.com')
       .update({
-        email: 'superadmin@sprintimer.com',
+        email: 'superadmin@sprintask.com',
         nombre: 'Super Admin',
         rol_id: superAdminRole.id,
         password_hash: passwordHash,
       });
 
-    console.log('✅ superadmin@sprintimer.com actualizado');
+    console.log('✅ superadmin@sprintask.com actualizado');
 
     // Verificar si ya existe admin
-    const existingAdmin = await db('usuarios').where('email', 'admin@sprintimer.com').first();
+    const existingAdmin = await db('usuarios').where('email', 'admin@sprintask.com').first();
 
     if (existingAdmin) {
       // Actualizar admin existente
       await db('usuarios')
-        .where('email', 'admin@sprintimer.com')
+        .where('email', 'admin@sprintask.com')
         .update({
           nombre: 'Administrador',
           rol_id: adminRole.id,
           password_hash: passwordHash,
         });
-      console.log('✅ admin@sprintimer.com actualizado');
+      console.log('✅ admin@sprintask.com actualizado');
     } else {
       // Crear nuevo admin
       await db('usuarios').insert({
         nombre: 'Administrador',
-        email: 'admin@sprintimer.com',
+        email: 'admin@sprintask.com',
         password_hash: passwordHash,
         rol_id: adminRole.id,
         debe_cambiar_password: false,
@@ -62,18 +62,18 @@ async function setupTestUsers() {
         email_verificado: true,
         creado_por: null,
       });
-      console.log('✅ admin@sprintimer.com creado');
+      console.log('✅ admin@sprintask.com creado');
     }
 
     console.log('\n╔═══════════════════════════════════════════════════════════╗');
     console.log('║   ✅ Usuarios configurados exitosamente!                  ║');
     console.log('╚═══════════════════════════════════════════════════════════╝\n');
     console.log('   Super Admin:');
-    console.log('   📧 Email:     superadmin@sprintimer.com');
+    console.log('   📧 Email:     superadmin@sprintask.com');
     console.log('   🔑 Contraseña: Admin1234!');
     console.log('   🎯 Dashboard: /super-admin/dashboard\n');
     console.log('   Admin:');
-    console.log('   📧 Email:     admin@sprintimer.com');
+    console.log('   📧 Email:     admin@sprintask.com');
     console.log('   🔑 Contraseña: Admin1234!');
     console.log('   🎯 Dashboard: /admin/dashboard\n');
 

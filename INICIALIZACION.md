@@ -1,4 +1,4 @@
-# 🚀 Inicialización de SprinTimer - Guía Completa
+# 🚀 Inicialización de SprinTask - Guía Completa
 
 ## Para Nuevo Entorno de Desarrollo
 
@@ -107,10 +107,10 @@ El script `npm run seed-examples` crea:
 
 | Rol | Email | Contraseña |
 |-----|-------|------------|
-| Admin | admin@sprintimer.com | Admin1234! |
-| Team Member | juan@sprintimer.com | Team1234! |
-| Team Member | maria@sprintimer.com | Team1234! |
-| Team Member | carlos@sprintimer.com | Team1234! |
+| Admin | admin@sprintask.com | Admin1234! |
+| Team Member | juan@sprintask.com | Team1234! |
+| Team Member | maria@sprintask.com | Team1234! |
+| Team Member | carlos@sprintask.com | Team1234! |
 
 ### Clientes
 - TechCorp Solutions
@@ -225,14 +225,14 @@ Después de inicializar, verifica:
 
 1. **Backend:** http://localhost:3500/api/health
    ```json
-   {"status":"ok","message":"SprinTimer API está funcionando"}
+   {"status":"ok","message":"SprinTask API está funcionando"}
    ```
 
 2. **Frontend:** http://localhost:5173
    - Debería mostrar login
 
 3. **Login:**
-   - Ingresa con `admin@sprintimer.com` / `Admin1234!`
+   - Ingresa con `admin@sprintask.com` / `Admin1234!`
    - Deberías ver el dashboard con datos
 
 ---

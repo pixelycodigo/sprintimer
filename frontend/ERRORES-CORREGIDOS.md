@@ -135,8 +135,8 @@ npm run build
 
 | Rol | Email | Contraseña | Dashboard |
 |-----|-------|------------|-----------|
-| Super Admin | superadmin@sprintimer.com | Admin1234! | `/super-admin/dashboard` |
-| Admin | admin@sprintimer.com | Admin1234! | `/admin/dashboard` |
+| Super Admin | superadmin@sprintask.com | Admin1234! | `/super-admin/dashboard` |
+| Admin | admin@sprintask.com | Admin1234! | `/admin/dashboard` |
 
 ---
 

@@ -1,5 +1,5 @@
 /**
- * Script de Inicialización Completa - SprinTimer Backend
+ * Script de Inicialización Completa - SprinTask Backend
  * 
  * Este script configura la base de datos desde cero en un nuevo entorno.
  * Equivalente a init-all.sh pero compatible con Windows.
@@ -50,7 +50,7 @@ async function testDatabaseExists() {
 
 async function initAll() {
   console.log('╔═══════════════════════════════════════════════════════════╗');
-  console.log('║   🚀 Inicialización de SprinTimer Backend                 ║');
+  console.log('║   🚀 Inicialización de SprinTask Backend                 ║');
   console.log('╚═══════════════════════════════════════════════════════════╝\n');
 
   // 1. Verificar .env
@@ -130,10 +130,10 @@ async function initAll() {
 
   console.log('📊 Credenciales de acceso:\n');
   console.log('   Super Admin:');
-  console.log('   📧 Email:     superadmin@sprintimer.com');
+  console.log('   📧 Email:     superadmin@sprintask.com');
   console.log('   🔑 Contraseña: Admin1234!\n');
   console.log('   Admin:');
-  console.log('   📧 Email:     admin@sprintimer.com');
+  console.log('   📧 Email:     admin@sprintask.com');
   console.log('   🔑 Contraseña: Admin1234!\n');
   console.log('🚀 Para iniciar el servidor:');
   console.log('   npm run dev\n');

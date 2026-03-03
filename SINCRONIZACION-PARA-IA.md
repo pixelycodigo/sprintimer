@@ -1,4 +1,4 @@
-# 🔄 Guía de Sincronización - SprinTimer
+# 🔄 Guía de Sincronización - SprinTask
 
 **Fecha:** 3 de Marzo, 2026  
 **Versión:** 1.0  

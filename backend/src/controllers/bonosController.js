@@ -5,24 +5,222 @@ const db = require('../config/database');
  */
 const listarBonos = async (req, res) => {
   try {
-    const { activo = '' } = req.query;
-    
+    const { activo = '', periodo = '' } = req.query;
+
     let query = db('bonos')
-      .select('bonos.*', 'monedas.codigo as moneda_codigo', 'monedas.simbolo as moneda_simbolo')
+      .select('bonos.*', 'monedas.codigo as moneda_codigo', 'monedas.simbolo as moneda_simbolo', 'monedas.nombre as moneda_nombre')
       .leftJoin('monedas', 'bonos.moneda_id', 'monedas.id');
-    
+
     if (activo !== '') {
       query.where('bonos.activo', activo === 'true');
     }
-    
+
+    if (periodo !== '') {
+      query.where('bonos.periodo', periodo);
+    }
+
     const bonos = await query.orderBy('bonos.nombre', 'asc');
-    
+
+    // Verificar si cada bono está en uso
+    const bonosConUso = await Promise.all(bonos.map(async (bono) => {
+      const enUso = await db('bonos_usuarios')
+        .where('bono_id', bono.id)
+        .where('activo', true)
+        .count('* as total')
+        .first();
+
+      const totalEnUso = parseInt(enUso.total);
+
+      return {
+        ...bono,
+        en_uso: totalEnUso > 0,
+        total_en_uso: totalEnUso,
+      };
+    }));
+
     res.json({
-      bonos,
-      total: bonos.length,
+      bonos: bonosConUso,
+      total: bonosConUso.length,
     });
   } catch (error) {
     console.error('Error al listar bonos:', error);
+    res.status(500).json({
+      error: 'Error interno del servidor',
+    });
+  }
+};
+
+/**
+ * Obtener bono por ID
+ */
+const obtenerBono = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const bono = await db('bonos')
+      .select('bonos.*', 'monedas.codigo as moneda_codigo', 'monedas.simbolo as moneda_simbolo', 'monedas.nombre as moneda_nombre')
+      .leftJoin('monedas', 'bonos.moneda_id', 'monedas.id')
+      .where('bonos.id', id)
+      .first();
+
+    if (!bono) {
+      return res.status(404).json({
+        error: 'Bono no encontrado',
+      });
+    }
+
+    res.json({ bono });
+  } catch (error) {
+    console.error('Error al obtener bono:', error);
+    res.status(500).json({
+      error: 'Error interno del servidor',
+    });
+  }
+};
+
+/**
+ * Crear bono
+ */
+const crearBono = async (req, res) => {
+  try {
+    const { nombre, descripcion, monto, moneda_id, periodo, fecha_inicio, fecha_fin, activo } = req.body;
+
+    if (!nombre || !monto || !moneda_id) {
+      return res.status(400).json({
+        error: 'Campos requeridos',
+        message: 'Nombre, monto y moneda son requeridos',
+      });
+    }
+
+    const [bonoId] = await db('bonos').insert({
+      nombre,
+      descripcion,
+      monto: parseFloat(monto),
+      moneda_id,
+      periodo,
+      fecha_inicio: fecha_inicio || null,
+      fecha_fin: fecha_fin || null,
+      activo: activo !== undefined ? activo : true,
+      creado_por: req.usuario.id,
+    });
+
+    const bono = await db('bonos').where('id', bonoId).first();
+
+    res.status(201).json({
+      mensaje: 'Bono creado exitosamente',
+      bono,
+    });
+  } catch (error) {
+    console.error('Error al crear bono:', error);
+    res.status(500).json({
+      error: 'Error interno del servidor',
+    });
+  }
+};
+
+/**
+ * Actualizar bono
+ */
+const actualizarBono = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nombre, descripcion, monto, moneda_id, periodo, fecha_inicio, fecha_fin, activo } = req.body;
+
+    const bono = await db('bonos').where('id', id).first();
+    if (!bono) {
+      return res.status(404).json({
+        error: 'Bono no encontrado',
+      });
+    }
+
+    const updateData = {};
+    if (nombre !== undefined) updateData.nombre = nombre;
+    if (descripcion !== undefined) updateData.descripcion = descripcion;
+    if (monto !== undefined) updateData.monto = parseFloat(monto);
+    if (moneda_id !== undefined) updateData.moneda_id = moneda_id;
+    if (periodo !== undefined) updateData.periodo = periodo;
+    if (fecha_inicio !== undefined) updateData.fecha_inicio = fecha_inicio;
+    if (fecha_fin !== undefined) updateData.fecha_fin = fecha_fin;
+    if (activo !== undefined) updateData.activo = activo;
+
+    await db('bonos').where('id', id).update(updateData);
+
+    const bonoActualizado = await db('bonos').where('id', id).first();
+
+    res.json({
+      mensaje: 'Bono actualizado exitosamente',
+      bono: bonoActualizado,
+    });
+  } catch (error) {
+    console.error('Error al actualizar bono:', error);
+    res.status(500).json({
+      error: 'Error interno del servidor',
+    });
+  }
+};
+
+/**
+ * Eliminar bono (soft delete)
+ */
+const eliminarBono = async (req, res) => {
+  const { id } = req.params;
+  const { motivo } = req.body;
+
+  try {
+    const bono = await db('bonos').where('id', id).first();
+    if (!bono) {
+      return res.status(404).json({
+        error: 'Bono no encontrado',
+      });
+    }
+
+    // Verificar si está en uso
+    const enUso = await db('bonos_usuarios')
+      .where('bono_id', id)
+      .where('activo', true)
+      .count('* as total')
+      .first();
+
+    const totalEnUso = parseInt(enUso.total);
+
+    if (totalEnUso > 0) {
+      return res.status(400).json({
+        error: 'Bono en uso',
+        message: `El bono está siendo utilizado en ${totalEnUso} ${totalEnUso === 1 ? 'usuario' : 'usuarios'}. Debes desvincularlo de todos los usuarios antes de eliminarlo.`,
+      });
+    }
+
+    const configEliminados = await db('configuracion_eliminados')
+      .where('entidad', 'bono')
+      .first();
+
+    const diasRetencion = configEliminados ? configEliminados.dias_retencion : 60;
+    const fechaEliminacionPermanente = new Date();
+    fechaEliminacionPermanente.setDate(fechaEliminacionPermanente.getDate() + diasRetencion);
+
+    await db.transaction(async (trx) => {
+      await trx('eliminados').insert({
+        entidad: 'bono',
+        entidad_id: bono.id,
+        datos_originales: JSON.stringify(bono),
+        eliminado_por: req.usuario.id,
+        fecha_eliminacion_permanente: fechaEliminacionPermanente,
+        motivo: motivo || null,
+      });
+
+      await trx('bonos')
+        .where('id', id)
+        .update({
+          eliminado: true,
+          fecha_eliminacion: new Date(),
+        });
+    });
+
+    res.json({
+      mensaje: 'Bono movido a eliminados exitosamente',
+    });
+  } catch (error) {
+    console.error('Error al eliminar bono:', error);
     res.status(500).json({
       error: 'Error interno del servidor',
     });
@@ -246,6 +444,10 @@ const obtenerBonosAplicables = async (req, res) => {
 
 module.exports = {
   listarBonos,
+  obtenerBono,
+  crearBono,
+  actualizarBono,
+  eliminarBono,
   listarBonosUsuario,
   asignarBono,
   eliminarBonoUsuario,

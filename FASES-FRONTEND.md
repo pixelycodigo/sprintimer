@@ -1,4 +1,4 @@
-# 🎨 SprinTimer - Fases de Implementación del Frontend
+# 🎨 SprinTask - Fases de Implementación del Frontend
 
 **Fecha de inicio:** 1 de Marzo, 2026  
 **Estado:** 🚧 En Desarrollo  

@@ -22,28 +22,28 @@ async function seedEliminadosTest() {
     }
 
     // Obtener el admin existente para usar como creado_por
-    const admin = await db('usuarios').where('email', 'admin@sprintimer.com').first();
+    const admin = await db('usuarios').where('email', 'admin@sprintask.com').first();
     const adminId = admin ? admin.id : null;
 
     // Datos de los 3 admins eliminados
     const adminsEliminados = [
       {
         nombre: 'Roberto Fernández',
-        email: 'roberto.fernandez@sprintimer.com',
+        email: 'roberto.fernandez@sprintask.com',
         eliminado_por: adminId,
         motivo: 'Solicitud propia - Cambio de empresa',
         dias_hace: 5,
       },
       {
         nombre: 'Patricia Gómez',
-        email: 'patricia.gomez@sprintimer.com',
+        email: 'patricia.gomez@sprintask.com',
         eliminado_por: adminId,
         motivo: 'Violación de políticas de uso',
         dias_hace: 15,
       },
       {
         nombre: 'Carlos Mendoza',
-        email: 'carlos.mendoza.2@sprintimer.com',
+        email: 'carlos.mendoza.2@sprintask.com',
         eliminado_por: adminId,
         motivo: 'Proyecto cancelado por cliente',
         dias_hace: 25,
@@ -127,9 +127,9 @@ async function seedEliminadosTest() {
     console.log('   - 1 eliminado hace 25 días');
     console.log('\n🔐 CREDENCIALES (ya no pueden usarlas porque están eliminados):');
     console.log('   ─────────────────────────────────────────────────────');
-    console.log('   Email: roberto.fernandez@sprintimer.com');
-    console.log('   Email: patricia.gomez@sprintimer.com');
-    console.log('   Email: carlos.mendoza.2@sprintimer.com');
+    console.log('   Email: roberto.fernandez@sprintask.com');
+    console.log('   Email: patricia.gomez@sprintask.com');
+    console.log('   Email: carlos.mendoza.2@sprintask.com');
     console.log('   Password: Usuario123!');
     console.log('\n📍 Para ver los admins eliminados:');
     console.log('   http://localhost:5173/super-admin/eliminados');
