@@ -191,11 +191,8 @@ export const trimestresService = {
   /**
    * Crear trimestre
    */
-  crear: async (proyecto_id, data) => {
-    const response = await api.post('/admin/tiempo/trimestres', {
-      proyecto_id,
-      ...data
-    });
+  crear: async (data) => {
+    const response = await api.post('/admin/tiempo/trimestres', data);
     return response.data;
   },
 

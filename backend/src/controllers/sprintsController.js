@@ -152,48 +152,54 @@ const obtenerSprint = async (req, res) => {
  */
 const crearSprint = async (req, res) => {
   const { nombre, descripcion, fecha_inicio, fecha_fin, duracion_semanas = 2, proyecto_id } = req.body;
-  
+
   try {
-    if (!nombre || !fecha_inicio || !fecha_fin || !proyecto_id) {
+    if (!nombre) {
       return res.status(400).json({
-        error: 'Campos requeridos',
-        message: 'Nombre, fecha_inicio, fecha_fin y proyecto_id son requeridos',
+        error: 'Campo requerido',
+        message: 'Nombre es requerido',
       });
     }
-    
-    const proyecto = await db('proyectos').where('id', proyecto_id).first();
-    if (!proyecto) {
-      return res.status(404).json({
-        error: 'Proyecto no encontrado',
-      });
+
+    // Si hay proyecto_id, verificar que existe y tiene permisos
+    if (proyecto_id) {
+      const proyecto = await db('proyectos').where('id', proyecto_id).first();
+      if (!proyecto) {
+        return res.status(404).json({
+          error: 'Proyecto no encontrado',
+        });
+      }
+
+      if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
+        return res.status(403).json({
+          error: 'No autorizado',
+        });
+      }
     }
-    
-    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
-      return res.status(403).json({
-        error: 'No autorizado',
-      });
+
+    // Validar fechas si se proporcionan
+    if (fecha_inicio && fecha_fin) {
+      const inicio = new Date(fecha_inicio);
+      const fin = new Date(fecha_fin);
+
+      if (inicio >= fin) {
+        return res.status(400).json({
+          error: 'Fechas inválidas',
+          message: 'La fecha de inicio debe ser anterior a la fecha de fin',
+        });
+      }
     }
-    
-    const inicio = new Date(fecha_inicio);
-    const fin = new Date(fecha_fin);
-    
-    if (inicio >= fin) {
-      return res.status(400).json({
-        error: 'Fechas inválidas',
-        message: 'La fecha de inicio debe ser anterior a la fecha de fin',
-      });
-    }
-    
+
     const [sprintId] = await db('sprints').insert({
       nombre: nombre.trim(),
       descripcion: descripcion ? descripcion.trim() : null,
-      fecha_inicio: inicio,
-      fecha_fin: fin,
+      fecha_inicio: fecha_inicio ? new Date(fecha_inicio) : null,
+      fecha_fin: fecha_fin ? new Date(fecha_fin) : null,
       duracion_semanas,
-      proyecto_id,
+      proyecto_id: proyecto_id || null,
       creado_por: req.usuario.id,
     });
-    
+
     res.status(201).json({
       mensaje: 'Sprint creado exitosamente',
       sprint: {
@@ -214,8 +220,8 @@ const crearSprint = async (req, res) => {
  */
 const actualizarSprint = async (req, res) => {
   const { id } = req.params;
-  const { nombre, descripcion, fecha_inicio, fecha_fin, duracion_semanas } = req.body;
-  
+  const { nombre, descripcion, fecha_inicio, fecha_fin, duracion_semanas, proyecto_id } = req.body;
+
   try {
     const sprintExistente = await db('sprints').where('id', id).first();
     if (!sprintExistente) {
@@ -223,47 +229,51 @@ const actualizarSprint = async (req, res) => {
         error: 'Sprint no encontrado',
       });
     }
-    
-    const proyecto = await db('proyectos').where('id', sprintExistente.proyecto_id).first();
-    if (!proyecto) {
-      return res.status(404).json({
-        error: 'Proyecto no encontrado',
-      });
+
+    // Si hay proyecto_id, verificar que existe y tiene permisos
+    if (proyecto_id) {
+      const proyecto = await db('proyectos').where('id', proyecto_id).first();
+      if (!proyecto) {
+        return res.status(404).json({
+          error: 'Proyecto no encontrado',
+        });
+      }
+
+      if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
+        return res.status(403).json({
+          error: 'No autorizado',
+        });
+      }
     }
-    
-    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
-      return res.status(403).json({
-        error: 'No autorizado',
-      });
-    }
-    
+
     const datosActualizacion = {};
     if (nombre) datosActualizacion.nombre = nombre.trim();
     if (descripcion !== undefined) datosActualizacion.descripcion = descripcion ? descripcion.trim() : null;
     if (duracion_semanas !== undefined) datosActualizacion.duracion_semanas = duracion_semanas;
-    
+    if (proyecto_id !== undefined) datosActualizacion.proyecto_id = proyecto_id || null;
+
     if (fecha_inicio) {
       datosActualizacion.fecha_inicio = new Date(fecha_inicio);
     }
-    
+
     if (fecha_fin) {
       const inicio = new Date(fecha_inicio || sprintExistente.fecha_inicio);
       const fin = new Date(fecha_fin);
-      
+
       if (inicio >= fin) {
         return res.status(400).json({
           error: 'Fechas inválidas',
           message: 'La fecha de inicio debe ser anterior a la fecha de fin',
         });
       }
-      
+
       datosActualizacion.fecha_fin = fin;
     }
-    
+
     await db('sprints')
       .where('id', id)
       .update(datosActualizacion);
-    
+
     res.json({
       mensaje: 'Sprint actualizado exitosamente',
     });

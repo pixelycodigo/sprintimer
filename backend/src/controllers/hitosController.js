@@ -107,38 +107,42 @@ const obtenerHito = async (req, res) => {
  * Crear hito
  */
 const crearHito = async (req, res) => {
-  const { nombre, descripcion, fecha_limite, proyecto_id } = req.body;
-  
+  const { nombre, descripcion, fecha_limite, proyecto_id, actividad_id } = req.body;
+
   try {
-    if (!nombre || !fecha_limite || !proyecto_id) {
+    if (!nombre) {
       return res.status(400).json({
-        error: 'Campos requeridos',
-        message: 'Nombre, fecha_limite y proyecto_id son requeridos',
+        error: 'Campo requerido',
+        message: 'Nombre es requerido',
       });
     }
-    
-    const proyecto = await db('proyectos').where('id', proyecto_id).first();
-    if (!proyecto) {
-      return res.status(404).json({
-        error: 'Proyecto no encontrado',
-      });
+
+    // Si hay proyecto_id, verificar que existe y tiene permisos
+    if (proyecto_id) {
+      const proyecto = await db('proyectos').where('id', proyecto_id).first();
+      if (!proyecto) {
+        return res.status(404).json({
+          error: 'Proyecto no encontrado',
+        });
+      }
+
+      if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
+        return res.status(403).json({
+          error: 'No autorizado',
+        });
+      }
     }
-    
-    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
-      return res.status(403).json({
-        error: 'No autorizado',
-      });
-    }
-    
+
     const [hitoId] = await db('hitos').insert({
       nombre: nombre.trim(),
       descripcion: descripcion ? descripcion.trim() : null,
-      fecha_limite: new Date(fecha_limite),
-      proyecto_id,
+      fecha_limite: fecha_limite ? new Date(fecha_limite) : null,
+      proyecto_id: proyecto_id || null,
+      actividad_id: actividad_id || null,
       completado: false,
       creado_por: req.usuario.id,
     });
-    
+
     res.status(201).json({
       mensaje: 'Hito creado exitosamente',
       hito: {
@@ -159,8 +163,8 @@ const crearHito = async (req, res) => {
  */
 const actualizarHito = async (req, res) => {
   const { id } = req.params;
-  const { nombre, descripcion, fecha_limite, completado } = req.body;
-  
+  const { nombre, descripcion, fecha_limite, proyecto_id, actividad_id, completado } = req.body;
+
   try {
     const hitoExistente = await db('hitos').where('id', id).first();
     if (!hitoExistente) {
@@ -168,30 +172,35 @@ const actualizarHito = async (req, res) => {
         error: 'Hito no encontrado',
       });
     }
-    
-    const proyecto = await db('proyectos').where('id', hitoExistente.proyecto_id).first();
-    if (!proyecto) {
-      return res.status(404).json({
-        error: 'Proyecto no encontrado',
-      });
+
+    // Si hay proyecto_id, verificar que existe y tiene permisos
+    if (proyecto_id) {
+      const proyecto = await db('proyectos').where('id', proyecto_id).first();
+      if (!proyecto) {
+        return res.status(404).json({
+          error: 'Proyecto no encontrado',
+        });
+      }
+
+      if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
+        return res.status(403).json({
+          error: 'No autorizado',
+        });
+      }
     }
-    
-    if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
-      return res.status(403).json({
-        error: 'No autorizado',
-      });
-    }
-    
+
     const datosActualizacion = {};
     if (nombre) datosActualizacion.nombre = nombre.trim();
     if (descripcion !== undefined) datosActualizacion.descripcion = descripcion ? descripcion.trim() : null;
     if (completado !== undefined) datosActualizacion.completado = completado;
-    if (fecha_limite) datosActualizacion.fecha_limite = new Date(fecha_limite);
-    
+    if (fecha_limite !== undefined) datosActualizacion.fecha_limite = fecha_limite ? new Date(fecha_limite) : null;
+    if (proyecto_id !== undefined) datosActualizacion.proyecto_id = proyecto_id || null;
+    if (actividad_id !== undefined) datosActualizacion.actividad_id = actividad_id || null;
+
     await db('hitos')
       .where('id', id)
       .update(datosActualizacion);
-    
+
     res.json({
       mensaje: 'Hito actualizado exitosamente',
     });

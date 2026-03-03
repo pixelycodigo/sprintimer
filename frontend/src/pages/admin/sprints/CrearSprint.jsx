@@ -1,36 +1,24 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { hitosService } from '../../../services/tiempoService';
+import { sprintsService } from '../../../services/tiempoService';
 import { proyectosService } from '../../../services/proyectosService';
-import { actividadesService } from '../../../services/tiempoService';
 
-export default function CrearHito() {
+export default function CrearSprint() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [proyectos, setProyectos] = useState([]);
-  const [actividades, setActividades] = useState([]);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [formData, setFormData] = useState({
     nombre: '',
-    descripcion: '',
     proyecto_id: '',
-    actividad_id: '',
-    fecha_limite: '',
-    completado: false,
+    fecha_inicio: '',
+    fecha_fin: '',
   });
 
   useEffect(() => {
     cargarProyectos();
   }, []);
-
-  useEffect(() => {
-    if (formData.proyecto_id) {
-      cargarActividades(formData.proyecto_id);
-    } else {
-      setActividades([]);
-    }
-  }, [formData.proyecto_id]);
 
   const cargarProyectos = async () => {
     try {
@@ -38,16 +26,6 @@ export default function CrearHito() {
       setProyectos(response.proyectos || []);
     } catch (error) {
       console.error('Error al cargar proyectos:', error);
-    }
-  };
-
-  const cargarActividades = async (proyectoId) => {
-    try {
-      const response = await actividadesService.listar(proyectoId);
-      setActividades(response.actividades || []);
-    } catch (error) {
-      console.error('Error al cargar actividades:', error);
-      setActividades([]);
     }
   };
 
@@ -64,20 +42,18 @@ export default function CrearHito() {
     setLoading(true);
 
     try {
-      await hitosService.crear({
+      await sprintsService.crear({
         nombre: formData.nombre,
-        descripcion: formData.descripcion,
         proyecto_id: formData.proyecto_id ? parseInt(formData.proyecto_id) : null,
-        actividad_id: formData.actividad_id ? parseInt(formData.actividad_id) : null,
-        fecha_limite: formData.fecha_limite ? new Date(formData.fecha_limite) : null,
-        completado: formData.completado,
+        fecha_inicio: formData.fecha_inicio ? new Date(formData.fecha_inicio) : null,
+        fecha_fin: formData.fecha_fin ? new Date(formData.fecha_fin) : null,
       });
-      setSuccess('Hito creado exitosamente');
+      setSuccess('Sprint creado exitosamente');
       setTimeout(() => {
-        navigate('/admin/hitos');
+        navigate('/admin/sprints');
       }, 1500);
     } catch (err) {
-      setError(err.response?.data?.message || 'Error al crear hito');
+      setError(err.response?.data?.message || 'Error al crear sprint');
     } finally {
       setLoading(false);
     }
@@ -87,13 +63,13 @@ export default function CrearHito() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Link to="/admin/hitos" className="text-slate-400 hover:text-slate-600">
+        <Link to="/admin/sprints" className="text-slate-400 hover:text-slate-600">
           ←
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Nuevo Hito</h1>
+          <h1 className="text-2xl font-bold text-slate-900">Nuevo Sprint</h1>
           <p className="text-slate-600 mt-1">
-            Crea un nuevo hito para tu proyecto
+            Crea un nuevo sprint para tu proyecto
           </p>
         </div>
       </div>
@@ -120,14 +96,14 @@ export default function CrearHito() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                  Nombre del Hito *
+                  Nombre del Sprint *
                 </label>
                 <input
                   type="text"
                   value={formData.nombre}
                   onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
                   className="input-base"
-                  placeholder="ej: Lanzamiento MVP"
+                  placeholder="ej: Sprint 1"
                   required
                 />
               </div>
@@ -152,32 +128,20 @@ export default function CrearHito() {
                 </p>
               </div>
             </div>
-            <div className="mt-4">
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                Descripción
-              </label>
-              <textarea
-                value={formData.descripcion}
-                onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
-                className="input-base"
-                rows="3"
-                placeholder="Descripción del hito..."
-              />
-            </div>
           </div>
 
-          {/* Detalles del Hito */}
+          {/* Fechas del Sprint */}
           <div>
-            <h3 className="text-lg font-semibold text-slate-900 mb-4">Detalles del Hito</h3>
+            <h3 className="text-lg font-semibold text-slate-900 mb-4">Fechas del Sprint</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                  Fecha Límite (Opcional)
+                  Fecha de Inicio (Opcional)
                 </label>
                 <input
                   type="date"
-                  value={formData.fecha_limite}
-                  onChange={(e) => setFormData({ ...formData, fecha_limite: e.target.value })}
+                  value={formData.fecha_inicio}
+                  onChange={(e) => setFormData({ ...formData, fecha_inicio: e.target.value })}
                   className="input-base"
                 />
                 <p className="text-xs text-slate-500 mt-1">
@@ -186,40 +150,17 @@ export default function CrearHito() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                  Actividad (Opcional)
+                  Fecha de Fin (Opcional)
                 </label>
-                <select
-                  value={formData.actividad_id}
-                  onChange={(e) => setFormData({ ...formData, actividad_id: e.target.value })}
+                <input
+                  type="date"
+                  value={formData.fecha_fin}
+                  onChange={(e) => setFormData({ ...formData, fecha_fin: e.target.value })}
                   className="input-base"
-                  disabled={!formData.proyecto_id}
-                >
-                  <option value="">Sin actividad</option>
-                  {actividades.map((actividad) => (
-                    <option key={actividad.id} value={actividad.id}>
-                      {actividad.nombre}
-                    </option>
-                  ))}
-                </select>
+                />
                 <p className="text-xs text-slate-500 mt-1">
-                  Asocia este hito a una actividad específica
+                  Puedes asignar una fecha más tarde
                 </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                  Estado
-                </label>
-                <div className="flex items-center gap-4 mt-2">
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={formData.completado}
-                      onChange={(e) => setFormData({ ...formData, completado: e.target.checked })}
-                      className="w-4 h-4 text-slate-900 focus:ring-slate-900"
-                    />
-                    <span className="text-sm text-slate-700">Marcar como completado</span>
-                  </label>
-                </div>
               </div>
             </div>
           </div>
@@ -231,11 +172,11 @@ export default function CrearHito() {
               disabled={loading}
               className="btn-primary"
             >
-              {loading ? 'Creando...' : 'Crear Hito'}
+              {loading ? 'Creando...' : 'Crear Sprint'}
             </button>
             <button
               type="button"
-              onClick={() => navigate('/admin/hitos')}
+              onClick={() => navigate('/admin/sprints')}
               className="btn-secondary"
               disabled={loading}
             >

@@ -5,11 +5,16 @@ const db = require('../config/database');
  */
 const listarPerfiles = async (req, res) => {
   try {
-    const { search = '', activo = '', creado_por = '' } = req.query;
+    const { search = '', activo = '', creado_por = '', eliminado = 'false' } = req.query;
 
     let query = db('perfiles_team')
       .select('perfiles_team.*', 'usuarios.nombre as creador_nombre')
       .leftJoin('usuarios', 'perfiles_team.creado_por', 'usuarios.id');
+
+    // Filtrar eliminados por defecto
+    if (eliminado !== '') {
+      query.where('perfiles_team.eliminado', eliminado === 'true');
+    }
 
     // Filtros
     if (search) {
@@ -34,9 +39,25 @@ const listarPerfiles = async (req, res) => {
 
     const perfiles = await query.orderBy('perfiles_team.nombre', 'asc');
 
+    // Verificar si cada perfil está en uso
+    const perfilesConUso = await Promise.all(perfiles.map(async (perfil) => {
+      const enUso = await db('team_projects')
+        .where('perfil_team_id', perfil.id)
+        .count('* as total')
+        .first();
+
+      const totalEnUso = parseInt(enUso.total);
+
+      return {
+        ...perfil,
+        en_uso: totalEnUso > 0,
+        total_en_uso: totalEnUso,
+      };
+    }));
+
     res.json({
-      perfiles,
-      total: perfiles.length,
+      perfiles: perfilesConUso,
+      total: perfilesConUso.length,
     });
   } catch (error) {
     console.error('Error al listar perfiles:', error);
@@ -156,6 +177,22 @@ const actualizarPerfil = async (req, res) => {
       });
     }
 
+    // Verificar nombre duplicado (si se está actualizando el nombre)
+    if (nombre !== undefined && nombre !== perfil.nombre) {
+      const existing = await db('perfiles_team')
+        .where('nombre', nombre)
+        .where('creado_por', req.usuario.id)
+        .where('id', '!=', id)
+        .first();
+
+      if (existing) {
+        return res.status(409).json({
+          error: 'Perfil duplicado',
+          message: 'Ya existe un perfil con este nombre',
+        });
+      }
+    }
+
     // Actualizar
     const updateData = {};
     if (nombre !== undefined) updateData.nombre = nombre;
@@ -182,9 +219,10 @@ const actualizarPerfil = async (req, res) => {
  * Eliminar perfil (soft delete)
  */
 const eliminarPerfil = async (req, res) => {
-  try {
-    const { id } = req.params;
+  const { id } = req.params;
+  const { motivo } = req.body;
 
+  try {
     // Verificar que el perfil existe
     const perfil = await db('perfiles_team').where('id', id).first();
     if (!perfil) {
@@ -201,11 +239,53 @@ const eliminarPerfil = async (req, res) => {
       });
     }
 
-    // Eliminar (soft delete - desactivar)
-    await db('perfiles_team').where('id', id).update({ activo: false });
+    // Verificar si está en uso
+    const enUso = await db('team_projects')
+      .where('perfil_team_id', id)
+      .count('* as total')
+      .first();
+
+    const totalEnUso = parseInt(enUso.total);
+
+    if (totalEnUso > 0) {
+      return res.status(400).json({
+        error: 'Perfil en uso',
+        message: `El perfil está siendo utilizado en ${totalEnUso} miembro(s) del equipo`,
+      });
+    }
+
+    // Obtener configuración de días de retención
+    const configEliminados = await db('configuracion_eliminados')
+      .where('entidad', 'perfil_team')
+      .first();
+
+    const diasRetencion = configEliminados ? configEliminados.dias_retencion : 60;
+    const fechaEliminacionPermanente = new Date();
+    fechaEliminacionPermanente.setDate(fechaEliminacionPermanente.getDate() + diasRetencion);
+
+    // Soft delete en transacción
+    await db.transaction(async (trx) => {
+      // Copiar datos a eliminados
+      await trx('eliminados').insert({
+        entidad: 'perfil_team',
+        entidad_id: perfil.id,
+        datos_originales: JSON.stringify(perfil),
+        eliminado_por: req.usuario.id,
+        fecha_eliminacion_permanente: fechaEliminacionPermanente,
+        motivo: motivo || null,
+      });
+
+      // Marcar como eliminado
+      await trx('perfiles_team')
+        .where('id', id)
+        .update({
+          eliminado: true,
+          fecha_eliminacion: new Date(),
+        });
+    });
 
     res.json({
-      mensaje: 'Perfil eliminado exitosamente',
+      mensaje: 'Perfil movido a eliminados exitosamente',
     });
   } catch (error) {
     console.error('Error al eliminar perfil:', error);

@@ -5,19 +5,52 @@ const db = require('../config/database');
  */
 const listarMonedas = async (req, res) => {
   try {
-    const { activo = '' } = req.query;
-    
-    let query = db('monedas').select('*');
-    
-    if (activo !== '') {
-      query.where('activo', activo === 'true');
+    const { search = '' } = req.query;
+
+    let query = db('monedas')
+      .select('monedas.*')
+      .where('monedas.eliminado', false);
+
+    // Aplicar búsqueda
+    if (search) {
+      query.where((builder) => {
+        builder.where('monedas.codigo', 'like', `%${search}%`)
+               .orWhere('monedas.nombre', 'like', `%${search}%`)
+               .orWhere('monedas.simbolo', 'like', `%${search}%`);
+      });
     }
-    
-    const monedas = await query.orderBy('nombre', 'asc');
-    
+
+    const monedas = await query.orderBy('monedas.nombre', 'asc');
+
+    // Verificar si cada moneda está en uso
+    const monedasConUso = await Promise.all(monedas.map(async (moneda) => {
+      const enUsoCostos = await db('costos_por_hora')
+        .where('moneda_id', moneda.id)
+        .count('* as total')
+        .first();
+
+      const enUsoBonos = await db('bonos')
+        .where('moneda_id', moneda.id)
+        .count('* as total')
+        .first();
+
+      const enUsoProyectos = await db('proyectos')
+        .where('moneda_id', moneda.id)
+        .count('* as total')
+        .first();
+
+      const totalEnUso = parseInt(enUsoCostos.total) + parseInt(enUsoBonos.total) + parseInt(enUsoProyectos.total);
+
+      return {
+        ...moneda,
+        en_uso: totalEnUso > 0,
+        total_en_uso: totalEnUso,
+      };
+    }));
+
     res.json({
-      monedas,
-      total: monedas.length,
+      monedas: monedasConUso,
+      total: monedasConUso.length,
     });
   } catch (error) {
     console.error('Error al listar monedas:', error);
@@ -153,39 +186,73 @@ const actualizarMoneda = async (req, res) => {
 };
 
 /**
- * Eliminar moneda (soft delete - desactivar)
+ * Eliminar moneda (soft delete)
  */
 const eliminarMoneda = async (req, res) => {
   const { id } = req.params;
-  
+  const { motivo } = req.body;
+
   try {
+    // Verificar que la moneda existe
     const moneda = await db('monedas').where('id', id).first();
     if (!moneda) {
       return res.status(404).json({
         error: 'Moneda no encontrada',
       });
     }
-    
+
     // Verificar si está en uso
-    const enUsoProyectos = await db('proyectos')
+    const enUsoCostos = await db('costos_por_hora')
       .where('moneda_id', id)
       .count('* as total')
       .first();
-    
-    if (parseInt(enUsoProyectos.total) > 0) {
+
+    const enUsoBonos = await db('bonos')
+      .where('moneda_id', id)
+      .count('* as total')
+      .first();
+
+    const totalEnUso = parseInt(enUsoCostos.total) + parseInt(enUsoBonos.total);
+
+    if (totalEnUso > 0) {
       return res.status(400).json({
         error: 'Moneda en uso',
-        message: `La moneda está siendo utilizada en ${enUsoProyectos.total} proyecto(s)`,
+        message: `La moneda está siendo utilizada en ${totalEnUso} registro(s) de costos o bonos`,
       });
     }
-    
-    // Desactivar moneda
-    await db('monedas')
-      .where('id', id)
-      .update({ activo: false });
-    
+
+    // Obtener configuración de días de retención
+    const configEliminados = await db('configuracion_eliminados')
+      .where('entidad', 'moneda')
+      .first();
+
+    const diasRetencion = configEliminados ? configEliminados.dias_retencion : 60;
+    const fechaEliminacionPermanente = new Date();
+    fechaEliminacionPermanente.setDate(fechaEliminacionPermanente.getDate() + diasRetencion);
+
+    // Soft delete en transacción
+    await db.transaction(async (trx) => {
+      // Copiar datos a eliminados
+      await trx('eliminados').insert({
+        entidad: 'moneda',
+        entidad_id: moneda.id,
+        datos_originales: JSON.stringify(moneda),
+        eliminado_por: req.usuario.id,
+        fecha_eliminacion_permanente: fechaEliminacionPermanente,
+        motivo: motivo || null,
+      });
+
+      // Marcar como eliminado
+      await trx('monedas')
+        .where('id', id)
+        .update({
+          eliminado: true,
+          fecha_eliminacion: new Date(),
+        });
+    });
+
     res.json({
-      mensaje: 'Moneda desactivada exitosamente',
+      mensaje: 'Moneda movida a eliminados exitosamente',
     });
   } catch (error) {
     console.error('Error al eliminar moneda:', error);

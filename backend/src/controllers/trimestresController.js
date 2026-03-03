@@ -101,7 +101,7 @@ const obtenerTrimestre = async (req, res) => {
  */
 const crearTrimestre = async (req, res) => {
   const { nombre, fecha_inicio, fecha_fin, proyecto_id } = req.body;
-  
+
   try {
     // Validar campos requeridos
     if (!nombre || !fecha_inicio || !fecha_fin || !proyecto_id) {
@@ -110,7 +110,7 @@ const crearTrimestre = async (req, res) => {
         message: 'Nombre, fecha_inicio, fecha_fin y proyecto_id son requeridos',
       });
     }
-    
+
     // Verificar que el proyecto existe
     const proyecto = await db('proyectos').where('id', proyecto_id).first();
     if (!proyecto) {
@@ -118,25 +118,25 @@ const crearTrimestre = async (req, res) => {
         error: 'Proyecto no encontrado',
       });
     }
-    
+
     // Verificar permisos
     if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
       });
     }
-    
+
     // Verificar fechas
     const inicio = new Date(fecha_inicio);
     const fin = new Date(fecha_fin);
-    
+
     if (inicio >= fin) {
       return res.status(400).json({
         error: 'Fechas inválidas',
         message: 'La fecha de inicio debe ser anterior a la fecha de fin',
       });
     }
-    
+
     // Crear trimestre
     const [trimestreId] = await db('trimestres').insert({
       nombre: nombre.trim(),
@@ -145,7 +145,7 @@ const crearTrimestre = async (req, res) => {
       proyecto_id,
       creado_por: req.usuario.id,
     });
-    
+
     res.status(201).json({
       mensaje: 'Trimestre creado exitosamente',
       trimestre: {
@@ -166,9 +166,17 @@ const crearTrimestre = async (req, res) => {
  */
 const actualizarTrimestre = async (req, res) => {
   const { id } = req.params;
-  const { nombre, fecha_inicio, fecha_fin } = req.body;
-  
+  const { nombre, fecha_inicio, fecha_fin, proyecto_id } = req.body;
+
   try {
+    // Validar campos requeridos
+    if (!nombre || !fecha_inicio || !fecha_fin || !proyecto_id) {
+      return res.status(400).json({
+        error: 'Campos requeridos',
+        message: 'Nombre, fecha_inicio, fecha_fin y proyecto_id son requeridos',
+      });
+    }
+
     // Verificar que el trimestre existe
     const trimestreExistente = await db('trimestres').where('id', id).first();
     if (!trimestreExistente) {
@@ -176,45 +184,43 @@ const actualizarTrimestre = async (req, res) => {
         error: 'Trimestre no encontrado',
       });
     }
-    
+
     // Verificar proyecto
-    const proyecto = await db('proyectos').where('id', trimestreExistente.proyecto_id).first();
+    const proyecto = await db('proyectos').where('id', proyecto_id).first();
     if (!proyecto) {
       return res.status(404).json({
         error: 'Proyecto no encontrado',
       });
     }
-    
+
     // Verificar permisos
     if (req.usuario.rol === 'admin' && proyecto.creado_por !== req.usuario.id) {
       return res.status(403).json({
         error: 'No autorizado',
       });
     }
-    
-    // Preparar datos de actualización
-    const datosActualizacion = {};
-    if (nombre) datosActualizacion.nombre = nombre.trim();
-    if (fecha_inicio) datosActualizacion.fecha_inicio = new Date(fecha_inicio);
-    if (fecha_fin) {
-      const inicio = new Date(fecha_inicio || trimestreExistente.fecha_inicio);
-      const fin = new Date(fecha_fin);
-      
-      if (inicio >= fin) {
-        return res.status(400).json({
-          error: 'Fechas inválidas',
-          message: 'La fecha de inicio debe ser anterior a la fecha de fin',
-        });
-      }
-      
-      datosActualizacion.fecha_fin = fin;
+
+    // Verificar fechas
+    const inicio = new Date(fecha_inicio);
+    const fin = new Date(fecha_fin);
+
+    if (inicio >= fin) {
+      return res.status(400).json({
+        error: 'Fechas inválidas',
+        message: 'La fecha de inicio debe ser anterior a la fecha de fin',
+      });
     }
-    
+
     // Actualizar
     await db('trimestres')
       .where('id', id)
-      .update(datosActualizacion);
-    
+      .update({
+        nombre: nombre.trim(),
+        fecha_inicio: inicio,
+        fecha_fin: fin,
+        proyecto_id,
+      });
+
     res.json({
       mensaje: 'Trimestre actualizado exitosamente',
     });

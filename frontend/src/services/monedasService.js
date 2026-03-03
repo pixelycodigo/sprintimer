@@ -38,10 +38,12 @@ export const monedasService = {
   },
 
   /**
-   * Eliminar moneda
+   * Eliminar moneda (soft delete)
    */
-  eliminar: async (id) => {
-    const response = await api.delete(`/admin/pagos/monedas/${id}`);
+  eliminar: async (id, motivo = '') => {
+    const response = await api.delete(`/admin/pagos/monedas/${id}`, {
+      data: { motivo }
+    });
     return response.data;
   },
 

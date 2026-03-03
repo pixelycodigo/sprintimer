@@ -131,6 +131,22 @@ export default function ListaHitos() {
     }
   };
 
+  const handleToggleCompletado = async (hito) => {
+    try {
+      await hitosService.actualizar(hito.id, {
+        completado: !hito.completado
+      });
+      setSuccess(`Hito marcado como ${!hito.completado ? 'completado' : 'pendiente'}`);
+      setError('');
+      cargarDatos();
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (error) {
+      console.error('Error al actualizar estado:', error);
+      setError('Error al actualizar estado del hito');
+      setTimeout(() => setError(''), 3000);
+    }
+  };
+
   const getCompletadoBadge = (completado) => {
     return (
       <div className="flex items-center gap-2">
@@ -283,16 +299,26 @@ export default function ListaHitos() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
-                        {hito.proyecto_nombre || '—'}
-                      </span>
+                      {hito.proyecto_id ? (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                          {hito.proyecto_nombre || 'Proyecto'}
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
+                          ⊘ Sin Proyecto
+                        </span>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                      {hito.actividad_nombre || '—'}
+                      {hito.actividad_id ? (
+                        hito.actividad_nombre || 'Actividad'
+                      ) : (
+                        <span className="text-slate-400 italic">Por Asignar</span>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                      {hito.fecha_limite 
-                        ? new Date(hito.fecha_limite + 'T00:00:00').toLocaleDateString('es-ES', {
+                      {hito.fecha_limite
+                        ? new Date(hito.fecha_limite).toLocaleDateString('es-ES', {
                             year: 'numeric',
                             month: 'short',
                             day: 'numeric'
@@ -305,6 +331,17 @@ export default function ListaHitos() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex justify-end gap-2">
+                        <button
+                          onClick={() => handleToggleCompletado(hito)}
+                          className={`p-2 rounded hover:bg-slate-50 transition-colors ${
+                            hito.completado
+                              ? 'text-amber-600 hover:bg-amber-50'
+                              : 'text-emerald-600 hover:bg-emerald-50'
+                          }`}
+                          title={hito.completado ? 'Marcar como pendiente' : 'Marcar como completado'}
+                        >
+                          {hito.completado ? '↩️' : '✅'}
+                        </button>
                         <Link
                           to={`/admin/hitos/${hito.id}/editar`}
                           className="p-2 text-blue-600 rounded hover:bg-blue-50 transition-colors"

@@ -14,6 +14,10 @@ export default function CambiarPasswordUsuario() {
     es_temporal: true,
   });
 
+  const handleCancel = () => {
+    navigate(-1);
+  };
+
   const passwordRequirements = [
     { label: 'Mínimo 8 caracteres', met: formData.password.length >= 8 },
     { label: 'Al menos 1 mayúscula', met: /[A-Z]/.test(formData.password) },
@@ -186,9 +190,13 @@ export default function CambiarPasswordUsuario() {
             >
               {loading ? 'Guardando...' : 'Cambiar Contraseña'}
             </button>
-            <Link to={`/admin/usuarios/${id}`} className="btn-secondary">
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="btn-secondary"
+            >
               Cancelar
-            </Link>
+            </button>
           </div>
         </form>
       </div>

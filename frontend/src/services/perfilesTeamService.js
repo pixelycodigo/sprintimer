@@ -36,8 +36,10 @@ export const perfilesTeamService = {
   /**
    * Eliminar perfil (soft delete)
    */
-  eliminar: async (id) => {
-    const response = await api.delete(`/admin/perfiles-team/${id}`);
+  eliminar: async (id, motivo = '') => {
+    const response = await api.delete(`/admin/perfiles-team/${id}`, {
+      data: { motivo }
+    });
     return response.data;
   },
 };

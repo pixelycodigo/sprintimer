@@ -58,9 +58,17 @@ export default function PerfilesEquipo() {
   const confirmarEliminar = async () => {
     if (!perfilEliminar) return;
 
+    // No permitir eliminar si está en uso
+    if (perfilEliminar.en_uso) {
+      const miembroText = perfilEliminar.total_en_uso === 1 ? 'miembro' : 'miembros';
+      setError(`El perfil está en uso en ${perfilEliminar.total_en_uso} ${miembroText}. Debes desvincularlo de todos los miembros del equipo antes de eliminarlo.`);
+      setTimeout(() => setError(''), 5000);
+      return;
+    }
+
     try {
       // Soft delete - se mueve a eliminados
-      await perfilesTeamService.eliminar(perfilEliminar.id);
+      await perfilesTeamService.eliminar(perfilEliminar.id, 'Eliminado desde el frontend');
       setSuccess('Perfil movido a eliminados');
       setPerfilEliminar(null);
       setShowModalEliminar(false);
@@ -156,6 +164,9 @@ export default function PerfilesEquipo() {
                   Nombre de Perfil
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                  En Uso
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
                   Fecha de Creación
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">
@@ -198,6 +209,17 @@ export default function PerfilesEquipo() {
                           )}
                         </div>
                       </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      {perfil.en_uso ? (
+                        <span className="text-slate-700">
+                          Usado en {perfil.total_en_uso} {perfil.total_en_uso === 1 ? 'miembro' : 'miembros'}
+                        </span>
+                      ) : (
+                        <span className="text-slate-400">
+                          Sin Uso
+                        </span>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
                       {perfil.fecha_creacion 
@@ -270,8 +292,9 @@ export default function PerfilesEquipo() {
               type="button"
               onClick={confirmarEliminar}
               className="btn-primary bg-red-600 hover:bg-red-700 text-white"
+              disabled={perfilEliminar?.en_uso}
             >
-              🗑️ Eliminar
+              🗑️ {perfilEliminar?.en_uso ? 'No se puede eliminar' : 'Eliminar'}
             </button>
           </div>
         }
@@ -292,12 +315,21 @@ export default function PerfilesEquipo() {
               )}
             </div>
           </div>
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-            <p className="text-sm text-amber-800">
-              <strong>⚠️ Atención:</strong> El perfil se moverá a la papelera de eliminados. 
-              Podrás recuperarlo o eliminarlo permanentemente desde allí.
-            </p>
-          </div>
+          {perfilEliminar?.en_uso ? (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+              <p className="text-sm text-red-800">
+                <strong>🔒 Bloqueado:</strong> Este perfil está siendo utilizado en <strong>{perfilEliminar.total_en_uso} {perfilEliminar.total_en_uso === 1 ? 'miembro' : 'miembros'}</strong>.
+                Debes desvincularlo de todos los miembros del equipo antes de eliminarlo.
+              </p>
+            </div>
+          ) : (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+              <p className="text-sm text-amber-800">
+                <strong>⚠️ Atención:</strong> El perfil se moverá a la papelera de eliminados.
+                Podrás recuperarlo o eliminarlo permanentemente desde allí.
+              </p>
+            </div>
+          )}
         </div>
       </Modal>
     </div>

@@ -1,39 +1,21 @@
 /**
- * Script para sincronizar base de datos completa (Schema + Datos)
- * Ejecutar: node scripts/sync-db.js database_backup_2026-03-03.json
+ * Script para importar base de datos MySQL desde JSON
+ * Ejecutar: node scripts/import-db.js database_backup_2026-03-03.json
  */
 
 const db = require('../src/config/database');
 const fs = require('fs');
 const path = require('path');
 
-async function syncDatabase(filePath) {
+async function importDatabase(filePath) {
   try {
-    console.log('🔄 Sincronizando base de datos...\n');
+    console.log('📦 Importando base de datos...\n');
 
     // Leer archivo JSON
     const importData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 
     console.log(`Base de datos: ${importData.database}`);
     console.log(`Timestamp: ${importData.timestamp}\n`);
-
-    // Paso 1: Ejecutar migraciones primero (actualiza schema)
-    console.log('📦 Paso 1: Ejecutando migraciones...\n');
-    
-    const { execSync } = require('child_process');
-    try {
-      execSync('npx knex migrate:latest', { 
-        cwd: __dirname,
-        stdio: 'inherit'
-      });
-      console.log('✅ Migraciones ejecutadas\n');
-    } catch (error) {
-      console.error('❌ Error al ejecutar migraciones:', error.message);
-      throw error;
-    }
-
-    // Paso 2: Importar datos
-    console.log('📦 Paso 2: Importando datos...\n');
 
     // Ordenar tablas por dependencias
     const tableOrder = [
@@ -88,25 +70,11 @@ async function syncDatabase(filePath) {
       }
     }
 
-    console.log(`\n✅ Base de datos sincronizada exitosamente\n`);
-
-    // Paso 3: Verificar integridad
-    console.log('📊 Paso 3: Verificando integridad...\n');
-    
-    const migrations = await db('knex_migrations').count('* as total').first();
-    console.log(`  ✅ Migraciones: ${migrations.total}`);
-    
-    const usuarios = await db('usuarios').count('* as total').first();
-    console.log(`  ✅ Usuarios: ${usuarios.total}`);
-    
-    const roles = await db('roles').select('nombre');
-    console.log(`  ✅ Roles: ${roles.map(r => r.nombre).join(', ')}`);
-
-    console.log('\n✅ Sincronización completada\n');
+    console.log(`\n✅ Base de datos importada exitosamente\n`);
 
     await db.destroy();
   } catch (error) {
-    console.error('❌ Error al sincronizar base de datos:', error.message);
+    console.error('❌ Error al importar base de datos:', error.message);
     console.error(error);
     await db.destroy();
     process.exit(1);
@@ -117,8 +85,8 @@ async function syncDatabase(filePath) {
 const filePath = process.argv[2];
 if (!filePath) {
   console.error('❌ Error: Debes proporcionar la ruta del archivo JSON');
-  console.error('Uso: node scripts/sync-db.js <ruta-al-archivo.json>');
+  console.error('Uso: node scripts/import-db.js <ruta-al-archivo.json>');
   process.exit(1);
 }
 
-syncDatabase(filePath);
+importDatabase(filePath);

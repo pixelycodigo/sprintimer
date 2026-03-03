@@ -46,6 +46,8 @@ import DetalleCorte from './pages/admin/cortes/DetalleCorte';
 
 // Admin - Sprints
 import ListaSprints from './pages/admin/sprints/ListaSprints';
+import CrearSprint from './pages/admin/sprints/CrearSprint';
+import EditarSprint from './pages/admin/sprints/EditarSprint';
 
 // Admin - Actividades
 import ListaActividades from './pages/admin/actividades/ListaActividades';
@@ -59,6 +61,8 @@ import EditarHito from './pages/admin/hitos/EditarHito';
 
 // Admin - Trimestres
 import ListaTrimestres from './pages/admin/trimestres/ListaTrimestres';
+import CrearTrimestre from './pages/admin/trimestres/CrearTrimestre';
+import EditarTrimestre from './pages/admin/trimestres/EditarTrimestre';
 
 // Admin - Bonos
 import ListaBonos from './pages/admin/bonos/ListaBonos';
@@ -68,6 +72,8 @@ import CostosPorHora from './pages/admin/costos/CostosPorHora';
 
 // Admin - Monedas
 import ListaMonedas from './pages/admin/monedas/ListaMonedas';
+import CrearMoneda from './pages/admin/monedas/CrearMoneda';
+import EditarMoneda from './pages/admin/monedas/EditarMoneda';
 
 // Team Member - Cortes
 import MisCortes from './pages/usuario/cortes/MisCortes';
@@ -430,6 +436,8 @@ function App() {
             <Route path="cortes" element={<CortesMensuales />} />
             <Route path="cortes/:id" element={<DetalleCorte />} />
             <Route path="sprints" element={<ListaSprints />} />
+            <Route path="sprints/crear" element={<CrearSprint />} />
+            <Route path="sprints/:id/editar" element={<EditarSprint />} />
             <Route path="actividades" element={<ListaActividades />} />
             <Route path="actividades/crear" element={<CrearActividad />} />
             <Route path="actividades/:id/editar" element={<EditarActividad />} />
@@ -437,9 +445,13 @@ function App() {
             <Route path="hitos/crear" element={<CrearHito />} />
             <Route path="hitos/:id/editar" element={<EditarHito />} />
             <Route path="trimestres" element={<ListaTrimestres />} />
+            <Route path="trimestres/crear" element={<CrearTrimestre />} />
+            <Route path="trimestres/:id/editar" element={<EditarTrimestre />} />
             <Route path="bonos" element={<ListaBonos />} />
             <Route path="costos" element={<CostosPorHora />} />
             <Route path="monedas" element={<ListaMonedas />} />
+            <Route path="monedas/crear" element={<CrearMoneda />} />
+            <Route path="monedas/:id/editar" element={<EditarMoneda />} />
           </Route>
 
           {/* Rutas Protegidas - Team Member (rol: team_member) */}
