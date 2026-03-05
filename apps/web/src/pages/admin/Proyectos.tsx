@@ -1,0 +1,1 @@
+export default function AdminProyectos() { return (<div><h1 className="text-2xl font-bold text-gray-900 mb-6">Proyectos</h1><div className="card p-6"><p className="text-gray-600">Página de Proyectos - En construcción</p></div></div>); }

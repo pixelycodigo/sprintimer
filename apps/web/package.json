@@ -1,0 +1,41 @@
+{
+  "name": "@sprintask/web",
+  "version": "1.0.0",
+  "description": "Frontend React para SprinTask",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,.tsx"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.22.3",
+    "@tanstack/react-query": "^5.29.2",
+    "@tanstack/react-table": "^8.16.0",
+    "zustand": "^4.5.2",
+    "axios": "^1.6.8",
+    "recharts": "^2.12.5",
+    "react-hook-form": "^7.51.3",
+    "@hookform/resolvers": "^3.3.4",
+    "zod": "^3.23.8",
+    "sonner": "^1.4.41",
+    "lucide-react": "^0.372.0",
+    "clsx": "^2.1.1",
+    "class-variance-authority": "^0.7.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "vite": "^5.2.10",
+    "typescript": "^5.4.5",
+    "tailwindcss": "^3.4.3",
+    "postcss": "^8.4.38",
+    "autoprefixer": "^10.4.19"
+  }
+}

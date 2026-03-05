@@ -1,0 +1,13 @@
+{
+  "name": "@sprintask/shared",
+  "version": "1.0.0",
+  "description": "Código compartido para SprinTask",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}

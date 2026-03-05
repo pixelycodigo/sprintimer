@@ -1,0 +1,1 @@
+export default function AdminSeniorities() { return (<div><h1 className="text-2xl font-bold text-gray-900 mb-6">Seniorities</h1><div className="card p-6"><p className="text-gray-600">Página de Seniorities - En construcción</p></div></div>); }
