@@ -4,7 +4,7 @@ import { generateToken, generateRefreshToken, verifyToken, TokenPayload } from '
 import { AppError } from '../middleware/error.middleware.js';
 
 export interface RegistroData {
-  nombre_completo: string;
+  nombre: string;
   usuario: string;
   email: string;
   password: string;
@@ -18,7 +18,7 @@ export interface LoginData {
 export interface AuthResponse {
   user: {
     id: number;
-    nombre_completo: string;
+    nombre: string;
     usuario: string;
     email: string;
     rol: string;
@@ -50,7 +50,7 @@ export class AuthService {
 
     // Crear usuario
     const userId = await usuarioRepository.create({
-      nombre_completo: data.nombre_completo,
+      nombre: data.nombre,
       usuario: data.usuario,
       email: data.email,
       password_hash: passwordHash,
@@ -72,7 +72,7 @@ export class AuthService {
     return {
       user: {
         id: usuario.id,
-        nombre_completo: usuario.nombre_completo,
+        nombre: usuario.nombre,
         usuario: usuario.usuario,
         email: usuario.email,
         rol: usuario.rol || 'administrador',
@@ -114,7 +114,7 @@ export class AuthService {
     return {
       user: {
         id: usuario.id,
-        nombre_completo: usuario.nombre_completo,
+        nombre: usuario.nombre,
         usuario: usuario.usuario,
         email: usuario.email,
         rol: usuario.rol || 'administrador',
@@ -144,7 +144,7 @@ export class AuthService {
       return {
         user: {
           id: usuario.id,
-          nombre_completo: usuario.nombre_completo,
+          nombre: usuario.nombre,
           usuario: usuario.usuario,
           email: usuario.email,
           rol: usuario.rol || 'administrador',
@@ -167,7 +167,7 @@ export class AuthService {
 
     return {
       id: usuario.id,
-      nombre_completo: usuario.nombre_completo,
+      nombre: usuario.nombre,
       usuario: usuario.usuario,
       email: usuario.email,
       rol: usuario.rol || 'administrador',
@@ -178,7 +178,7 @@ export class AuthService {
     };
   }
 
-  async updateProfile(userId: number, data: { nombre_completo?: string; email?: string }) {
+  async updateProfile(userId: number, data: { nombre?: string; email?: string }) {
     // Verificar si el email cambia y si ya existe
     if (data.email) {
       const emailExists = await usuarioRepository.emailExists(data.email, userId);
@@ -188,7 +188,7 @@ export class AuthService {
     }
 
     const updated = await usuarioRepository.update(userId, {
-      nombre_completo: data.nombre_completo,
+      nombre: data.nombre,
       email: data.email,
       email_verificado: data.email ? false : undefined,
     });

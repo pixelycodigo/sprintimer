@@ -3,7 +3,7 @@ import { hashPassword } from '../utils/hash.js';
 import { AppError } from '../middleware/error.middleware.js';
 
 export interface UsuarioCreateData {
-  nombre_completo: string;
+  nombre: string;
   usuario: string;
   email: string;
   password: string;
@@ -11,7 +11,7 @@ export interface UsuarioCreateData {
 }
 
 export interface UsuarioUpdateData {
-  nombre_completo?: string;
+  nombre?: string;
   email?: string;
   activo?: boolean;
 }
@@ -49,7 +49,7 @@ export class UsuariosService {
 
     // Crear usuario
     const userId = await usuarioRepository.create({
-      nombre_completo: data.nombre_completo,
+      nombre: data.nombre,
       usuario: data.usuario,
       email: data.email,
       password_hash: passwordHash,
@@ -73,7 +73,7 @@ export class UsuariosService {
     }
 
     const updated = await usuarioRepository.update(id, {
-      nombre_completo: data.nombre_completo,
+      nombre: data.nombre,
       email: data.email,
       activo: data.activo,
     });

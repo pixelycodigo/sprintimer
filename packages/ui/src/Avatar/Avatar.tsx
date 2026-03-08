@@ -1,54 +1,47 @@
-import { HTMLAttributes, forwardRef } from 'react';
-import { cn } from '../../utils/cn';
+import * as React from 'react';
+import * as AvatarPrimitive from '@radix-ui/react-avatar';
+import { cn } from '../utils/cn';
 
-export interface AvatarProps extends HTMLAttributes<HTMLDivElement> {
-  src?: string;
-  fallback: string;
-  size?: 'sm' | 'md' | 'lg';
-}
+const Avatar = React.forwardRef<
+  React.ElementRef<typeof AvatarPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>
+>(({ className, ...props }, ref) => (
+  <AvatarPrimitive.Root
+    ref={ref}
+    className={cn(
+      'relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full',
+      className
+    )}
+    {...props}
+  />
+));
+Avatar.displayName = AvatarPrimitive.Root.displayName;
 
-export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
-  ({ className, src, fallback, size = 'md', ...props }, ref) => {
-    const sizeStyles = {
-      sm: 'h-8 w-8 text-sm',
-      md: 'h-10 w-10 text-base',
-      lg: 'h-12 w-12 text-lg',
-    };
+const AvatarImage = React.forwardRef<
+  React.ElementRef<typeof AvatarPrimitive.Image>,
+  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>
+>(({ className, ...props }, ref) => (
+  <AvatarPrimitive.Image
+    ref={ref}
+    className={cn('aspect-square h-full w-full', className)}
+    {...props}
+  />
+));
+AvatarImage.displayName = AvatarPrimitive.Image.displayName;
 
-    if (src) {
-      return (
-        <div
-          ref={ref}
-          className={cn(
-            'relative flex shrink-0 overflow-hidden rounded-full',
-            sizeStyles[size],
-            className
-          )}
-          {...props}
-        >
-          <img
-            className="aspect-square h-full w-full object-cover"
-            src={src}
-            alt={fallback}
-          />
-        </div>
-      );
-    }
+const AvatarFallback = React.forwardRef<
+  React.ElementRef<typeof AvatarPrimitive.Fallback>,
+  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback>
+>(({ className, ...props }, ref) => (
+  <AvatarPrimitive.Fallback
+    ref={ref}
+    className={cn(
+      'flex h-full w-full items-center justify-center rounded-full bg-slate-900 dark:bg-zinc-100 text-white dark:text-zinc-900 font-semibold',
+      className
+    )}
+    {...props}
+  />
+));
+AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
 
-    return (
-      <div
-        ref={ref}
-        className={cn(
-          'relative flex shrink-0 overflow-hidden rounded-full bg-blue-600 items-center justify-center text-white font-medium',
-          sizeStyles[size],
-          className
-        )}
-        {...props}
-      >
-        {fallback.charAt(0).toUpperCase()}
-      </div>
-    );
-  }
-);
-
-Avatar.displayName = 'Avatar';
+export { Avatar, AvatarImage, AvatarFallback };

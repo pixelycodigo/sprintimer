@@ -16,6 +16,24 @@ const queryClient = new QueryClient({
   },
 });
 
+// Aplicar tema inicial antes de renderizar
+if (typeof window !== 'undefined') {
+  const storedTheme = localStorage.getItem('theme-storage');
+  if (storedTheme) {
+    try {
+      const parsed = JSON.parse(storedTheme);
+      const theme = parsed.state?.theme || parsed.theme;
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    } catch {
+      // Ignorar errores de parseo
+    }
+  }
+}
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>

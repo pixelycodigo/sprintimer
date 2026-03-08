@@ -1,34 +1,5 @@
 import api from './api';
-import { User } from '../stores/auth.store';
-
-export interface Usuario {
-  id: number;
-  nombre_completo: string;
-  usuario: string;
-  email: string;
-  rol: string;
-  rol_id: number;
-  avatar?: string;
-  email_verificado: boolean;
-  activo: boolean;
-  ultimo_login?: string;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface CreateUsuarioData {
-  nombre_completo: string;
-  usuario: string;
-  email: string;
-  password: string;
-  rol_id: number;
-}
-
-export interface UpdateUsuarioData {
-  nombre_completo?: string;
-  email?: string;
-  activo?: boolean;
-}
+import type { Usuario, CreateUsuarioInput as CreateUsuarioData, UpdateUsuarioInput as UpdateUsuarioData } from '@shared';
 
 export interface ChangePasswordData {
   password: string;

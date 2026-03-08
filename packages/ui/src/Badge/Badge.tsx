@@ -1,34 +1,43 @@
-import { HTMLAttributes, forwardRef } from 'react';
-import { cn } from '../../utils/cn';
+import * as React from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from '../utils/cn';
 
-export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
-  variant?: 'default' | 'success' | 'warning' | 'danger' | 'info';
-}
-
-export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
-  ({ className, variant = 'default', children, ...props }, ref) => {
-    const variantStyles = {
-      default: 'bg-gray-100 text-gray-800',
-      success: 'bg-green-100 text-green-800',
-      warning: 'bg-yellow-100 text-yellow-800',
-      danger: 'bg-red-100 text-red-800',
-      info: 'bg-blue-100 text-blue-800',
-    };
-
-    return (
-      <span
-        ref={ref}
-        className={cn(
-          'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold',
-          variantStyles[variant],
-          className
-        )}
-        {...props}
-      >
-        {children}
-      </span>
-    );
+const badgeVariants = cva(
+  'inline-flex items-center rounded-full border border-slate-200 px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2 dark:border-zinc-800 dark:focus:ring-zinc-100 dark:focus:ring-offset-zinc-950',
+  {
+    variants: {
+      variant: {
+        default:
+          'border-transparent bg-slate-900 text-slate-50 hover:bg-slate-900/80 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-100/80',
+        secondary:
+          'border-transparent bg-slate-100 text-slate-900 hover:bg-slate-100/80 dark:bg-zinc-800 dark:text-zinc-50 dark:hover:bg-zinc-800/80',
+        destructive:
+          'border-transparent bg-red-600 text-slate-50 hover:bg-red-600/80 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50',
+        outline: 'text-slate-950 dark:text-zinc-50',
+        success:
+          'border-transparent bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+        warning:
+          'border-transparent bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
+        info:
+          'border-transparent bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+        inactive:
+          'border-transparent bg-slate-100 text-slate-900 hover:bg-slate-100/80 dark:bg-zinc-800/30 dark:text-zinc-400 dark:hover:bg-zinc-800/50',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+    },
   }
 );
 
-Badge.displayName = 'Badge';
+export interface BadgeProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof badgeVariants> {}
+
+function Badge({ className, variant, ...props }: BadgeProps) {
+  return (
+    <div className={cn(badgeVariants({ variant }), className)} {...props} />
+  );
+}
+
+export { Badge, badgeVariants };

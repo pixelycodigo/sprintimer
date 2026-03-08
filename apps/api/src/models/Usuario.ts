@@ -1,6 +1,6 @@
 export interface Usuario {
   id: number;
-  nombre_completo: string;
+  nombre: string;
   usuario: string;
   email: string;
   password_hash: string;
@@ -16,17 +16,19 @@ export interface Usuario {
 }
 
 export interface UsuarioCreate {
-  nombre_completo: string;
+  nombre: string;
   usuario: string;
   email: string;
   password_hash: string;
   rol_id: number;
   avatar?: string;
+  email_verificado?: boolean;
+  activo?: boolean;
   creado_por?: number;
 }
 
 export interface UsuarioUpdate {
-  nombre_completo?: string;
+  nombre?: string;
   email?: string;
   avatar?: string;
   email_verificado?: boolean;

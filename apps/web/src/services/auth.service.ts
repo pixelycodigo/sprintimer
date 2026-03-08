@@ -8,7 +8,7 @@ export interface LoginData {
 }
 
 export interface RegistroData {
-  nombre_completo: string;
+  nombre: string;
   usuario: string;
   email: string;
   password: string;
@@ -41,7 +41,7 @@ export const authService = {
     return response.data.data;
   },
 
-  async updateProfile(data: { nombre_completo?: string; email?: string }): Promise<User> {
+  async updateProfile(data: { nombre?: string; email?: string }): Promise<User> {
     const response = await api.put<{ data: User }>('/auth/profile', data);
     return response.data.data;
   },

@@ -60,7 +60,8 @@ export function rolesMiddleware(allowedRoles: string[]) {
 
 // Middlewares predefinidos por rol
 export const superAdminMiddleware = rolesMiddleware(['super_admin']);
-export const adminMiddleware = rolesMiddleware(['administrador']);
+// El super_admin tiene acceso a todas las rutas de administrador
+export const adminMiddleware = rolesMiddleware(['administrador', 'super_admin']);
 export const talentMiddleware = rolesMiddleware(['talent']);
 export const clienteMiddleware = rolesMiddleware(['cliente']);
 

@@ -10,23 +10,25 @@
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --ext .ts",
+    "test": "vitest",
     "migrate": "knex migrate:latest --knexfile database/knexfile.ts",
     "migrate:rollback": "knex migrate:rollback --knexfile database/knexfile.ts",
     "migrate:fresh": "knex migrate:fresh --knexfile database/knexfile.ts",
     "seed": "knex seed:run --knexfile database/knexfile.ts",
-    "db:setup": "npm run migrate && npm run seed"
+    "db:setup": "npm run migrate && npm run seed",
+    "db:schema": "node scripts/export-db-schema.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "express-rate-limit": "^7.4.0",
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
     "knex": "^3.1.0",
     "morgan": "^1.10.0",
     "mysql2": "^3.9.2",
-    "express-rate-limit": "^7.4.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -36,8 +38,11 @@
     "@types/jsonwebtoken": "^9.0.6",
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.12.7",
+    "@vitest/coverage-v8": "^1.4.0",
+    "tsc-alias": "^1.8.8",
     "tsx": "^4.7.3",
     "typescript": "^5.4.5",
-    "tsc-alias": "^1.8.8"
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^1.4.0"
   }
 }

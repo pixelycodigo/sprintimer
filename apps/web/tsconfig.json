@@ -16,9 +16,13 @@
     "paths": {
       "@/*": ["./src/*"],
       "@ui/*": ["../../packages/ui/src/*"],
-      "@shared/*": ["../../packages/shared/src/*"]
-    }
+      "@ui": ["../../packages/ui/src/index.ts"],
+      "@shared/*": ["../../packages/shared/src/*"],
+      "@shared": ["../../packages/shared/src/index.ts"]
+    },
+    "types": ["vitest/globals", "@testing-library/jest-dom/vitest"]
   },
   "include": ["src", "../../packages/ui/src", "../../packages/shared/src"],
+  "exclude": ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

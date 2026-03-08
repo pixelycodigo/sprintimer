@@ -1,1 +1,0 @@
-export default function AdminActividades() { return (<div><h1 className="text-2xl font-bold text-gray-900 mb-6">Actividades</h1><div className="card p-6"><p className="text-gray-600">Página de Actividades - En construcción</p></div></div>); }

@@ -2,35 +2,40 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './stores/auth.store';
 
 // Layouts
-import AuthLayout from './layouts/AuthLayout';
 import AdminLayout from './layouts/AdminLayout';
 import TalentLayout from './layouts/TalentLayout';
 import SuperAdminLayout from './layouts/SuperAdminLayout';
+import ClienteLayout from './layouts/ClienteLayout';
 
-// Páginas de Autenticación
-import LoginPage from './pages/auth/LoginPage';
-import RegisterPage from './pages/auth/RegisterPage';
+// Páginas de Autenticación (Features)
+import LoginPage from './features/auth/pages/LoginPage';
+import RegisterPage from './features/auth/pages/RegisterPage';
+import ForgotPasswordPage from './features/auth/pages/ForgotPasswordPage';
 
-// Páginas de Admin
-import AdminDashboard from './pages/admin/Dashboard';
-import AdminClientes from './pages/admin/Clientes';
-import AdminTalents from './pages/admin/Talents';
-import AdminActividades from './pages/admin/Actividades';
-import AdminProyectos from './pages/admin/Proyectos';
-import AdminPerfiles from './pages/admin/Perfiles';
-import AdminSeniorities from './pages/admin/Seniorities';
-import AdminDivisas from './pages/admin/Divisas';
-import AdminCostoPorHora from './pages/admin/CostoPorHora';
-import AdminEliminados from './pages/admin/Eliminados';
-import AdminAsignaciones from './pages/admin/Asignaciones';
+// Features de Admin
+import { AdminDashboard, ClienteDashboard, TalentDashboard, SuperAdminDashboard } from './features/dashboard';
+import { ClientesList, ClientesCrear, ClientesEditar } from './features/clientes';
+import { TalentsList, TalentsCrear, TalentsEditar } from './features/talents';
+import { ActividadesList, ActividadesCrear, ActividadesEditar } from './features/actividades';
+import { ProyectosList, ProyectosCrear, ProyectosEditar } from './features/proyectos';
+import { PerfilesList, PerfilesCrear, PerfilesEditar } from './features/perfiles';
+import { SenioritiesList, SenioritiesCrear, SenioritiesEditar } from './features/seniorities';
+import { DivisasList, DivisasCrear, DivisasEditar } from './features/divisas';
+import { CostoPorHoraList, CostoPorHoraCrear, CostoPorHoraEditar } from './features/costo-por-hora';
+import { AsignacionesList, AsignacionesCrear, AsignacionesEditar } from './features/asignaciones';
+import { EliminadosList } from './features/eliminados';
 
-// Páginas de Super Admin
-import SuperAdminDashboard from './pages/super-admin/Dashboard';
-import SuperAdminUsuarios from './pages/super-admin/Usuarios';
-import SuperAdminUsuariosCrear from './pages/super-admin/UsuariosCrear';
+// Features de Super Admin
+import { UsuariosList, UsuariosCrear, UsuariosEditar } from './features/super-admin';
+
+// Features de Admin
+import { AdminPerfil, AdminConfiguracion } from './features/admin';
 
 // Páginas de Talent
-import TalentDashboard from './pages/talent/Dashboard';
+import { TalentProyectos, TalentTareas, TareasCrear, TareasEditar, TareasEliminadas, TalentActividades } from './features/talent';
+
+// Páginas de Cliente
+import { ClienteProyectos, ClienteActividades } from './features/cliente';
 
 // Componente para rutas protegidas
 interface ProtectedRouteProps {
@@ -58,6 +63,7 @@ function App() {
       {/* Rutas públicas */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/registro" element={<RegisterPage />} />
+      <Route path="/recuperar-password" element={<ForgotPasswordPage />} />
 
       {/* Rutas Super Admin */}
       <Route
@@ -69,8 +75,9 @@ function App() {
         }
       >
         <Route index element={<SuperAdminDashboard />} />
-        <Route path="usuarios" element={<SuperAdminUsuarios />} />
-        <Route path="usuarios/crear" element={<SuperAdminUsuariosCrear />} />
+        <Route path="usuarios" element={<UsuariosList />} />
+        <Route path="usuarios/crear" element={<UsuariosCrear />} />
+        <Route path="usuarios/:id" element={<UsuariosEditar />} />
       </Route>
 
       {/* Rutas Admin */}
@@ -83,16 +90,36 @@ function App() {
         }
       >
         <Route index element={<AdminDashboard />} />
-        <Route path="clientes" element={<AdminClientes />} />
-        <Route path="talents" element={<AdminTalents />} />
-        <Route path="actividades" element={<AdminActividades />} />
-        <Route path="proyectos" element={<AdminProyectos />} />
-        <Route path="perfiles" element={<AdminPerfiles />} />
-        <Route path="seniorities" element={<AdminSeniorities />} />
-        <Route path="divisas" element={<AdminDivisas />} />
-        <Route path="costo-por-hora" element={<AdminCostoPorHora />} />
-        <Route path="eliminados" element={<AdminEliminados />} />
-        <Route path="asignaciones" element={<AdminAsignaciones />} />
+        <Route path="clientes" element={<ClientesList />} />
+        <Route path="clientes/crear" element={<ClientesCrear />} />
+        <Route path="clientes/:id" element={<ClientesEditar />} />
+        <Route path="talents" element={<TalentsList />} />
+        <Route path="talents/crear" element={<TalentsCrear />} />
+        <Route path="talents/:id" element={<TalentsEditar />} />
+        <Route path="actividades" element={<ActividadesList />} />
+        <Route path="actividades/crear" element={<ActividadesCrear />} />
+        <Route path="actividades/:id" element={<ActividadesEditar />} />
+        <Route path="proyectos" element={<ProyectosList />} />
+        <Route path="proyectos/crear" element={<ProyectosCrear />} />
+        <Route path="proyectos/:id" element={<ProyectosEditar />} />
+        <Route path="perfiles" element={<PerfilesList />} />
+        <Route path="perfiles/crear" element={<PerfilesCrear />} />
+        <Route path="perfiles/:id" element={<PerfilesEditar />} />
+        <Route path="seniorities" element={<SenioritiesList />} />
+        <Route path="seniorities/crear" element={<SenioritiesCrear />} />
+        <Route path="seniorities/:id" element={<SenioritiesEditar />} />
+        <Route path="divisas" element={<DivisasList />} />
+        <Route path="divisas/crear" element={<DivisasCrear />} />
+        <Route path="divisas/:id" element={<DivisasEditar />} />
+        <Route path="costo-por-hora" element={<CostoPorHoraList />} />
+        <Route path="costo-por-hora/crear" element={<CostoPorHoraCrear />} />
+        <Route path="costo-por-hora/:id" element={<CostoPorHoraEditar />} />
+        <Route path="asignaciones" element={<AsignacionesList />} />
+        <Route path="asignaciones/crear" element={<AsignacionesCrear />} />
+        <Route path="asignaciones/:id" element={<AsignacionesEditar />} />
+        <Route path="eliminados" element={<EliminadosList />} />
+        <Route path="perfil" element={<AdminPerfil />} />
+        <Route path="configuracion" element={<AdminConfiguracion />} />
       </Route>
 
       {/* Rutas Talent */}
@@ -105,6 +132,26 @@ function App() {
         }
       >
         <Route index element={<TalentDashboard />} />
+        <Route path="proyectos" element={<TalentProyectos />} />
+        <Route path="actividades" element={<TalentActividades />} />
+        <Route path="tareas" element={<TalentTareas />} />
+        <Route path="tareas/crear" element={<TareasCrear />} />
+        <Route path="tareas/:id/editar" element={<TareasEditar />} />
+        <Route path="tareas/eliminadas" element={<TareasEliminadas />} />
+      </Route>
+
+      {/* Rutas Cliente */}
+      <Route
+        path="/cliente"
+        element={
+          <ProtectedRoute allowedRoles={['cliente']}>
+            <ClienteLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<ClienteDashboard />} />
+        <Route path="proyectos" element={<ClienteProyectos />} />
+        <Route path="actividades" element={<ClienteActividades />} />
       </Route>
 
       {/* Ruta por defecto */}

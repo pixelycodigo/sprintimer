@@ -1,143 +1,104 @@
-import { useState } from 'react';
-import { Outlet, Link, useNavigate } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  Briefcase, 
-  CheckSquare, 
-  ChevronLeft,
-  ChevronRight,
+import { Outlet, useNavigate } from 'react-router-dom';
+import {
+  LayoutDashboard,
+  Briefcase,
+  CheckSquare,
+  ListTodo,
   LogOut,
-  User,
-  Settings
+  Trash2
 } from 'lucide-react';
 import { useSidebarStore } from '../stores/sidebar.store';
 import { useAuthStore } from '../stores/auth.store';
+
+import { ThemeToggle } from '@ui/ThemeToggle';
+import { SidebarToggle } from '@ui/SidebarToggle';
+import { UserMenuProfile } from '@ui/UserMenu';
+import {
+  Sidebar,
+  SidebarHeader,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarMenuItem,
+  SidebarMenuItemIcon,
+} from '@ui/Sidebar';
+import { Header, HeaderLeft, HeaderRight } from '@ui/Header';
+import { Main, MainContent } from '@ui/Main';
+import { Button } from '@ui/Button';
 import { cn } from '../utils/cn';
 
 const navigation = [
   { name: 'Dashboard', href: '/talent', icon: LayoutDashboard },
   { name: 'Mis Proyectos', href: '/talent/proyectos', icon: Briefcase },
+  { name: 'Mis Actividades', href: '/talent/actividades', icon: ListTodo },
   { name: 'Mis Tareas', href: '/talent/tareas', icon: CheckSquare },
+  { name: 'Tareas Eliminadas', href: '/talent/tareas/eliminadas', icon: Trash2 },
 ];
 
 export default function TalentLayout() {
   const sidebar = useSidebarStore();
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
-  const [showUserMenu, setShowUserMenu] = useState(false);
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
-  const getInitial = (name: string) => name.charAt(0).toUpperCase();
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Sidebar */}
-      <aside
-        className={cn(
-          'fixed inset-y-0 left-0 z-50 flex flex-col bg-white border-r border-gray-200 transition-all duration-300 ease-in-out',
-          sidebar.isOpen ? 'w-64' : 'w-0'
-        )}
-      >
-        {/* Logo */}
-        <div className={cn(
-          'flex items-center justify-between h-16 px-4 border-b border-gray-200',
-          !sidebar.isOpen && 'hidden'
-        )}>
-          <h1 className="text-xl font-bold text-blue-600">SPRINTASK</h1>
-        </div>
+    <div className="min-h-screen bg-slate-50 dark:bg-zinc-950">
+      <Sidebar collapsed={!sidebar.isOpen}>
+        <SidebarHeader>
+          <h1 className="text-xl font-bold text-slate-900 dark:text-zinc-100 tracking-tight">SPRINTASK</h1>
+        </SidebarHeader>
 
-        {/* Navigation */}
-        <nav className={cn('flex-1 overflow-y-auto py-4', !sidebar.isOpen && 'hidden')}>
-          <div className="px-3 space-y-1">
+        <SidebarContent>
+          <SidebarGroup>
             {navigation.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-100 hover:text-gray-900"
-              >
-                <item.icon className="w-5 h-5 mr-3" />
+              <SidebarMenuItem key={item.name} href={item.href}>
+                <SidebarMenuItemIcon>
+                  <item.icon className="w-5 h-5" aria-hidden="true" />
+                </SidebarMenuItemIcon>
                 {item.name}
-              </Link>
+              </SidebarMenuItem>
             ))}
-          </div>
-        </nav>
+          </SidebarGroup>
+        </SidebarContent>
 
-        {/* Logout */}
-        <div className={cn('p-4 border-t border-gray-200', !sidebar.isOpen && 'hidden')}>
-          <button
-            onClick={handleLogout}
-            className="flex items-center w-full px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-100 hover:text-gray-900"
-          >
-            <LogOut className="w-5 h-5 mr-3" />
+        <SidebarFooter>
+          <Button variant="ghost" onClick={handleLogout} className="w-full justify-start">
+            <LogOut className="w-5 h-5 mr-3" aria-hidden="true" />
             Cerrar sesión
-          </button>
-        </div>
-      </aside>
+          </Button>
+        </SidebarFooter>
+      </Sidebar>
 
-      {/* Main content */}
-      <div className={cn('transition-all duration-300', sidebar.isOpen ? 'ml-64' : 'ml-0')}>
-        {/* Header */}
-        <header className="bg-white border-b border-gray-200">
-          <div className="flex items-center justify-between h-16 px-4">
-            <button
-              onClick={sidebar.toggle}
-              className="p-2 rounded-md hover:bg-gray-100"
-            >
-              {sidebar.isOpen ? (
-                <ChevronLeft className="w-5 h-5" />
-              ) : (
-                <ChevronRight className="w-5 h-5" />
-              )}
-            </button>
+      <div className={cn('flex flex-col transition-all duration-300', sidebar.isOpen ? 'ml-[260px]' : 'ml-0')}>
+        <Header>
+          <HeaderLeft>
+            <SidebarToggle isOpen={sidebar.isOpen} onToggle={sidebar.toggle} />
+          </HeaderLeft>
 
-            <div className="flex items-center space-x-4">
-              {/* User dropdown */}
-              <div className="relative">
-                <button
-                  onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100"
-                >
-                  <div className="w-8 h-8 rounded-full bg-amber-600 flex items-center justify-center text-white font-medium">
-                    {getInitial(user?.nombre_completo || 'U')}
-                  </div>
-                  <div className="text-sm text-left hidden sm:block">
-                    <p className="font-medium text-gray-700">{user?.nombre_completo}</p>
-                    <p className="text-xs text-gray-500 capitalize">{user?.rol}</p>
-                  </div>
-                </button>
+          <HeaderRight className="flex-shrink-0">
+            <ThemeToggle />
+            <UserMenuProfile
+              user={{
+                nombre: user?.nombre || '',
+                rol: user?.rol || '',
+                avatar: user?.avatar,
+              }}
+              onLogout={handleLogout}
+              profileLink="/talent/perfil"
+              settingsLink="/talent/configuracion"
+            />
+          </HeaderRight>
+        </Header>
 
-                {showUserMenu && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 border border-gray-200 z-50">
-                    <Link
-                      to="/talent/perfil"
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      onClick={() => setShowUserMenu(false)}
-                    >
-                      <User className="w-4 h-4 mr-2" />
-                      Ver perfil
-                    </Link>
-                    <button
-                      onClick={handleLogout}
-                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    >
-                      <LogOut className="w-4 h-4 mr-2" />
-                      Cerrar sesión
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* Page content */}
-        <main className="p-6">
-          <Outlet />
-        </main>
+        <Main>
+          <MainContent>
+            <Outlet />
+          </MainContent>
+        </Main>
       </div>
     </div>
   );

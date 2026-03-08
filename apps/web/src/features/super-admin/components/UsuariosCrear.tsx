@@ -1,0 +1,235 @@
+import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
+import { useMutation } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { usuariosService } from '../../../services/usuarios.service';
+import { Button } from '@ui/Button';
+import { Card, CardContent } from '@ui/Card';
+import { Input } from '@ui/Input';
+import { Label } from '@ui/Label';
+import { HeaderPage } from '@ui/HeaderPage';
+
+interface CreateUsuarioForm {
+  nombre: string;
+  usuario: string;
+  email: string;
+  password: string;
+  password_confirm: string;
+  rol_id: number;
+}
+
+export default function SuperAdminUsuariosCrear() {
+  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState<CreateUsuarioForm>({
+    nombre: '',
+    usuario: '',
+    email: '',
+    password: '',
+    password_confirm: '',
+    rol_id: 2, // Administrador por defecto
+  });
+
+  const createMutation = useMutation({
+    mutationFn: (data: Omit<CreateUsuarioForm, 'password_confirm'>) => 
+      usuariosService.create({
+        nombre: data.nombre,
+        usuario: data.usuario,
+        email: data.email,
+        password: data.password,
+        rol_id: data.rol_id,
+      }),
+    onSuccess: () => {
+      toast.success('Usuario creado exitosamente');
+      navigate('/super-admin/usuarios');
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Error al crear usuario');
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (formData.password !== formData.password_confirm) {
+      toast.error('Las contraseñas no coinciden');
+      return;
+    }
+
+    if (formData.password.length < 8) {
+      toast.error('La contraseña debe tener al menos 8 caracteres');
+      return;
+    }
+
+    createMutation.mutate({
+      nombre: formData.nombre,
+      usuario: formData.usuario,
+      email: formData.email,
+      password: formData.password,
+      rol_id: formData.rol_id,
+    });
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <HeaderPage
+        title="Nuevo Usuario"
+        description="Crea un nuevo usuario administrador"
+        backLink={
+          <Link
+            to="/super-admin/usuarios"
+            className="p-2 text-slate-400 dark:text-zinc-500 hover:text-slate-600 dark:hover:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-md transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" aria-hidden="true" />
+          </Link>
+        }
+      />
+
+      {/* Form */}
+      <Card className="dark:bg-zinc-900 dark:border-zinc-800">
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+            {/* Nombre Completo */}
+            <div>
+              <Label htmlFor="nombre">
+                Nombre completo *
+              </Label>
+              <Input
+                id="nombre"
+                type="text"
+                required
+                value={formData.nombre}
+                onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
+                className="dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500"
+                placeholder="Juan Pérez"
+              />
+            </div>
+
+            {/* Usuario */}
+            <div>
+              <Label htmlFor="usuario">
+                Usuario *
+              </Label>
+              <Input
+                id="usuario"
+                type="text"
+                required
+                value={formData.usuario}
+                onChange={(e) => setFormData({ ...formData, usuario: e.target.value })}
+                className="dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500"
+                placeholder="juanperez"
+                pattern="[a-zA-Z0-9_]+"
+              />
+              <p className="mt-1 text-xs text-slate-500 dark:text-zinc-400">
+                Solo letras, números y guiones bajos
+              </p>
+            </div>
+
+            {/* Email */}
+            <div>
+              <Label htmlFor="email">
+                Email *
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                required
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500"
+                placeholder="juan@email.com"
+              />
+            </div>
+
+            {/* Contraseña */}
+            <div>
+              <Label htmlFor="password">
+                Contraseña *
+              </Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  className="pr-10 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500"
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 dark:text-zinc-500 hover:text-slate-600 dark:hover:text-zinc-300"
+                  aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" aria-hidden="true" />
+                  ) : (
+                    <Eye className="w-5 h-5" aria-hidden="true" />
+                  )}
+                </button>
+              </div>
+              <p className="mt-1 text-xs text-slate-500 dark:text-zinc-400">
+                Mínimo 8 caracteres, una mayúscula, una minúscula y un número
+              </p>
+            </div>
+
+            {/* Confirmar Contraseña */}
+            <div>
+              <Label htmlFor="password_confirm">
+                Confirmar contraseña *
+              </Label>
+              <Input
+                id="password_confirm"
+                type={showPassword ? 'text' : 'password'}
+                required
+                value={formData.password_confirm}
+                onChange={(e) => setFormData({ ...formData, password_confirm: e.target.value })}
+                className="dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500"
+                placeholder="••••••••"
+              />
+            </div>
+
+            {/* Tipo de Rol */}
+            <div>
+              <Label htmlFor="rol_id">
+                Tipo de usuario *
+              </Label>
+              <select
+                id="rol_id"
+                value={formData.rol_id}
+                onChange={(e) => setFormData({ ...formData, rol_id: Number(e.target.value) })}
+                className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus-visible:ring-zinc-300"
+              >
+                <option value="2">Administrador</option>
+                <option value="1">Super Admin</option>
+              </select>
+              <p className="mt-1 text-xs text-slate-500 dark:text-zinc-400">
+                Los administradores pueden gestionar clientes, proyectos y talents
+              </p>
+            </div>
+
+            {/* Actions */}
+            <div className="flex items-center gap-4 pt-4">
+              <Button
+                type="submit"
+                variant="default"
+                size="default"
+                disabled={createMutation.isPending}
+              >
+                {createMutation.isPending ? 'Creando...' : 'Crear Usuario'}
+              </Button>
+              <Link to="/super-admin/usuarios">
+                <Button type="button" variant="secondary" size="default">
+                  Cancelar
+                </Button>
+              </Link>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

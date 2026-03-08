@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const registroSchema = z.object({
-  nombre_completo: z
+  nombre: z
     .string()
     .min(3, 'El nombre completo debe tener al menos 3 caracteres')
     .max(255, 'El nombre completo es muy largo'),
@@ -38,7 +38,7 @@ export const loginSchema = z.object({
 });
 
 export const updateProfileSchema = z.object({
-  nombre_completo: z
+  nombre: z
     .string()
     .min(3, 'El nombre completo debe tener al menos 3 caracteres')
     .max(255, 'El nombre completo es muy largo')

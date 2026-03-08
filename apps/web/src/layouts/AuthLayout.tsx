@@ -1,18 +1,29 @@
 import { Outlet, Navigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/auth.store';
+import { AuthLayout as UIAuthLayout } from '@ui/AuthLayout';
 
 export default function AuthLayout() {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
 
-  if (isAuthenticated) {
-    return <Navigate to="/admin" replace />;
+  // Redirigir según el rol si ya está autenticado
+  if (isAuthenticated && user?.rol) {
+    switch (user.rol) {
+      case 'super_admin':
+        return <Navigate to="/super-admin" replace />;
+      case 'administrador':
+        return <Navigate to="/admin" replace />;
+      case 'talent':
+        return <Navigate to="/talent" replace />;
+      case 'cliente':
+        return <Navigate to="/cliente" replace />;
+      default:
+        return <Navigate to="/admin" replace />;
+    }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8">
-        <Outlet />
-      </div>
-    </div>
+    <UIAuthLayout showLogo={false}>
+      <Outlet />
+    </UIAuthLayout>
   );
 }

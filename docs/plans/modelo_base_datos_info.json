@@ -1,0 +1,1868 @@
+{
+  "database": "sprintask",
+  "generated_at": "2026-03-07T22:04:21.057Z",
+  "tables": [
+    {
+      "name": "actividades",
+      "comment": null,
+      "engine": "InnoDB",
+      "collation": "utf8mb4_unicode_ci",
+      "columns": [
+        {
+          "name": "id",
+          "position": 1,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": true,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": true
+        },
+        {
+          "name": "proyecto_id",
+          "position": 2,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": true,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "sprint_id",
+          "position": 3,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": true,
+          "isPrimaryKey": false,
+          "isForeignKey": true,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "nombre",
+          "position": 4,
+          "type": "varchar(255)",
+          "dataType": "varchar",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "descripcion",
+          "position": 5,
+          "type": "text",
+          "dataType": "text",
+          "nullable": true,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "horas_estimadas",
+          "position": 6,
+          "type": "decimal(5,2)",
+          "dataType": "decimal",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "activo",
+          "position": 7,
+          "type": "tinyint(1)",
+          "dataType": "tinyint",
+          "nullable": true,
+          "default": "1",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "created_at",
+          "position": 8,
+          "type": "timestamp",
+          "dataType": "timestamp",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "updated_at",
+          "position": 9,
+          "type": "timestamp",
+          "dataType": "timestamp",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        }
+      ],
+      "foreignKeys": [
+        {
+          "column": "proyecto_id",
+          "referencedTable": "proyectos",
+          "referencedColumn": "id",
+          "onUpdate": "NO ACTION",
+          "onDelete": "NO ACTION"
+        },
+        {
+          "column": "sprint_id",
+          "referencedTable": "sprints",
+          "referencedColumn": "id",
+          "onUpdate": "NO ACTION",
+          "onDelete": "NO ACTION"
+        },
+        {
+          "column": "proyecto_id",
+          "referencedTable": "proyectos",
+          "referencedColumn": "id",
+          "onUpdate": "NO ACTION",
+          "onDelete": "NO ACTION"
+        },
+        {
+          "column": "sprint_id",
+          "referencedTable": "sprints",
+          "referencedColumn": "id",
+          "onUpdate": "NO ACTION",
+          "onDelete": "NO ACTION"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "actividades_proyecto_id_foreign",
+          "column": "proyecto_id",
+          "unique": false
+        },
+        {
+          "name": "actividades_sprint_id_foreign",
+          "column": "sprint_id",
+          "unique": false
+        }
+      ],
+      "createTable": "CREATE TABLE `actividades` (\n  `id` int unsigned NOT NULL AUTO_INCREMENT,\n  `proyecto_id` int unsigned NOT NULL,\n  `sprint_id` int unsigned DEFAULT NULL,\n  `nombre` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `descripcion` text COLLATE utf8mb4_unicode_ci,\n  `horas_estimadas` decimal(5,2) NOT NULL,\n  `activo` tinyint(1) DEFAULT '1',\n  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY (`id`),\n  KEY `actividades_proyecto_id_foreign` (`proyecto_id`),\n  KEY `actividades_sprint_id_foreign` (`sprint_id`),\n  CONSTRAINT `actividades_proyecto_id_foreign` FOREIGN KEY (`proyecto_id`) REFERENCES `proyectos` (`id`),\n  CONSTRAINT `actividades_sprint_id_foreign` FOREIGN KEY (`sprint_id`) REFERENCES `sprints` (`id`)\n) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    },
+    {
+      "name": "actividades_integrantes",
+      "comment": null,
+      "engine": "InnoDB",
+      "collation": "utf8mb4_unicode_ci",
+      "columns": [
+        {
+          "name": "id",
+          "position": 1,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": true,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": true
+        },
+        {
+          "name": "actividad_id",
+          "position": 2,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": true,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "talent_id",
+          "position": 3,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": true,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "fecha_asignacion",
+          "position": 4,
+          "type": "timestamp",
+          "dataType": "timestamp",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        }
+      ],
+      "foreignKeys": [
+        {
+          "column": "actividad_id",
+          "referencedTable": "actividades",
+          "referencedColumn": "id",
+          "onUpdate": "NO ACTION",
+          "onDelete": "CASCADE"
+        },
+        {
+          "column": "talent_id",
+          "referencedTable": "talents",
+          "referencedColumn": "id",
+          "onUpdate": "NO ACTION",
+          "onDelete": "CASCADE"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "unique_asignacion",
+          "column": "actividad_id",
+          "unique": true
+        },
+        {
+          "name": "unique_asignacion",
+          "column": "talent_id",
+          "unique": true
+        },
+        {
+          "name": "actividades_integrantes_talent_id_foreign",
+          "column": "talent_id",
+          "unique": false
+        }
+      ],
+      "createTable": "CREATE TABLE `actividades_integrantes` (\n  `id` int unsigned NOT NULL AUTO_INCREMENT,\n  `actividad_id` int unsigned NOT NULL,\n  `talent_id` int unsigned NOT NULL,\n  `fecha_asignacion` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `unique_asignacion` (`actividad_id`,`talent_id`),\n  KEY `actividades_integrantes_talent_id_foreign` (`talent_id`),\n  CONSTRAINT `actividades_integrantes_actividad_id_foreign` FOREIGN KEY (`actividad_id`) REFERENCES `actividades` (`id`) ON DELETE CASCADE,\n  CONSTRAINT `actividades_integrantes_talent_id_foreign` FOREIGN KEY (`talent_id`) REFERENCES `talents` (`id`) ON DELETE CASCADE\n) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    },
+    {
+      "name": "clientes",
+      "comment": null,
+      "engine": "InnoDB",
+      "collation": "utf8mb4_unicode_ci",
+      "columns": [
+        {
+          "name": "id",
+          "position": 1,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": true,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": true
+        },
+        {
+          "name": "nombre_cliente",
+          "position": 2,
+          "type": "varchar(255)",
+          "dataType": "varchar",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "cargo",
+          "position": 3,
+          "type": "varchar(100)",
+          "dataType": "varchar",
+          "nullable": true,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "empresa",
+          "position": 4,
+          "type": "varchar(255)",
+          "dataType": "varchar",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "email",
+          "position": 5,
+          "type": "varchar(255)",
+          "dataType": "varchar",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "celular",
+          "position": 6,
+          "type": "varchar(20)",
+          "dataType": "varchar",
+          "nullable": true,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "telefono",
+          "position": 7,
+          "type": "varchar(20)",
+          "dataType": "varchar",
+          "nullable": true,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "anexo",
+          "position": 8,
+          "type": "varchar(10)",
+          "dataType": "varchar",
+          "nullable": true,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "pais",
+          "position": 9,
+          "type": "varchar(100)",
+          "dataType": "varchar",
+          "nullable": true,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "activo",
+          "position": 10,
+          "type": "tinyint(1)",
+          "dataType": "tinyint",
+          "nullable": true,
+          "default": "1",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "created_at",
+          "position": 11,
+          "type": "timestamp",
+          "dataType": "timestamp",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "updated_at",
+          "position": 12,
+          "type": "timestamp",
+          "dataType": "timestamp",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        }
+      ],
+      "foreignKeys": [],
+      "indexes": [],
+      "createTable": "CREATE TABLE `clientes` (\n  `id` int unsigned NOT NULL AUTO_INCREMENT,\n  `nombre_cliente` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `cargo` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `empresa` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `celular` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `telefono` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `anexo` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `pais` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `activo` tinyint(1) DEFAULT '1',\n  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY (`id`)\n) ENGINE=InnoDB AUTO_INCREMENT=170 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    },
+    {
+      "name": "costos_por_hora",
+      "comment": null,
+      "engine": "InnoDB",
+      "collation": "utf8mb4_unicode_ci",
+      "columns": [
+        {
+          "name": "id",
+          "position": 1,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": true,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": true
+        },
+        {
+          "name": "tipo",
+          "position": 2,
+          "type": "enum('fijo','variable')",
+          "dataType": "enum",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": true,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "costo_min",
+          "position": 3,
+          "type": "decimal(10,2)",
+          "dataType": "decimal",
+          "nullable": true,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "costo_max",
+          "position": 4,
+          "type": "decimal(10,2)",
+          "dataType": "decimal",
+          "nullable": true,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "costo_hora",
+          "position": 5,
+          "type": "decimal(10,2)",
+          "dataType": "decimal",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "divisa_id",
+          "position": 6,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": true,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "perfil_id",
+          "position": 7,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": true,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "seniority_id",
+          "position": 8,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": true,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "concepto",
+          "position": 9,
+          "type": "varchar(255)",
+          "dataType": "varchar",
+          "nullable": true,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "activo",
+          "position": 10,
+          "type": "tinyint(1)",
+          "dataType": "tinyint",
+          "nullable": true,
+          "default": "1",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "created_at",
+          "position": 11,
+          "type": "timestamp",
+          "dataType": "timestamp",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "updated_at",
+          "position": 12,
+          "type": "timestamp",
+          "dataType": "timestamp",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        }
+      ],
+      "foreignKeys": [
+        {
+          "column": "divisa_id",
+          "referencedTable": "divisas",
+          "referencedColumn": "id",
+          "onUpdate": "NO ACTION",
+          "onDelete": "NO ACTION"
+        },
+        {
+          "column": "perfil_id",
+          "referencedTable": "perfiles",
+          "referencedColumn": "id",
+          "onUpdate": "NO ACTION",
+          "onDelete": "NO ACTION"
+        },
+        {
+          "column": "seniority_id",
+          "referencedTable": "seniorities",
+          "referencedColumn": "id",
+          "onUpdate": "NO ACTION",
+          "onDelete": "NO ACTION"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "unique_costo",
+          "column": "tipo",
+          "unique": true
+        },
+        {
+          "name": "unique_costo",
+          "column": "divisa_id",
+          "unique": true
+        },
+        {
+          "name": "unique_costo",
+          "column": "perfil_id",
+          "unique": true
+        },
+        {
+          "name": "unique_costo",
+          "column": "seniority_id",
+          "unique": true
+        },
+        {
+          "name": "costos_por_hora_divisa_id_foreign",
+          "column": "divisa_id",
+          "unique": false
+        },
+        {
+          "name": "costos_por_hora_perfil_id_foreign",
+          "column": "perfil_id",
+          "unique": false
+        },
+        {
+          "name": "costos_por_hora_seniority_id_foreign",
+          "column": "seniority_id",
+          "unique": false
+        }
+      ],
+      "createTable": "CREATE TABLE `costos_por_hora` (\n  `id` int unsigned NOT NULL AUTO_INCREMENT,\n  `tipo` enum('fijo','variable') COLLATE utf8mb4_unicode_ci NOT NULL,\n  `costo_min` decimal(10,2) DEFAULT NULL,\n  `costo_max` decimal(10,2) DEFAULT NULL,\n  `costo_hora` decimal(10,2) NOT NULL,\n  `divisa_id` int unsigned NOT NULL,\n  `perfil_id` int unsigned NOT NULL,\n  `seniority_id` int unsigned NOT NULL,\n  `concepto` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `activo` tinyint(1) DEFAULT '1',\n  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `unique_costo` (`tipo`,`divisa_id`,`perfil_id`,`seniority_id`),\n  KEY `costos_por_hora_divisa_id_foreign` (`divisa_id`),\n  KEY `costos_por_hora_perfil_id_foreign` (`perfil_id`),\n  KEY `costos_por_hora_seniority_id_foreign` (`seniority_id`),\n  CONSTRAINT `costos_por_hora_divisa_id_foreign` FOREIGN KEY (`divisa_id`) REFERENCES `divisas` (`id`),\n  CONSTRAINT `costos_por_hora_perfil_id_foreign` FOREIGN KEY (`perfil_id`) REFERENCES `perfiles` (`id`),\n  CONSTRAINT `costos_por_hora_seniority_id_foreign` FOREIGN KEY (`seniority_id`) REFERENCES `seniorities` (`id`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    },
+    {
+      "name": "divisas",
+      "comment": null,
+      "engine": "InnoDB",
+      "collation": "utf8mb4_unicode_ci",
+      "columns": [
+        {
+          "name": "id",
+          "position": 1,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": true,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": true
+        },
+        {
+          "name": "codigo",
+          "position": 2,
+          "type": "varchar(3)",
+          "dataType": "varchar",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": true,
+          "autoIncrement": false
+        },
+        {
+          "name": "simbolo",
+          "position": 3,
+          "type": "varchar(5)",
+          "dataType": "varchar",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "nombre",
+          "position": 4,
+          "type": "varchar(100)",
+          "dataType": "varchar",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "activo",
+          "position": 5,
+          "type": "tinyint(1)",
+          "dataType": "tinyint",
+          "nullable": true,
+          "default": "1",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "created_at",
+          "position": 6,
+          "type": "timestamp",
+          "dataType": "timestamp",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        }
+      ],
+      "foreignKeys": [],
+      "indexes": [
+        {
+          "name": "divisas_codigo_unique",
+          "column": "codigo",
+          "unique": true
+        }
+      ],
+      "createTable": "CREATE TABLE `divisas` (\n  `id` int unsigned NOT NULL AUTO_INCREMENT,\n  `codigo` varchar(3) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `simbolo` varchar(5) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `nombre` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `activo` tinyint(1) DEFAULT '1',\n  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `divisas_codigo_unique` (`codigo`)\n) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    },
+    {
+      "name": "eliminados",
+      "comment": null,
+      "engine": "InnoDB",
+      "collation": "utf8mb4_unicode_ci",
+      "columns": [
+        {
+          "name": "id",
+          "position": 1,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": true,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": true
+        },
+        {
+          "name": "item_id",
+          "position": 2,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "item_tipo",
+          "position": 3,
+          "type": "enum('cliente','proyecto','actividad','talent','perfil','seniority','divisa','costo_por_hora','sprint','tarea')",
+          "dataType": "enum",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "eliminado_por",
+          "position": 4,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": true,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "fecha_eliminacion",
+          "position": 5,
+          "type": "timestamp",
+          "dataType": "timestamp",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "fecha_borrado_permanente",
+          "position": 6,
+          "type": "date",
+          "dataType": "date",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "datos",
+          "position": 7,
+          "type": "json",
+          "dataType": "json",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        }
+      ],
+      "foreignKeys": [
+        {
+          "column": "eliminado_por",
+          "referencedTable": "usuarios",
+          "referencedColumn": "id",
+          "onUpdate": "NO ACTION",
+          "onDelete": "NO ACTION"
+        },
+        {
+          "column": "eliminado_por",
+          "referencedTable": "usuarios",
+          "referencedColumn": "id",
+          "onUpdate": "NO ACTION",
+          "onDelete": "NO ACTION"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "eliminados_eliminado_por_foreign",
+          "column": "eliminado_por",
+          "unique": false
+        }
+      ],
+      "createTable": "CREATE TABLE `eliminados` (\n  `id` int unsigned NOT NULL AUTO_INCREMENT,\n  `item_id` int unsigned NOT NULL,\n  `item_tipo` enum('cliente','proyecto','actividad','talent','perfil','seniority','divisa','costo_por_hora','sprint','tarea') COLLATE utf8mb4_unicode_ci NOT NULL,\n  `eliminado_por` int unsigned NOT NULL,\n  `fecha_eliminacion` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  `fecha_borrado_permanente` date NOT NULL,\n  `datos` json NOT NULL,\n  PRIMARY KEY (`id`),\n  KEY `eliminados_eliminado_por_foreign` (`eliminado_por`),\n  CONSTRAINT `eliminados_eliminado_por_foreign` FOREIGN KEY (`eliminado_por`) REFERENCES `usuarios` (`id`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    },
+    {
+      "name": "migrations_lock",
+      "comment": null,
+      "engine": "InnoDB",
+      "collation": "utf8mb4_unicode_ci",
+      "columns": [
+        {
+          "name": "index",
+          "position": 1,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": true,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": true
+        },
+        {
+          "name": "is_locked",
+          "position": 2,
+          "type": "int",
+          "dataType": "int",
+          "nullable": true,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        }
+      ],
+      "foreignKeys": [],
+      "indexes": [],
+      "createTable": "CREATE TABLE `migrations_lock` (\n  `index` int unsigned NOT NULL AUTO_INCREMENT,\n  `is_locked` int DEFAULT NULL,\n  PRIMARY KEY (`index`)\n) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    },
+    {
+      "name": "perfiles",
+      "comment": null,
+      "engine": "InnoDB",
+      "collation": "utf8mb4_unicode_ci",
+      "columns": [
+        {
+          "name": "id",
+          "position": 1,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": true,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": true
+        },
+        {
+          "name": "nombre",
+          "position": 2,
+          "type": "varchar(100)",
+          "dataType": "varchar",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": true,
+          "autoIncrement": false
+        },
+        {
+          "name": "descripcion",
+          "position": 3,
+          "type": "text",
+          "dataType": "text",
+          "nullable": true,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "activo",
+          "position": 4,
+          "type": "tinyint(1)",
+          "dataType": "tinyint",
+          "nullable": true,
+          "default": "1",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "created_at",
+          "position": 5,
+          "type": "timestamp",
+          "dataType": "timestamp",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        }
+      ],
+      "foreignKeys": [],
+      "indexes": [
+        {
+          "name": "perfiles_nombre_unique",
+          "column": "nombre",
+          "unique": true
+        }
+      ],
+      "createTable": "CREATE TABLE `perfiles` (\n  `id` int unsigned NOT NULL AUTO_INCREMENT,\n  `nombre` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `descripcion` text COLLATE utf8mb4_unicode_ci,\n  `activo` tinyint(1) DEFAULT '1',\n  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `perfiles_nombre_unique` (`nombre`)\n) ENGINE=InnoDB AUTO_INCREMENT=214 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    },
+    {
+      "name": "proyectos",
+      "comment": null,
+      "engine": "InnoDB",
+      "collation": "utf8mb4_unicode_ci",
+      "columns": [
+        {
+          "name": "id",
+          "position": 1,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": true,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": true
+        },
+        {
+          "name": "cliente_id",
+          "position": 2,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": true,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "nombre",
+          "position": 3,
+          "type": "varchar(255)",
+          "dataType": "varchar",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "descripcion",
+          "position": 4,
+          "type": "text",
+          "dataType": "text",
+          "nullable": true,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "modalidad",
+          "position": 5,
+          "type": "enum('sprint','ad-hoc')",
+          "dataType": "enum",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "formato_horas",
+          "position": 6,
+          "type": "enum('minutos','cuartiles','sin_horas')",
+          "dataType": "enum",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "moneda_id",
+          "position": 7,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": true,
+          "isPrimaryKey": false,
+          "isForeignKey": true,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "activo",
+          "position": 8,
+          "type": "tinyint(1)",
+          "dataType": "tinyint",
+          "nullable": true,
+          "default": "1",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "created_at",
+          "position": 9,
+          "type": "timestamp",
+          "dataType": "timestamp",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "updated_at",
+          "position": 10,
+          "type": "timestamp",
+          "dataType": "timestamp",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        }
+      ],
+      "foreignKeys": [
+        {
+          "column": "cliente_id",
+          "referencedTable": "clientes",
+          "referencedColumn": "id",
+          "onUpdate": "NO ACTION",
+          "onDelete": "NO ACTION"
+        },
+        {
+          "column": "cliente_id",
+          "referencedTable": "clientes",
+          "referencedColumn": "id",
+          "onUpdate": "NO ACTION",
+          "onDelete": "NO ACTION"
+        },
+        {
+          "column": "moneda_id",
+          "referencedTable": "divisas",
+          "referencedColumn": "id",
+          "onUpdate": "NO ACTION",
+          "onDelete": "NO ACTION"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "proyectos_cliente_id_foreign",
+          "column": "cliente_id",
+          "unique": false
+        },
+        {
+          "name": "proyectos_moneda_id_foreign",
+          "column": "moneda_id",
+          "unique": false
+        }
+      ],
+      "createTable": "CREATE TABLE `proyectos` (\n  `id` int unsigned NOT NULL AUTO_INCREMENT,\n  `cliente_id` int unsigned NOT NULL,\n  `nombre` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `descripcion` text COLLATE utf8mb4_unicode_ci,\n  `modalidad` enum('sprint','ad-hoc') COLLATE utf8mb4_unicode_ci NOT NULL,\n  `formato_horas` enum('minutos','cuartiles','sin_horas') COLLATE utf8mb4_unicode_ci NOT NULL,\n  `moneda_id` int unsigned DEFAULT NULL,\n  `activo` tinyint(1) DEFAULT '1',\n  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY (`id`),\n  KEY `proyectos_cliente_id_foreign` (`cliente_id`),\n  KEY `proyectos_moneda_id_foreign` (`moneda_id`),\n  CONSTRAINT `proyectos_cliente_id_foreign` FOREIGN KEY (`cliente_id`) REFERENCES `clientes` (`id`),\n  CONSTRAINT `proyectos_moneda_id_foreign` FOREIGN KEY (`moneda_id`) REFERENCES `divisas` (`id`)\n) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    },
+    {
+      "name": "roles",
+      "comment": null,
+      "engine": "InnoDB",
+      "collation": "utf8mb4_unicode_ci",
+      "columns": [
+        {
+          "name": "id",
+          "position": 1,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": true,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": true
+        },
+        {
+          "name": "nombre",
+          "position": 2,
+          "type": "enum('super_admin','administrador','cliente','talent')",
+          "dataType": "enum",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": true,
+          "autoIncrement": false
+        },
+        {
+          "name": "descripcion",
+          "position": 3,
+          "type": "varchar(255)",
+          "dataType": "varchar",
+          "nullable": true,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "activo",
+          "position": 4,
+          "type": "tinyint(1)",
+          "dataType": "tinyint",
+          "nullable": true,
+          "default": "1",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "created_at",
+          "position": 5,
+          "type": "timestamp",
+          "dataType": "timestamp",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "updated_at",
+          "position": 6,
+          "type": "timestamp",
+          "dataType": "timestamp",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        }
+      ],
+      "foreignKeys": [],
+      "indexes": [
+        {
+          "name": "roles_nombre_unique",
+          "column": "nombre",
+          "unique": true
+        }
+      ],
+      "createTable": "CREATE TABLE `roles` (\n  `id` int unsigned NOT NULL AUTO_INCREMENT,\n  `nombre` enum('super_admin','administrador','cliente','talent') COLLATE utf8mb4_unicode_ci NOT NULL,\n  `descripcion` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `activo` tinyint(1) DEFAULT '1',\n  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `roles_nombre_unique` (`nombre`)\n) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    },
+    {
+      "name": "seniorities",
+      "comment": null,
+      "engine": "InnoDB",
+      "collation": "utf8mb4_unicode_ci",
+      "columns": [
+        {
+          "name": "id",
+          "position": 1,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": true,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": true
+        },
+        {
+          "name": "nombre",
+          "position": 2,
+          "type": "varchar(50)",
+          "dataType": "varchar",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": true,
+          "autoIncrement": false
+        },
+        {
+          "name": "nivel_orden",
+          "position": 3,
+          "type": "int",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "activo",
+          "position": 4,
+          "type": "tinyint(1)",
+          "dataType": "tinyint",
+          "nullable": true,
+          "default": "1",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        }
+      ],
+      "foreignKeys": [],
+      "indexes": [
+        {
+          "name": "seniorities_nombre_unique",
+          "column": "nombre",
+          "unique": true
+        }
+      ],
+      "createTable": "CREATE TABLE `seniorities` (\n  `id` int unsigned NOT NULL AUTO_INCREMENT,\n  `nombre` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `nivel_orden` int NOT NULL,\n  `activo` tinyint(1) DEFAULT '1',\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `seniorities_nombre_unique` (`nombre`)\n) ENGINE=InnoDB AUTO_INCREMENT=138 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    },
+    {
+      "name": "sprints",
+      "comment": null,
+      "engine": "InnoDB",
+      "collation": "utf8mb4_unicode_ci",
+      "columns": [
+        {
+          "name": "id",
+          "position": 1,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": true,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": true
+        },
+        {
+          "name": "proyecto_id",
+          "position": 2,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": true,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "nombre",
+          "position": 3,
+          "type": "varchar(50)",
+          "dataType": "varchar",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "fecha_inicio",
+          "position": 4,
+          "type": "date",
+          "dataType": "date",
+          "nullable": true,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "fecha_fin",
+          "position": 5,
+          "type": "date",
+          "dataType": "date",
+          "nullable": true,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "activo",
+          "position": 6,
+          "type": "tinyint(1)",
+          "dataType": "tinyint",
+          "nullable": true,
+          "default": "1",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        }
+      ],
+      "foreignKeys": [
+        {
+          "column": "proyecto_id",
+          "referencedTable": "proyectos",
+          "referencedColumn": "id",
+          "onUpdate": "NO ACTION",
+          "onDelete": "NO ACTION"
+        },
+        {
+          "column": "proyecto_id",
+          "referencedTable": "proyectos",
+          "referencedColumn": "id",
+          "onUpdate": "NO ACTION",
+          "onDelete": "NO ACTION"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "sprints_proyecto_id_foreign",
+          "column": "proyecto_id",
+          "unique": false
+        }
+      ],
+      "createTable": "CREATE TABLE `sprints` (\n  `id` int unsigned NOT NULL AUTO_INCREMENT,\n  `proyecto_id` int unsigned NOT NULL,\n  `nombre` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `fecha_inicio` date DEFAULT NULL,\n  `fecha_fin` date DEFAULT NULL,\n  `activo` tinyint(1) DEFAULT '1',\n  PRIMARY KEY (`id`),\n  KEY `sprints_proyecto_id_foreign` (`proyecto_id`),\n  CONSTRAINT `sprints_proyecto_id_foreign` FOREIGN KEY (`proyecto_id`) REFERENCES `proyectos` (`id`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    },
+    {
+      "name": "talents",
+      "comment": null,
+      "engine": "InnoDB",
+      "collation": "utf8mb4_unicode_ci",
+      "columns": [
+        {
+          "name": "id",
+          "position": 1,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": true,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": true
+        },
+        {
+          "name": "usuario_id",
+          "position": 2,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": true,
+          "isPrimaryKey": false,
+          "isForeignKey": true,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "perfil_id",
+          "position": 3,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": true,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "seniority_id",
+          "position": 4,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": true,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "nombre_completo",
+          "position": 5,
+          "type": "varchar(255)",
+          "dataType": "varchar",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "apellido",
+          "position": 6,
+          "type": "varchar(255)",
+          "dataType": "varchar",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "email",
+          "position": 7,
+          "type": "varchar(255)",
+          "dataType": "varchar",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": true,
+          "autoIncrement": false
+        },
+        {
+          "name": "password_hash",
+          "position": 8,
+          "type": "varchar(255)",
+          "dataType": "varchar",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "costo_hora_fijo",
+          "position": 9,
+          "type": "decimal(10,2)",
+          "dataType": "decimal",
+          "nullable": true,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "costo_hora_variable_min",
+          "position": 10,
+          "type": "decimal(10,2)",
+          "dataType": "decimal",
+          "nullable": true,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "costo_hora_variable_max",
+          "position": 11,
+          "type": "decimal(10,2)",
+          "dataType": "decimal",
+          "nullable": true,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "activo",
+          "position": 12,
+          "type": "tinyint(1)",
+          "dataType": "tinyint",
+          "nullable": true,
+          "default": "1",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "created_at",
+          "position": 13,
+          "type": "timestamp",
+          "dataType": "timestamp",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "updated_at",
+          "position": 14,
+          "type": "timestamp",
+          "dataType": "timestamp",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        }
+      ],
+      "foreignKeys": [
+        {
+          "column": "perfil_id",
+          "referencedTable": "perfiles",
+          "referencedColumn": "id",
+          "onUpdate": "NO ACTION",
+          "onDelete": "NO ACTION"
+        },
+        {
+          "column": "seniority_id",
+          "referencedTable": "seniorities",
+          "referencedColumn": "id",
+          "onUpdate": "NO ACTION",
+          "onDelete": "NO ACTION"
+        },
+        {
+          "column": "usuario_id",
+          "referencedTable": "usuarios",
+          "referencedColumn": "id",
+          "onUpdate": "NO ACTION",
+          "onDelete": "NO ACTION"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "talents_email_unique",
+          "column": "email",
+          "unique": true
+        },
+        {
+          "name": "talents_perfil_id_foreign",
+          "column": "perfil_id",
+          "unique": false
+        },
+        {
+          "name": "talents_seniority_id_foreign",
+          "column": "seniority_id",
+          "unique": false
+        },
+        {
+          "name": "talents_usuario_id_foreign",
+          "column": "usuario_id",
+          "unique": false
+        }
+      ],
+      "createTable": "CREATE TABLE `talents` (\n  `id` int unsigned NOT NULL AUTO_INCREMENT,\n  `usuario_id` int unsigned DEFAULT NULL,\n  `perfil_id` int unsigned NOT NULL,\n  `seniority_id` int unsigned NOT NULL,\n  `nombre_completo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `apellido` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `password_hash` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `costo_hora_fijo` decimal(10,2) DEFAULT NULL,\n  `costo_hora_variable_min` decimal(10,2) DEFAULT NULL,\n  `costo_hora_variable_max` decimal(10,2) DEFAULT NULL,\n  `activo` tinyint(1) DEFAULT '1',\n  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `talents_email_unique` (`email`),\n  KEY `talents_perfil_id_foreign` (`perfil_id`),\n  KEY `talents_seniority_id_foreign` (`seniority_id`),\n  KEY `talents_usuario_id_foreign` (`usuario_id`),\n  CONSTRAINT `talents_perfil_id_foreign` FOREIGN KEY (`perfil_id`) REFERENCES `perfiles` (`id`),\n  CONSTRAINT `talents_seniority_id_foreign` FOREIGN KEY (`seniority_id`) REFERENCES `seniorities` (`id`),\n  CONSTRAINT `talents_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`)\n) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    },
+    {
+      "name": "tareas",
+      "comment": null,
+      "engine": "InnoDB",
+      "collation": "utf8mb4_unicode_ci",
+      "columns": [
+        {
+          "name": "id",
+          "position": 1,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": true,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": true
+        },
+        {
+          "name": "actividad_id",
+          "position": 2,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": true,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "talent_id",
+          "position": 3,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": true,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "nombre",
+          "position": 4,
+          "type": "varchar(255)",
+          "dataType": "varchar",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "descripcion",
+          "position": 5,
+          "type": "text",
+          "dataType": "text",
+          "nullable": true,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "horas_registradas",
+          "position": 6,
+          "type": "decimal(5,2)",
+          "dataType": "decimal",
+          "nullable": true,
+          "default": "0.00",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "completado",
+          "position": 7,
+          "type": "tinyint(1)",
+          "dataType": "tinyint",
+          "nullable": true,
+          "default": "0",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "created_at",
+          "position": 8,
+          "type": "timestamp",
+          "dataType": "timestamp",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "updated_at",
+          "position": 9,
+          "type": "timestamp",
+          "dataType": "timestamp",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        }
+      ],
+      "foreignKeys": [
+        {
+          "column": "actividad_id",
+          "referencedTable": "actividades",
+          "referencedColumn": "id",
+          "onUpdate": "NO ACTION",
+          "onDelete": "NO ACTION"
+        },
+        {
+          "column": "actividad_id",
+          "referencedTable": "actividades",
+          "referencedColumn": "id",
+          "onUpdate": "NO ACTION",
+          "onDelete": "NO ACTION"
+        },
+        {
+          "column": "talent_id",
+          "referencedTable": "talents",
+          "referencedColumn": "id",
+          "onUpdate": "NO ACTION",
+          "onDelete": "NO ACTION"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "tareas_actividad_id_foreign",
+          "column": "actividad_id",
+          "unique": false
+        },
+        {
+          "name": "tareas_talent_id_foreign",
+          "column": "talent_id",
+          "unique": false
+        }
+      ],
+      "createTable": "CREATE TABLE `tareas` (\n  `id` int unsigned NOT NULL AUTO_INCREMENT,\n  `actividad_id` int unsigned NOT NULL,\n  `talent_id` int unsigned NOT NULL,\n  `nombre` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `descripcion` text COLLATE utf8mb4_unicode_ci,\n  `horas_registradas` decimal(5,2) DEFAULT '0.00',\n  `completado` tinyint(1) DEFAULT '0',\n  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY (`id`),\n  KEY `tareas_actividad_id_foreign` (`actividad_id`),\n  KEY `tareas_talent_id_foreign` (`talent_id`),\n  CONSTRAINT `tareas_actividad_id_foreign` FOREIGN KEY (`actividad_id`) REFERENCES `actividades` (`id`),\n  CONSTRAINT `tareas_talent_id_foreign` FOREIGN KEY (`talent_id`) REFERENCES `talents` (`id`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    },
+    {
+      "name": "usuarios",
+      "comment": null,
+      "engine": "InnoDB",
+      "collation": "utf8mb4_unicode_ci",
+      "columns": [
+        {
+          "name": "id",
+          "position": 1,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": true,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": true
+        },
+        {
+          "name": "nombre",
+          "position": 2,
+          "type": "varchar(255)",
+          "dataType": "varchar",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "usuario",
+          "position": 3,
+          "type": "varchar(50)",
+          "dataType": "varchar",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": true,
+          "autoIncrement": false
+        },
+        {
+          "name": "email",
+          "position": 4,
+          "type": "varchar(255)",
+          "dataType": "varchar",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": true,
+          "autoIncrement": false
+        },
+        {
+          "name": "password_hash",
+          "position": 5,
+          "type": "varchar(255)",
+          "dataType": "varchar",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "rol_id",
+          "position": 6,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "isForeignKey": true,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "avatar",
+          "position": 7,
+          "type": "varchar(255)",
+          "dataType": "varchar",
+          "nullable": true,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "email_verificado",
+          "position": 8,
+          "type": "tinyint(1)",
+          "dataType": "tinyint",
+          "nullable": true,
+          "default": "0",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "activo",
+          "position": 9,
+          "type": "tinyint(1)",
+          "dataType": "tinyint",
+          "nullable": true,
+          "default": "1",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "ultimo_login",
+          "position": 10,
+          "type": "timestamp",
+          "dataType": "timestamp",
+          "nullable": true,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "creado_por",
+          "position": 11,
+          "type": "int unsigned",
+          "dataType": "int",
+          "nullable": true,
+          "isPrimaryKey": false,
+          "isForeignKey": true,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "created_at",
+          "position": 12,
+          "type": "timestamp",
+          "dataType": "timestamp",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        },
+        {
+          "name": "updated_at",
+          "position": 13,
+          "type": "timestamp",
+          "dataType": "timestamp",
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP",
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "isUnique": false,
+          "autoIncrement": false
+        }
+      ],
+      "foreignKeys": [
+        {
+          "column": "creado_por",
+          "referencedTable": "usuarios",
+          "referencedColumn": "id",
+          "onUpdate": "NO ACTION",
+          "onDelete": "NO ACTION"
+        },
+        {
+          "column": "rol_id",
+          "referencedTable": "roles",
+          "referencedColumn": "id",
+          "onUpdate": "NO ACTION",
+          "onDelete": "NO ACTION"
+        },
+        {
+          "column": "rol_id",
+          "referencedTable": "roles",
+          "referencedColumn": "id",
+          "onUpdate": "NO ACTION",
+          "onDelete": "NO ACTION"
+        },
+        {
+          "column": "creado_por",
+          "referencedTable": "usuarios",
+          "referencedColumn": "id",
+          "onUpdate": "NO ACTION",
+          "onDelete": "NO ACTION"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "usuarios_usuario_unique",
+          "column": "usuario",
+          "unique": true
+        },
+        {
+          "name": "usuarios_email_unique",
+          "column": "email",
+          "unique": true
+        },
+        {
+          "name": "usuarios_rol_id_foreign",
+          "column": "rol_id",
+          "unique": false
+        },
+        {
+          "name": "usuarios_creado_por_foreign",
+          "column": "creado_por",
+          "unique": false
+        }
+      ],
+      "createTable": "CREATE TABLE `usuarios` (\n  `id` int unsigned NOT NULL AUTO_INCREMENT,\n  `nombre` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,\n  `usuario` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `password_hash` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `rol_id` int unsigned NOT NULL,\n  `avatar` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `email_verificado` tinyint(1) DEFAULT '0',\n  `activo` tinyint(1) DEFAULT '1',\n  `ultimo_login` timestamp NULL DEFAULT NULL,\n  `creado_por` int unsigned DEFAULT NULL,\n  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `usuarios_usuario_unique` (`usuario`),\n  UNIQUE KEY `usuarios_email_unique` (`email`),\n  KEY `usuarios_rol_id_foreign` (`rol_id`),\n  KEY `usuarios_creado_por_foreign` (`creado_por`),\n  CONSTRAINT `usuarios_creado_por_foreign` FOREIGN KEY (`creado_por`) REFERENCES `usuarios` (`id`),\n  CONSTRAINT `usuarios_rol_id_foreign` FOREIGN KEY (`rol_id`) REFERENCES `roles` (`id`)\n) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    }
+  ]
+}
