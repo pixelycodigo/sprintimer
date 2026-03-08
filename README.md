@@ -24,12 +24,12 @@
 ```
 sprintask/
 ├── apps/
-│   ├── web/              # Frontend React (35+ páginas)
-│   └── api/              # Backend Node.js (74 endpoints, 12 controladores)
+│   ├── web/              # Frontend React (45+ páginas)
+│   └── api/              # Backend Node.js (74 endpoints, 17 controladores)
 ├── packages/
-│   ├── ui/               # 33 componentes UI compartidos (@sprintask/ui)
+│   ├── ui/               # 50+ componentes UI compartidos (@sprintask/ui)
 │   └── shared/           # Tipos y utilidades compartidos (@sprintask/shared)
-├── e2e/                  # Tests E2E con Playwright (63 tests)
+├── e2e/                  # Tests E2E con Playwright (Próximo hito)
 ├── database/
 │   └── create_database.sql
 ├── docs/
@@ -81,7 +81,7 @@ cd apps/web
 cp .env.example .env
 ```
 
-### 5. Ejecutar Migraciones
+### 5. Ejecutar Migraciones y Seeds (Datos Simulados)
 
 ```bash
 cd apps/api
@@ -128,11 +128,7 @@ Administrador:
 | `npm run dev:api` | Iniciar solo backend (puerto 3001) |
 | `npm run dev:web` | Iniciar solo frontend (puerto 5173) |
 | `npm run build` | Compilar ambos proyectos |
-| `npm run typecheck` | Verificar tipos en ambos proyectos |
-| `npm run test:e2e` | Ejecutar tests E2E con Playwright |
-| `npm run test:e2e:ui` | Ejecutar tests con UI de Playwright |
-| `npm run test:e2e:headed` | Ejecutar tests en navegador visible |
-| `npm run test:e2e:report` | Generar reporte HTML de tests |
+| `npm run typecheck` | Verificar tipos en ambos proyectos (100% Passing) |
 
 ### Backend (apps/api)
 
@@ -167,31 +163,9 @@ Administrador:
 
 ### Tests E2E (Playwright)
 
-```bash
-# Ejecutar todos los tests (headless, solo Chromium)
-npm run test:e2e
-
-# Ejecutar tests específicos
-npm run test:e2e -- e2e/auth.spec.ts
-
-# Ejecutar con UI
-npm run test:e2e:ui
-
-# Ejecutar en modo debug
-npm run test:e2e:debug
-```
-
 **Estado actual:**
-- ✅ 63 tests implementados
-- ✅ Tests de autenticación passing
-- ⏳ Tests CRUD requieren DB con seeds
-
-### Limpieza de Datos E2E
-
-```bash
-cd apps/api
-npm run seed  # Ejecuta seed de cleanup (999_cleanup_e2e_data.ts)
-```
+- ⏳ Próximo hito de desarrollo.
+- 🎯 Cobertura planificada: Autenticación, CRUDs principales, Flujos de Dashboard.
 
 ### Tests Unitarios (Vitest)
 
@@ -204,8 +178,8 @@ cd apps/web && npm run test -- --run
 ```
 
 **Estado actual:**
-- ✅ 10 tests implementados
-- ⚠️ 1 test failing (Button component - requiere actualización)
+- ✅ Tests de utilidades y lógica de negocio básica implementados.
+- 🛠️ Ampliación de cobertura en progreso.
 
 ---
 
@@ -213,12 +187,12 @@ cd apps/web && npm run test -- --run
 
 | Categoría | Cantidad |
 |-----------|----------|
-| **Componentes UI** | 33 (en packages/ui) |
-| **Páginas** | 35+ |
+| **Componentes UI** | 50+ (en packages/ui) |
+| **Páginas** | 45+ |
 | **Endpoints API** | 74 |
 | **Migraciones** | 14 |
-| **Tests E2E** | 63 |
-| **Tests Unitarios** | 10 |
+| **Typecheck** | 100% ✅ |
+| **Tests E2E** | Próximo Hito ⏳ |
 | **Roles** | 4 (super_admin, administrador, cliente, talent) |
 | **Paquetes compartidos** | 2 (@sprintask/ui, @sprintask/shared) |
 
@@ -228,13 +202,13 @@ cd apps/web && npm run test -- --run
 
 ### @sprintask/ui
 
-Biblioteca de 33 componentes UI reutilizables:
+Biblioteca de 50+ componentes UI reutilizables:
 
 ```typescript
 import { Button, Input, Card, Table } from '@sprintask/ui';
 ```
 
-**Componentes principales:** Button, Input, Label, Badge, Avatar, Card, Select, Dialog, DropdownMenu, Table, Textarea, Checkbox, Switch, Calendar, DatePicker, Pagination, y más.
+**Componentes principales:** Button, Input, Label, Badge, Avatar, Card, Select, Dialog, DropdownMenu, Table, Textarea, Checkbox, Switch, Calendar, DatePicker, Pagination, Recharts (Chart), y más.
 
 ### @sprintask/shared
 
@@ -256,4 +230,4 @@ ISC
 
 **SprinTask** - Gestión de proyectos freelance simplificada.
 
-**Última actualización:** 6 de Marzo, 2026
+**Última actualización:** 8 de Marzo, 2026
