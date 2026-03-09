@@ -7,6 +7,9 @@ import api from '../../../services/api';
 import { type ColumnDef } from '@tanstack/react-table';
 
 import { DataTable } from '@ui/DataTable';
+import { Muted } from '@ui/Typography';
+import { Badge } from '@ui/Badge';
+import { Spinner } from '@ui/Spinner';
 import {
   AlertDialog,
   AlertDialogAction,

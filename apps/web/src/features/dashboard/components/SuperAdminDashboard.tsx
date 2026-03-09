@@ -3,6 +3,8 @@ import { Users, Shield, Activity, TrendingUp, Briefcase, CheckSquare } from 'luc
 import { useQuery } from '@tanstack/react-query';
 
 import { Empty } from '@ui/Empty';
+import { Spinner } from '@ui/Spinner';
+import { Badge } from '@ui/Badge';
 import { Card, CardHeader, CardTitle, CardDescription } from '@ui/Card';
 
 import { StatCard } from './StatCard';

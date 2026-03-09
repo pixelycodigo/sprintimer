@@ -5,6 +5,9 @@ import { Link } from 'react-router-dom';
 import { talentDashboardService } from '../../../services/talent-dashboard.service';
 
 import { DataTable } from '@ui/DataTable';
+import { Muted } from '@ui/Typography';
+import { Spinner } from '@ui/Spinner';
+import { Badge } from '@ui/Badge';
 import { FilterPage } from '@ui/FilterPage';
 import { HeaderPage } from '@ui/HeaderPage';
 import { Empty } from '@ui/Empty';

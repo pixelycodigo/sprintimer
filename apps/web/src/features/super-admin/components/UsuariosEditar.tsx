@@ -7,6 +7,7 @@ import { usuariosService } from '../../../services/usuarios.service';
 import { Button } from '@ui/Button';
 import { Input } from '@ui/Input';
 import { Label } from '@ui/Label';
+import { Spinner } from '@ui/Spinner';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/Card';
 import { HeaderPage } from '@ui/HeaderPage';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/Select';

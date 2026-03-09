@@ -5,6 +5,9 @@ import { type ColumnDef } from '@tanstack/react-table';
 import { clienteDashboardService } from '../../../services/cliente-dashboard.service';
 
 import { DataTable } from '@ui/DataTable';
+import { Muted } from '@ui/Typography';
+import { Badge } from '@ui/Badge';
+import { Spinner } from '@ui/Spinner';
 import { FilterPage } from '@ui/FilterPage';
 import { HeaderPage } from '@ui/HeaderPage';
 import { Empty } from '@ui/Empty';

@@ -7,6 +7,7 @@ import { asignacionesService } from '../../../services/asignaciones.service';
 import { actividadesService } from '../../../services/actividades.service';
 import { talentsService } from '../../../services/talents.service';
 import { Button } from '@ui/Button';
+import { Spinner } from '@ui/Spinner';
 import { Label } from '@ui/Label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/Card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/Select';

@@ -8,6 +8,8 @@ import { type ColumnDef } from '@tanstack/react-table';
 
 import { DataTable, DataTableActions } from '@ui/DataTable';
 import { LoadingState, StatusBadge } from '@ui';
+import { Muted } from '@ui/Typography';
+import { Badge } from '@ui/Badge';
 import { Button } from '@ui/Button';
 import { FilterPage } from '@ui/FilterPage';
 import { HeaderPage } from '@ui/HeaderPage';

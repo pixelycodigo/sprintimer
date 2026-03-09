@@ -6,6 +6,7 @@ import { dashboardService } from '../../../services/dashboard.service';
 
 import { Button } from '@ui/Button';
 import { Spinner } from '@ui/Spinner';
+import { Badge } from '@ui/Badge';
 import { DataTable } from '@ui/DataTable';
 import { Empty } from '@ui/Empty';
 import { HeaderPage } from '@ui/HeaderPage';

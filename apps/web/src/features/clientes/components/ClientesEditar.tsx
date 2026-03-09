@@ -7,6 +7,8 @@ import { clientesService } from '../../../services/clientes.service';
 import { Button } from '@ui/Button';
 import { Input } from '@ui/Input';
 import { Label } from '@ui/Label';
+import { Muted } from '@ui/Typography';
+import { Spinner } from '@ui/Spinner';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/Card';
 import type { UpdateClienteInput } from '@shared';
 
