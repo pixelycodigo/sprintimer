@@ -9,6 +9,7 @@ import { Input } from '@ui/Input';
 import { Label } from '@ui/Label';
 import { Checkbox } from '@ui/Checkbox';
 import { Button } from '@ui/Button';
+import { Spinner } from '@ui/Spinner';
 
 export interface LoginFormProps {
   title?: string;

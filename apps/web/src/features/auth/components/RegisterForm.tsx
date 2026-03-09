@@ -7,6 +7,7 @@ import { Card, CardContent } from '@ui/Card';
 import { Input } from '@ui/Input';
 import { Label } from '@ui/Label';
 import { Button } from '@ui/Button';
+import { Spinner } from '@ui/Spinner';
 import { Checkbox } from '@ui/Checkbox';
 
 export interface RegisterFormProps {
