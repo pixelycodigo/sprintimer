@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Plus, User, Mail } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -6,12 +7,11 @@ import { talentsService } from '../../../services/talents.service';
 import { type ColumnDef } from '@tanstack/react-table';
 
 import { DataTable, DataTableActions } from '@ui/DataTable';
+import { EntityCell, StatusBadge, LoadingState } from '@ui';
 import { Badge } from '@ui/Badge';
 import { Button } from '@ui/Button';
 import { FilterPage } from '@ui/FilterPage';
 import { HeaderPage } from '@ui/HeaderPage';
-import { Spinner } from '@ui/Spinner';
-import { useState } from 'react';
 
 export default function AdminTalents() {
   const queryClient = useQueryClient();
@@ -54,61 +54,31 @@ export default function AdminTalents() {
       header: 'Talent',
       accessorKey: 'nombre',
       cell: ({ row }) => (
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
-            <User className="w-5 h-5 text-slate-500 dark:text-zinc-400" />
-          </div>
-          <div>
-            <p className="font-medium text-slate-900 dark:text-zinc-100">
-              {row.original.nombre} {row.original.apellido}
-            </p>
-          </div>
-        </div>
-      ),
-    },
-    {
-      header: 'Email',
-      accessorKey: 'email',
-      cell: ({ row }) => (
-        <div className="flex items-center gap-2 text-slate-600 dark:text-zinc-300">
-          <Mail className="w-4 h-4 text-slate-400 dark:text-zinc-500" />
-          {row.original.email}
-        </div>
+        <EntityCell
+          icon={User}
+          title={`${row.original.nombre} ${row.original.apellido}`}
+          subtitle={row.original.email}
+        />
       ),
     },
     {
       header: 'Perfil',
       accessorKey: 'perfil_nombre',
-      cell: ({ row }) => row.original.perfil_nombre || '—',
+      cell: ({ getValue }) => (
+        <span className="text-slate-600 dark:text-zinc-300">{getValue<string>() || '—'}</span>
+      ),
     },
     {
       header: 'Seniority',
       accessorKey: 'seniority_nombre',
-      cell: ({ row }) =>
-        row.original.seniority_nombre ? (
-          <Badge variant="info">{row.original.seniority_nombre}</Badge>
-        ) : (
-          '—'
-        ),
-    },
-    {
-      header: 'Costo Hora',
-      accessorKey: 'costo_hora_fijo',
-      cell: ({ row }) =>
-        row.original.costo_hora_fijo
-          ? `$${row.original.costo_hora_fijo}/hora`
-          : row.original.costo_hora_variable_min && row.original.costo_hora_variable_max
-          ? `$${row.original.costo_hora_variable_min} - $${row.original.costo_hora_variable_max}/hora`
-          : '—',
+      cell: ({ getValue }) => (
+        <Badge variant="outline">{getValue<string>() || '—'}</Badge>
+      ),
     },
     {
       header: 'Estado',
       accessorKey: 'activo',
-      cell: ({ row }) => (
-        <Badge variant={row.original.activo ? 'success' : 'inactive'}>
-          {row.original.activo ? 'Activo' : 'Inactivo'}
-        </Badge>
-      ),
+      cell: ({ getValue }) => <StatusBadge active={getValue<boolean>()} />,
     },
     {
       header: 'Acciones',
@@ -133,19 +103,14 @@ export default function AdminTalents() {
   ];
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <Spinner size="lg" />
-      </div>
-    );
+    return <LoadingState message="Cargando talents..." />;
   }
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <HeaderPage
         title="Talents"
-        description="Gestiona los talents de la plataforma"
+        description="Gestiona los talents freelance de la plataforma"
         action={
           <Link to="/admin/talents/crear">
             <Button variant="default" size="default">
@@ -156,15 +121,13 @@ export default function AdminTalents() {
         }
       />
 
-      {/* Filters */}
       <FilterPage
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
         onClear={() => setSearchTerm('')}
-        searchPlaceholder="Buscar por nombre, email, perfil o seniority..."
+        searchPlaceholder="Buscar por nombre, apellido, email, perfil o seniority..."
       />
 
-      {/* Table */}
       <DataTable
         data={filteredTalents || []}
         columns={columns as any}

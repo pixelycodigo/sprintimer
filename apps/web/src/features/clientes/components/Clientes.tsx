@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Plus, Building2, Mail } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -6,13 +7,11 @@ import { clientesService } from '../../../services/clientes.service';
 import { type ColumnDef } from '@tanstack/react-table';
 
 import { DataTable, DataTableActions } from '@ui/DataTable';
-import { FilterPage } from '@ui/FilterPage';
-import { HeaderPage } from '@ui/HeaderPage';
+import { EntityCell, StatusBadge, LoadingState } from '@ui';
 import { Badge } from '@ui/Badge';
 import { Button } from '@ui/Button';
-import { Spinner } from '@ui/Spinner';
-import { Muted } from '@ui/Typography';
-import { useState } from 'react';
+import { FilterPage } from '@ui/FilterPage';
+import { HeaderPage } from '@ui/HeaderPage';
 
 export default function AdminClientes() {
   const queryClient = useQueryClient();
@@ -45,26 +44,16 @@ export default function AdminClientes() {
     cliente.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleClear = () => {
-    setSearchTerm('');
-  };
-
   const columns: ColumnDef<any>[] = [
     {
       header: 'Cliente',
       accessorKey: 'nombre_cliente',
-      cell: ({ getValue, row }) => (
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
-            <Building2 className="w-5 h-5 text-slate-500 dark:text-zinc-400" />
-          </div>
-          <div>
-            <p className="font-medium text-slate-900 dark:text-zinc-100">{getValue<string>()}</p>
-            {row.original.cargo && (
-              <Muted>{row.original.cargo}</Muted>
-            )}
-          </div>
-        </div>
+      cell: ({ row }) => (
+        <EntityCell
+          icon={Building2}
+          title={row.original.nombre_cliente}
+          subtitle={row.original.cargo}
+        />
       ),
     },
     {
@@ -105,22 +94,15 @@ export default function AdminClientes() {
     {
       header: 'Estado',
       accessorKey: 'activo',
-      cell: ({ getValue }) => {
-        const activo = getValue<boolean>();
-        return (
-          <Badge variant={activo ? 'success' : 'inactive'}>
-            {activo ? 'Activo' : 'Inactivo'}
-          </Badge>
-        );
-      },
+      cell: ({ getValue }) => <StatusBadge active={getValue<boolean>()} />,
     },
     {
       header: 'Acciones',
       accessorKey: 'id',
-      cell: ({ getValue, row }) => (
+      cell: ({ row }) => (
         <DataTableActions
-          editId={getValue<number>()}
-          deleteId={getValue<number>()}
+          editId={row.original.id}
+          deleteId={row.original.id}
           deleteNombre={row.original.nombre_cliente}
           onEdit={(id) => navigate(`/admin/clientes/${id}`)}
           onDelete={(id, nombre) => {
@@ -137,16 +119,11 @@ export default function AdminClientes() {
   ];
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <Spinner size="lg" />
-      </div>
-    );
+    return <LoadingState message="Cargando clientes..." />;
   }
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <HeaderPage
         title="Clientes"
         description="Gestiona los clientes de la plataforma"
@@ -160,15 +137,13 @@ export default function AdminClientes() {
         }
       />
 
-      {/* Filters */}
       <FilterPage
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
-        onClear={handleClear}
+        onClear={() => setSearchTerm('')}
         searchPlaceholder="Buscar por nombre, empresa o email..."
       />
 
-      {/* Table */}
       <DataTable
         data={filteredClientes || []}
         columns={columns as any}
