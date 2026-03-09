@@ -17,8 +17,6 @@ export default function SuperAdminUsuarios() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const [deleteId, setDeleteId] = useState<number | string | null>(null);
-  const [deleteNombre, setDeleteNombre] = useState<string>('');
 
   const { data: usuarios, isLoading } = useQuery({
     queryKey: ['usuarios'],
@@ -103,7 +101,7 @@ export default function SuperAdminUsuarios() {
             setDeleteId(id);
             setDeleteNombre(nombre);
           }}
-          onConfirmDelete={(id) => deleteMutation.mutate(id)}
+          onConfirmDelete={(id: number | string) => deleteMutation.mutate(Number(id))}
           deleteTitle="¿Eliminar usuario?"
           deleteDescription="Esta acción no se puede deshacer. Se eliminará permanentemente el usuario"
           isLoading={deleteMutation.isPending}

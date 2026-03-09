@@ -17,8 +17,6 @@ export default function AdminTalents() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const [deleteId, setDeleteId] = useState<number | string | null>(null);
-  const [deleteNombre, setDeleteNombre] = useState<string>('');
 
   const { data: talents, isLoading } = useQuery({
     queryKey: ['talents'],
@@ -93,7 +91,7 @@ export default function AdminTalents() {
             setDeleteId(id);
             setDeleteNombre(nombre);
           }}
-          onConfirmDelete={(id) => deleteMutation.mutate(id)}
+          onConfirmDelete={(id: number | string) => deleteMutation.mutate(Number(id))}
           deleteTitle="¿Eliminar talent?"
           deleteDescription="Esta acción no se puede deshacer. Se eliminará permanentemente el talent"
           isLoading={deleteMutation.isPending}

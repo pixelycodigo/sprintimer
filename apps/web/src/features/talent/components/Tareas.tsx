@@ -18,8 +18,6 @@ export default function TalentTareas() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const [deleteId, setDeleteId] = useState<number | string | null>(null);
-  const [deleteNombre, setDeleteNombre] = useState<string>('');
 
   const { data: tareas, isLoading } = useQuery({
     queryKey: ['talent-tareas'],
@@ -136,7 +134,7 @@ export default function TalentTareas() {
             setDeleteId(id);
             setDeleteNombre(nombre);
           }}
-          onConfirmDelete={(id) => deleteMutation.mutate(id)}
+          onConfirmDelete={(id: number | string) => deleteMutation.mutate(Number(id))}
           deleteTitle="¿Eliminar tarea?"
           deleteDescription="La tarea se moverá a la papelera de reciclaje. Podrás restaurarla o eliminarla permanentemente antes de los 30 días."
           isLoading={deleteMutation.isPending}
