@@ -61,18 +61,15 @@ export function DataTableActions({
   deleteDisabled = false,
   isLoading = false,
   className,
-}: DataTableActionsProps) {
+  isSoftDelete = false,
+}: DataTableActionsProps & { isSoftDelete?: boolean }) {
   const [open, setOpen] = React.useState(false);
-
-  // Abrir/cerrar diálogo cuando cambia deleteId
-  React.useEffect(() => {
-    setOpen(deleteId !== null && deleteId !== undefined);
-  }, [deleteId]);
 
   const handleDeleteClick = () => {
     if (deleteId && deleteNombre && onDelete) {
       onDelete(deleteId, deleteNombre);
     }
+    setOpen(true);
   };
 
   const handleConfirmDelete = () => {
@@ -116,12 +113,10 @@ export function DataTableActions({
           <AlertDialogHeader>
             <AlertDialogTitle>{deleteTitle}</AlertDialogTitle>
             <AlertDialogDescription>
-              {deleteDescription}{' '}
-              {deleteNombre && (
-                <>
-                  Se eliminará <strong className="text-slate-900 dark:text-zinc-100">"{deleteNombre}"</strong>.
-                </>
-              )}
+              {isSoftDelete 
+                ? `La ${deleteNombre ? `tarea "${deleteNombre}"` : 'elemento'} se moverá a la papelera de reciclaje. Podrás restaurarla o eliminarla permanentemente antes de los 30 días.`
+                : `${deleteDescription} ${deleteNombre && `Se eliminará `}<strong className="text-slate-900 dark:text-zinc-100">${deleteNombre && `"${deleteNombre}"`}</strong>.`
+              }
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

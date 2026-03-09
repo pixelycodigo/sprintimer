@@ -128,13 +128,9 @@ export default function TalentTareas() {
           deleteId={row.original.id}
           deleteNombre={row.original.nombre}
           onEdit={(id) => navigate(`/talent/tareas/${id}/editar`)}
-          onDelete={(id, nombre) => {
-            setDeleteId(id);
-            setDeleteNombre(nombre);
-          }}
           onConfirmDelete={(id: number | string) => deleteMutation.mutate(Number(id))}
           deleteTitle="¿Eliminar tarea?"
-          deleteDescription="La tarea se moverá a la papelera de reciclaje. Podrás restaurarla o eliminarla permanentemente antes de los 30 días."
+          isSoftDelete
           isLoading={deleteMutation.isPending}
         />
       ),
