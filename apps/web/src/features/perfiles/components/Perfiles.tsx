@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Plus, Tag } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -6,12 +7,11 @@ import { perfilesService } from '../../../services/perfiles.service';
 import { type ColumnDef } from '@tanstack/react-table';
 
 import { DataTable, DataTableActions } from '@ui/DataTable';
+import { EntityCell, StatusBadge, LoadingState } from '@ui';
 import { Badge } from '@ui/Badge';
 import { Button } from '@ui/Button';
 import { FilterPage } from '@ui/FilterPage';
 import { HeaderPage } from '@ui/HeaderPage';
-import { Spinner } from '@ui/Spinner';
-import { useState } from 'react';
 
 export default function AdminPerfiles() {
   const queryClient = useQueryClient();
@@ -45,30 +45,20 @@ export default function AdminPerfiles() {
 
   const columns: ColumnDef<any>[] = [
     {
-      header: 'Nombre',
+      header: 'Perfil',
       accessorKey: 'nombre',
       cell: ({ row }) => (
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
-            <Tag className="w-5 h-5 text-slate-500 dark:text-zinc-400" />
-          </div>
-          <div>
-            <p className="font-medium text-slate-900 dark:text-zinc-100">{row.original.nombre}</p>
-            {row.original.descripcion && (
-              <p className="text-sm text-slate-500 dark:text-zinc-400">{row.original.descripcion}</p>
-            )}
-          </div>
-        </div>
+        <EntityCell
+          icon={Tag}
+          title={row.original.nombre}
+          subtitle={row.original.descripcion}
+        />
       ),
     },
     {
       header: 'Estado',
       accessorKey: 'activo',
-      cell: ({ getValue }) => (
-        <Badge variant={getValue<boolean>() ? 'success' : 'inactive'}>
-          {getValue<boolean>() ? 'Activo' : 'Inactivo'}
-        </Badge>
-      ),
+      cell: ({ getValue }) => <StatusBadge active={getValue<boolean>()} />,
     },
     {
       header: 'Acciones',
@@ -93,11 +83,7 @@ export default function AdminPerfiles() {
   ];
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <Spinner size="lg" />
-      </div>
-    );
+    return <LoadingState message="Cargando perfiles..." />;
   }
 
   return (

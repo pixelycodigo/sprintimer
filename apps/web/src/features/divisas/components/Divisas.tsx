@@ -7,11 +7,11 @@ import { divisasService } from '../../../services/divisas.service';
 import { type ColumnDef } from '@tanstack/react-table';
 
 import { DataTable, DataTableActions } from '@ui/DataTable';
+import { EntityCell, StatusBadge, LoadingState } from '@ui';
 import { Badge } from '@ui/Badge';
 import { Button } from '@ui/Button';
 import { FilterPage } from '@ui/FilterPage';
 import { HeaderPage } from '@ui/HeaderPage';
-import { Spinner } from '@ui/Spinner';
 
 export default function AdminDivisas() {
   const queryClient = useQueryClient();
@@ -49,15 +49,11 @@ export default function AdminDivisas() {
       header: 'Divisa',
       accessorKey: 'nombre',
       cell: ({ row }) => (
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
-            <Coins className="w-5 h-5 text-slate-500 dark:text-zinc-400" />
-          </div>
-          <div>
-            <p className="font-medium text-slate-900 dark:text-zinc-100">{row.original.nombre}</p>
-            <p className="text-sm text-slate-500 dark:text-zinc-400">{row.original.codigo}</p>
-          </div>
-        </div>
+        <EntityCell
+          icon={Coins}
+          title={row.original.nombre}
+          subtitle={row.original.codigo}
+        />
       ),
     },
     {
@@ -70,11 +66,7 @@ export default function AdminDivisas() {
     {
       header: 'Estado',
       accessorKey: 'activo',
-      cell: ({ getValue }) => (
-        <Badge variant={getValue<boolean>() ? 'success' : 'inactive'}>
-          {getValue<boolean>() ? 'Activo' : 'Inactivo'}
-        </Badge>
-      ),
+      cell: ({ getValue }) => <StatusBadge active={getValue<boolean>()} />,
     },
     {
       header: 'Acciones',
@@ -99,11 +91,7 @@ export default function AdminDivisas() {
   ];
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <Spinner size="lg" />
-      </div>
-    );
+    return <LoadingState message="Cargando divisas..." />;
   }
 
   return (
