@@ -8,7 +8,6 @@ import { type ColumnDef } from '@tanstack/react-table';
 
 import { DataTable, DataTableActions } from '@ui/DataTable';
 import { EntityCell, StatusBadge } from '@ui';
-import { Badge } from '@ui/Badge';
 import { Button } from '@ui/Button';
 import { FilterPage } from '@ui/FilterPage';
 import { HeaderPage } from '@ui/HeaderPage';
@@ -18,8 +17,6 @@ export default function AdminAsignaciones() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const [deleteId, setDeleteId] = useState<number | string | null>(null);
-  const [deleteNombre, setDeleteNombre] = useState<string>('');
 
   const { data: asignaciones, isLoading } = useQuery({
     queryKey: ['asignaciones'],
@@ -94,7 +91,7 @@ export default function AdminAsignaciones() {
             setDeleteId(id);
             setDeleteNombre(nombre);
           }}
-          onConfirmDelete={(id) => deleteMutation.mutate(id)}
+          onConfirmDelete={(id: number | string) => deleteMutation.mutate(Number(id))}
           deleteTitle="¿Eliminar asignación?"
           deleteDescription="Esta acción no se puede deshacer. Se eliminará permanentemente la asignación"
           isLoading={deleteMutation.isPending}

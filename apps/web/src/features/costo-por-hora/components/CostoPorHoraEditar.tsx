@@ -14,7 +14,6 @@ import { Checkbox } from '@ui/Checkbox';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/Card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/Select';
 import { Textarea } from '@ui/Textarea';
-import { Spinner } from '@ui/Spinner';
 import { HeaderPage } from '@ui/HeaderPage';
 import type { UpdateCostoPorHoraInput } from '@shared';
 

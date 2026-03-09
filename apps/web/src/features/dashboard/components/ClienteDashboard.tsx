@@ -2,7 +2,6 @@ import { Users, Briefcase, CheckSquare, TrendingUp, FolderOpen } from 'lucide-re
 import { useQuery } from '@tanstack/react-query';
 import { clienteDashboardService } from '../../../services/cliente-dashboard.service';
 
-import { Spinner } from '@ui/Spinner';
 import { Empty } from '@ui/Empty';
 import { DashboardSection } from './DashboardSection';
 import { StatCard } from './StatCard';

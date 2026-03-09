@@ -4,13 +4,11 @@ import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { dashboardService } from '../../../services/dashboard.service';
 
-import { Badge } from '@ui/Badge';
 import { Button } from '@ui/Button';
 import { DataTable } from '@ui/DataTable';
 import { Empty } from '@ui/Empty';
 import { HeaderPage } from '@ui/HeaderPage';
 import { QuickActions } from '@ui/QuickActions';
-import { Spinner } from '@ui/Spinner';
 
 import { StatCard } from './StatCard';
 import { DashboardSection } from './DashboardSection';

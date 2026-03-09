@@ -10,7 +10,6 @@ import { Label } from '@ui/Label';
 import { Checkbox } from '@ui/Checkbox';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/Card';
 import { Textarea } from '@ui/Textarea';
-import { Spinner } from '@ui/Spinner';
 import { HeaderPage } from '@ui/HeaderPage';
 import type { UpdatePerfilInput } from '@shared';
 

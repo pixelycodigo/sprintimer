@@ -9,7 +9,6 @@ import { Input } from '@ui/Input';
 import { Label } from '@ui/Label';
 import { Checkbox } from '@ui/Checkbox';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/Card';
-import { Spinner } from '@ui/Spinner';
 import { HeaderPage } from '@ui/HeaderPage';
 import type { UpdateSeniorityInput } from '@shared';
 

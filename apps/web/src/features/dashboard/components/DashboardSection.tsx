@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader } from '@ui/Card';
-import { Muted } from '@ui/Typography';
 
 export interface DashboardSectionProps {
   title: string;

@@ -1,4 +1,3 @@
-import { Spinner } from '@ui/Spinner';
 import { StatCard, StatCardProps } from './StatCard';
 
 export interface DashboardStatsProps {

@@ -9,7 +9,6 @@ import { Input } from '@ui/Input';
 import { Label } from '@ui/Label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/Card';
 import { HeaderPage } from '@ui/HeaderPage';
-import { Spinner } from '@ui/Spinner';
 
 export default function AdminConfiguracion() {
   const navigate = useNavigate();

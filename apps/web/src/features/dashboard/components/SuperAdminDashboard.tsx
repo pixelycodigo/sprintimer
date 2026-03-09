@@ -2,10 +2,8 @@ import { Link } from 'react-router-dom';
 import { Users, Shield, Activity, TrendingUp, Briefcase, CheckSquare } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 
-import { Spinner } from '@ui/Spinner';
 import { Empty } from '@ui/Empty';
 import { Card, CardHeader, CardTitle, CardDescription } from '@ui/Card';
-import { Badge } from '@ui/Badge';
 
 import { StatCard } from './StatCard';
 import { DashboardSection } from './DashboardSection';

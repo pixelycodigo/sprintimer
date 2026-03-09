@@ -12,7 +12,6 @@ import { Checkbox } from '@ui/Checkbox';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/Card';
 import { Textarea } from '@ui/Textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/Select';
-import { Spinner } from '@ui/Spinner';
 import { HeaderPage } from '@ui/HeaderPage';
 import type { UpdateActividadInput } from '@shared';
 

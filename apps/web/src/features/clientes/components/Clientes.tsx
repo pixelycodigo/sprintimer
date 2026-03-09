@@ -8,7 +8,6 @@ import { type ColumnDef } from '@tanstack/react-table';
 
 import { DataTable, DataTableActions } from '@ui/DataTable';
 import { EntityCell, StatusBadge, LoadingState } from '@ui';
-import { Badge } from '@ui/Badge';
 import { Button } from '@ui/Button';
 import { FilterPage } from '@ui/FilterPage';
 import { HeaderPage } from '@ui/HeaderPage';
@@ -17,8 +16,6 @@ export default function AdminClientes() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const [deleteId, setDeleteId] = useState<number | string | null>(null);
-  const [deleteNombre, setDeleteNombre] = useState<string>('');
 
   const { data: clientes, isLoading } = useQuery({
     queryKey: ['clientes'],
@@ -109,7 +106,7 @@ export default function AdminClientes() {
             setDeleteId(id);
             setDeleteNombre(nombre);
           }}
-          onConfirmDelete={(id) => deleteMutation.mutate(id)}
+          onConfirmDelete={(id: number | string) => deleteMutation.mutate(Number(id))}
           deleteTitle="¿Eliminar cliente?"
           deleteDescription="Esta acción no se puede deshacer. Se eliminará permanentemente el cliente"
           isLoading={deleteMutation.isPending}

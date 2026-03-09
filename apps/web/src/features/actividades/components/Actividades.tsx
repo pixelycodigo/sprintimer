@@ -8,18 +8,14 @@ import { type ColumnDef } from '@tanstack/react-table';
 
 import { DataTable, DataTableActions } from '@ui/DataTable';
 import { EntityCell, StatusBadge, LoadingState } from '@ui';
-import { Badge } from '@ui/Badge';
 import { Button } from '@ui/Button';
 import { FilterPage } from '@ui/FilterPage';
 import { HeaderPage } from '@ui/HeaderPage';
-import { Muted } from '@ui/Typography';
 
 export default function AdminActividades() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const [deleteId, setDeleteId] = useState<number | string | null>(null);
-  const [deleteNombre, setDeleteNombre] = useState<string>('');
 
   const { data: actividades, isLoading } = useQuery({
     queryKey: ['actividades'],
@@ -31,11 +27,9 @@ export default function AdminActividades() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['actividades'] });
       toast.success('Actividad eliminada exitosamente');
-      setDeleteId(null);
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al eliminar actividad');
-      setDeleteId(null);
     },
   });
 
@@ -85,11 +79,7 @@ export default function AdminActividades() {
           deleteId={row.original.id}
           deleteNombre={row.original.nombre}
           onEdit={(id) => navigate(`/admin/actividades/${id}`)}
-          onDelete={(id, nombre) => {
-            setDeleteId(id);
-            setDeleteNombre(nombre);
-          }}
-          onConfirmDelete={(id) => deleteMutation.mutate(id)}
+          onConfirmDelete={(id: number | string) => deleteMutation.mutate(Number(id))}
           deleteTitle="¿Eliminar actividad?"
           deleteDescription="Esta acción no se puede deshacer. Se eliminará permanentemente la actividad"
           isLoading={deleteMutation.isPending}

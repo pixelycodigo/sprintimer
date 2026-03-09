@@ -7,10 +7,7 @@ import { clienteDashboardService } from '../../../services/cliente-dashboard.ser
 import { DataTable } from '@ui/DataTable';
 import { FilterPage } from '@ui/FilterPage';
 import { HeaderPage } from '@ui/HeaderPage';
-import { Badge } from '@ui/Badge';
-import { Spinner } from '@ui/Spinner';
 import { Empty } from '@ui/Empty';
-import { Muted } from '@ui/Typography';
 import { Progress } from '@ui/ProgressBar';
 
 export default function ClienteProyectos() {

@@ -10,7 +10,6 @@ import { Button } from '@ui/Button';
 import { Label } from '@ui/Label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/Card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/Select';
-import { Spinner } from '@ui/Spinner';
 import { HeaderPage } from '@ui/HeaderPage';
 import type { UpdateAsignacionInput } from '@shared';
 

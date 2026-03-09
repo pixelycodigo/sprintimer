@@ -9,8 +9,6 @@ import { Input } from '@ui/Input';
 import { Label } from '@ui/Label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/Card';
 import { HeaderPage } from '@ui/HeaderPage';
-import { Spinner } from '@ui/Spinner';
-import { Badge } from '@ui/Badge';
 
 export default function AdminPerfil() {
   const navigate = useNavigate();

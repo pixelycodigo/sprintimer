@@ -19,16 +19,11 @@ import {
 } from '@ui/AlertDialog';
 import { ActionButtonRestore, ActionButtonDelete } from '@ui/ActionButtonTable';
 
-import { Badge } from '@ui/Badge';
 import { Card, CardContent } from '@ui/Card';
 import { HeaderPage } from '@ui/HeaderPage';
-import { Muted } from '@ui/Typography';
-import { Spinner } from '@ui/Spinner';
 
 export default function TalentTareasEliminadas() {
   const queryClient = useQueryClient();
-  const [deleteId, setDeleteId] = useState<number | string | null>(null);
-  const [deleteNombre, setDeleteNombre] = useState<string>('');
 
   // Fetch tareas eliminadas
   const { data: tareas, isLoading } = useQuery({

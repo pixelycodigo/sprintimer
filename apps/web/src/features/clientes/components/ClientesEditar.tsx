@@ -8,8 +8,6 @@ import { Button } from '@ui/Button';
 import { Input } from '@ui/Input';
 import { Label } from '@ui/Label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/Card';
-import { Spinner } from '@ui/Spinner';
-import { Muted } from '@ui/Typography';
 import type { UpdateClienteInput } from '@shared';
 
 export default function AdminClientesEditar() {

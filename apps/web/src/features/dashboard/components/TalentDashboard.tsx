@@ -2,7 +2,6 @@ import { Users, Briefcase, CheckSquare, TrendingUp, ClipboardList, FolderOpen } 
 import { useQuery } from '@tanstack/react-query';
 import { talentDashboardService } from '../../../services/talent-dashboard.service';
 
-import { Spinner } from '@ui/Spinner';
 import { Empty } from '@ui/Empty';
 import { DashboardSection } from './DashboardSection';
 import { StatCard } from './StatCard';
