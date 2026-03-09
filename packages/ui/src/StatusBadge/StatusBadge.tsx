@@ -14,13 +14,14 @@ export interface StatusBadgeProps {
  * Reemplaza el patrón repetido en todas las tablas CRUD
  */
 const StatusBadge = React.forwardRef<HTMLDivElement, StatusBadgeProps>(
-  ({ active, activeLabel = 'Activo', inactiveLabel = 'Inactivo', variant, className }, ref) => {
+  ({ active, activeLabel = 'Activo', inactiveLabel = 'Inactivo', variant, className, ...props }, ref) => {
     const isActive = active !== false;
     
     return (
       <Badge
         variant={variant || (isActive ? 'success' : 'inactive')}
         className={className}
+        {...props}
       >
         {isActive ? activeLabel : inactiveLabel}
       </Badge>
@@ -43,22 +44,12 @@ export interface BooleanBadgeProps {
  * Componente reutilizable para badges booleanos genéricos
  */
 const BooleanBadge = React.forwardRef<HTMLDivElement, BooleanBadgeProps>(
-  (
-    {
-      value,
-      trueLabel = 'Sí',
-      falseLabel = 'No',
-      trueVariant = 'success',
-      falseVariant = 'inactive',
-      className,
-    },
-    ref
-  ) => {
+  ({ value, trueLabel = 'Sí', falseLabel = 'No', trueVariant = 'success', falseVariant = 'inactive', className, ...props }, ref) => {
     return (
       <Badge
-        ref={ref}
         variant={value ? trueVariant : falseVariant}
         className={className}
+        {...props}
       >
         {value ? trueLabel : falseLabel}
       </Badge>
