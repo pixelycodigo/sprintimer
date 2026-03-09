@@ -27,6 +27,9 @@ export * from './Spinner';
 export * from './QuickActions';
 export * from './ActionButtonTable';
 export * from './Chart';
+export * from './EntityCell';
+export * from './LoadingState';
+export * from './StatusBadge';
 
 // Componentes de Navegación y Selección
 export * from './Popover';

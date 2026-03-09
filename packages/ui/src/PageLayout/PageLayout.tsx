@@ -1,58 +1,52 @@
 import * as React from 'react';
 import { cn } from '../utils/cn';
 
-export interface PageLayoutProps extends React.HTMLAttributes<HTMLDivElement> {
-  withSidebar?: boolean;
-  sidebarOpen?: boolean;
-  sidebarWidth?: number;
+export interface PageLayoutProps {
+  className?: string;
+  children: React.ReactNode;
+  withPadding?: boolean;
+  withSpacing?: boolean;
 }
 
+/**
+ * Componente de layout principal para páginas
+ * Incluye el espaciado vertical consistente (space-y-6) y padding opcional
+ */
 const PageLayout = React.forwardRef<HTMLDivElement, PageLayoutProps>(
-  ({ className, withSidebar = false, sidebarOpen = true, sidebarWidth = 260, ...props }, ref) => {
+  ({ className, children, withPadding = false, withSpacing = true, ...props }, ref) => {
     return (
       <div
         ref={ref}
         className={cn(
-          'min-h-screen bg-slate-50 dark:bg-zinc-950',
-          withSidebar && sidebarOpen
-            ? 'ml-[--sidebar-width]'
-            : 'ml-0',
+          withPadding && 'p-6',
+          withSpacing && 'space-y-6',
           className
         )}
-        style={
-          withSidebar
-            ? { '--sidebar-width': `${sidebarWidth}px` } as React.CSSProperties
-            : undefined
-        }
         {...props}
-      />
+      >
+        {children}
+      </div>
     );
   }
 );
+
 PageLayout.displayName = 'PageLayout';
 
-const PageLayoutHeader = React.forwardRef<
+/**
+ * Componente para el contenedor principal de contenido
+ * Reemplaza los divs con clases repetidas en cada página
+ */
+const PageContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('sticky top-0 z-40', className)}
+    className={cn('space-y-6', className)}
     {...props}
   />
 ));
-PageLayoutHeader.displayName = 'PageLayoutHeader';
 
-const PageLayoutContent = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn('p-6', className)}
-    {...props}
-  />
-));
-PageLayoutContent.displayName = 'PageLayoutContent';
+PageContent.displayName = 'PageContent';
 
-export { PageLayout, PageLayoutHeader, PageLayoutContent };
+export { PageLayout, PageContent };
