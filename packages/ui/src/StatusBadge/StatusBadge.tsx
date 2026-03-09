@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { cn } from '../utils/cn';
 import { Badge } from '../Badge';
 
 export interface StatusBadgeProps {
@@ -20,7 +19,6 @@ const StatusBadge = React.forwardRef<HTMLDivElement, StatusBadgeProps>(
     
     return (
       <Badge
-        ref={ref}
         variant={variant || (isActive ? 'success' : 'inactive')}
         className={className}
       >

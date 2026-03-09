@@ -6,7 +6,7 @@ import { Empty } from '../Empty';
 export interface LoadingStateProps {
   className?: string;
   message?: string;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'default' | 'sm' | 'lg';
   height?: string | number;
 }
 

@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Plus, ClipboardList, CheckCircle2, Circle } from 'lucide-react';
+import { Plus, CheckCircle2, Circle } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { talentDashboardService } from '../../../services/talent-dashboard.service';
 import { type ColumnDef } from '@tanstack/react-table';
 
 import { DataTable, DataTableActions } from '@ui/DataTable';
-import { EntityCell, LoadingState, StatusBadge } from '@ui';
+import { LoadingState, StatusBadge } from '@ui';
 import { Badge } from '@ui/Badge';
 import { Button } from '@ui/Button';
 import { FilterPage } from '@ui/FilterPage';
