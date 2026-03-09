@@ -27,7 +27,7 @@ import { Spinner } from '@ui/Spinner';
 
 export default function TalentTareasEliminadas() {
   const queryClient = useQueryClient();
-  const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [deleteId, setDeleteId] = useState<number | string | null>(null);
   const [deleteNombre, setDeleteNombre] = useState<string>('');
 
   // Fetch tareas eliminadas

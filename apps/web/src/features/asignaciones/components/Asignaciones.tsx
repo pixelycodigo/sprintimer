@@ -18,7 +18,7 @@ export default function AdminAsignaciones() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [deleteId, setDeleteId] = useState<number | string | null>(null);
   const [deleteNombre, setDeleteNombre] = useState<string>('');
 
   const { data: asignaciones, isLoading } = useQuery({
