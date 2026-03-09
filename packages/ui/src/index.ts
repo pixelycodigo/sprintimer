@@ -19,6 +19,7 @@ export * from './AlertDialog';
 // Componentes de Datos
 export * from './Table';
 export * from './DataTable';
+export * from './DataTableActions';
 export * from './Empty';
 export * from './ProgressBar';
 export * from './Skeleton';

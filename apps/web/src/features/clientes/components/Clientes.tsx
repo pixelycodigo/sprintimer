@@ -5,26 +5,14 @@ import { toast } from 'sonner';
 import { clientesService } from '../../../services/clientes.service';
 import { type ColumnDef } from '@tanstack/react-table';
 
-import { DataTable } from '@ui/DataTable';
+import { DataTable, DataTableActions } from '@ui/DataTable';
 import { FilterPage } from '@ui/FilterPage';
 import { HeaderPage } from '@ui/HeaderPage';
-import { ActionButtonEdit, ActionButtonDelete } from '@ui/ActionButtonTable';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@ui/AlertDialog';
-
-import { useState } from 'react';
 import { Badge } from '@ui/Badge';
 import { Button } from '@ui/Button';
 import { Spinner } from '@ui/Spinner';
 import { Muted } from '@ui/Typography';
+import { useState } from 'react';
 
 export default function AdminClientes() {
   const queryClient = useQueryClient();
@@ -56,17 +44,6 @@ export default function AdminClientes() {
     cliente.empresa.toLowerCase().includes(searchTerm.toLowerCase()) ||
     cliente.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  const handleDelete = (id: number, nombre: string) => {
-    setDeleteId(id);
-    setDeleteNombre(nombre);
-  };
-
-  const handleConfirmDelete = () => {
-    if (deleteId) {
-      deleteMutation.mutate(deleteId);
-    }
-  };
 
   const handleClear = () => {
     setSearchTerm('');
@@ -141,14 +118,20 @@ export default function AdminClientes() {
       header: 'Acciones',
       accessorKey: 'id',
       cell: ({ getValue, row }) => (
-        <div className="flex items-center justify-end gap-2">
-          <ActionButtonEdit
-            onClick={() => navigate(`/admin/clientes/${getValue<number>()}`)}
-          />
-          <ActionButtonDelete
-            onClick={() => handleDelete(getValue<number>(), row.original.nombre_cliente)}
-          />
-        </div>
+        <DataTableActions
+          editId={getValue<number>()}
+          deleteId={getValue<number>()}
+          deleteNombre={row.original.nombre_cliente}
+          onEdit={(id) => navigate(`/admin/clientes/${id}`)}
+          onDelete={(id, nombre) => {
+            setDeleteId(id);
+            setDeleteNombre(nombre);
+          }}
+          onConfirmDelete={(id) => deleteMutation.mutate(id)}
+          deleteTitle="¿Eliminar cliente?"
+          deleteDescription="Esta acción no se puede deshacer. Se eliminará permanentemente el cliente"
+          isLoading={deleteMutation.isPending}
+        />
       ),
     },
   ];
@@ -188,32 +171,10 @@ export default function AdminClientes() {
       {/* Table */}
       <DataTable
         data={filteredClientes || []}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         columns={columns as any}
         pageSize={10}
         emptyMessage="No se encontraron clientes"
       />
-
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Esta acción no se puede deshacer. Se eliminará permanentemente el cliente "{deleteNombre}".
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleConfirmDelete}
-              className="bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600"
-            >
-              Eliminar
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }

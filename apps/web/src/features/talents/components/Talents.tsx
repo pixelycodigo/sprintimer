@@ -5,25 +5,13 @@ import { toast } from 'sonner';
 import { talentsService } from '../../../services/talents.service';
 import { type ColumnDef } from '@tanstack/react-table';
 
-import { DataTable } from '@ui/DataTable';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@ui/AlertDialog';
-import { ActionButtonEdit, ActionButtonDelete } from '@ui/ActionButtonTable';
-
-import { useState } from 'react';
+import { DataTable, DataTableActions } from '@ui/DataTable';
 import { Badge } from '@ui/Badge';
 import { Button } from '@ui/Button';
 import { FilterPage } from '@ui/FilterPage';
 import { HeaderPage } from '@ui/HeaderPage';
 import { Spinner } from '@ui/Spinner';
+import { useState } from 'react';
 
 export default function AdminTalents() {
   const queryClient = useQueryClient();
@@ -60,17 +48,6 @@ export default function AdminTalents() {
       talent.seniority_nombre?.toLowerCase().includes(search)
     );
   });
-
-  const handleDelete = (id: number, nombre: string) => {
-    setDeleteId(id);
-    setDeleteNombre(nombre);
-  };
-
-  const handleConfirmDelete = () => {
-    if (deleteId) {
-      deleteMutation.mutate(deleteId);
-    }
-  };
 
   const columns: ColumnDef<any>[] = [
     {
@@ -137,14 +114,20 @@ export default function AdminTalents() {
       header: 'Acciones',
       accessorKey: 'id',
       cell: ({ row }) => (
-        <div className="flex items-center justify-end gap-2">
-          <ActionButtonEdit
-            onClick={() => navigate(`/admin/talents/${row.original.id}`)}
-          />
-          <ActionButtonDelete
-            onClick={() => handleDelete(row.original.id, `${row.original.nombre} ${row.original.apellido}`)}
-          />
-        </div>
+        <DataTableActions
+          editId={row.original.id}
+          deleteId={row.original.id}
+          deleteNombre={`${row.original.nombre} ${row.original.apellido}`}
+          onEdit={(id) => navigate(`/admin/talents/${id}`)}
+          onDelete={(id, nombre) => {
+            setDeleteId(id);
+            setDeleteNombre(nombre);
+          }}
+          onConfirmDelete={(id) => deleteMutation.mutate(id)}
+          deleteTitle="¿Eliminar talent?"
+          deleteDescription="Esta acción no se puede deshacer. Se eliminará permanentemente el talent"
+          isLoading={deleteMutation.isPending}
+        />
       ),
     },
   ];
@@ -188,27 +171,6 @@ export default function AdminTalents() {
         pageSize={10}
         emptyMessage="No se encontraron talents"
       />
-
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Esta acción no se puede deshacer. Se eliminará permanentemente el elemento "{deleteNombre}".
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleConfirmDelete}
-              className="bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600"
-            >
-              Eliminar
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }
