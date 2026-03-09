@@ -5,25 +5,13 @@ import { toast } from 'sonner';
 import { perfilesService } from '../../../services/perfiles.service';
 import { type ColumnDef } from '@tanstack/react-table';
 
-import { DataTable } from '@ui/DataTable';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@ui/AlertDialog';
-import { ActionButtonEdit, ActionButtonDelete } from '@ui/ActionButtonTable';
-
-import { useState } from 'react';
+import { DataTable, DataTableActions } from '@ui/DataTable';
 import { Badge } from '@ui/Badge';
 import { Button } from '@ui/Button';
 import { FilterPage } from '@ui/FilterPage';
 import { HeaderPage } from '@ui/HeaderPage';
 import { Spinner } from '@ui/Spinner';
+import { useState } from 'react';
 
 export default function AdminPerfiles() {
   const queryClient = useQueryClient();
@@ -55,17 +43,6 @@ export default function AdminPerfiles() {
     perfil.descripcion?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleDelete = (id: number, nombre: string) => {
-    setDeleteId(id);
-    setDeleteNombre(nombre);
-  };
-
-  const handleConfirmDelete = () => {
-    if (deleteId) {
-      deleteMutation.mutate(deleteId);
-    }
-  };
-
   const columns: ColumnDef<any>[] = [
     {
       header: 'Nombre',
@@ -77,21 +54,19 @@ export default function AdminPerfiles() {
           </div>
           <div>
             <p className="font-medium text-slate-900 dark:text-zinc-100">{row.original.nombre}</p>
+            {row.original.descripcion && (
+              <p className="text-sm text-slate-500 dark:text-zinc-400">{row.original.descripcion}</p>
+            )}
           </div>
         </div>
       ),
     },
     {
-      header: 'Descripción',
-      accessorKey: 'descripcion',
-      cell: ({ row }) => row.original.descripcion || '—',
-    },
-    {
       header: 'Estado',
       accessorKey: 'activo',
-      cell: ({ row }) => (
-        <Badge variant={row.original.activo ? 'success' : 'inactive'}>
-          {row.original.activo ? 'Activo' : 'Inactivo'}
+      cell: ({ getValue }) => (
+        <Badge variant={getValue<boolean>() ? 'success' : 'inactive'}>
+          {getValue<boolean>() ? 'Activo' : 'Inactivo'}
         </Badge>
       ),
     },
@@ -99,14 +74,20 @@ export default function AdminPerfiles() {
       header: 'Acciones',
       accessorKey: 'id',
       cell: ({ row }) => (
-        <div className="flex items-center justify-end gap-2">
-          <ActionButtonEdit
-            onClick={() => navigate(`/admin/perfiles/${row.original.id}`)}
-          />
-          <ActionButtonDelete
-            onClick={() => handleDelete(row.original.id, row.original.nombre)}
-          />
-        </div>
+        <DataTableActions
+          editId={row.original.id}
+          deleteId={row.original.id}
+          deleteNombre={row.original.nombre}
+          onEdit={(id) => navigate(`/admin/perfiles/${id}`)}
+          onDelete={(id, nombre) => {
+            setDeleteId(id);
+            setDeleteNombre(nombre);
+          }}
+          onConfirmDelete={(id) => deleteMutation.mutate(id)}
+          deleteTitle="¿Eliminar perfil?"
+          deleteDescription="Esta acción no se puede deshacer. Se eliminará permanentemente el perfil"
+          isLoading={deleteMutation.isPending}
+        />
       ),
     },
   ];
@@ -121,10 +102,9 @@ export default function AdminPerfiles() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <HeaderPage
         title="Perfiles"
-        description="Gestiona los perfiles profesionales"
+        description="Gestiona los perfiles profesionales de los talents"
         action={
           <Link to="/admin/perfiles/crear">
             <Button variant="default" size="default">
@@ -135,7 +115,6 @@ export default function AdminPerfiles() {
         }
       />
 
-      {/* Filters */}
       <FilterPage
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
@@ -143,34 +122,12 @@ export default function AdminPerfiles() {
         searchPlaceholder="Buscar por nombre o descripción..."
       />
 
-      {/* Table */}
       <DataTable
         data={filteredPerfiles || []}
         columns={columns as any}
         pageSize={10}
         emptyMessage="No se encontraron perfiles"
       />
-
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Esta acción no se puede deshacer. Se eliminará permanentemente el elemento "{deleteNombre}".
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleConfirmDelete}
-              className="bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600"
-            >
-              Eliminar
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }
