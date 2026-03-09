@@ -27,6 +27,8 @@ import { HeaderPage } from '@ui/HeaderPage';
 
 export default function TalentTareasEliminadas() {
   const queryClient = useQueryClient();
+  const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [deleteNombre, setDeleteNombre] = useState('');
 
   // Fetch tareas eliminadas
   const { data: tareas, isLoading } = useQuery({
@@ -98,10 +100,11 @@ export default function TalentTareasEliminadas() {
     {
       header: 'Fecha Eliminación',
       accessorKey: 'fecha_eliminacion',
-      cell: ({ getValue }) => {
-        const date = getValue<string>();
-        return date ? new Date(date).toLocaleDateString('es-ES') : '—';
-      },
+      cell: ({ getValue }) => (
+        <Badge variant="outline">
+          {getValue<string>() ? new Date(getValue<string>()).toLocaleDateString('es-ES') : '—'}
+        </Badge>
+      ),
     },
     {
       header: 'Días Restantes',
@@ -126,7 +129,7 @@ export default function TalentTareasEliminadas() {
       header: 'Acciones',
       accessorKey: 'id',
       cell: ({ row }) => (
-        <div className="flex items-center justify-end gap-2">
+        <div className="flex items-center justify-center gap-2">
           <ActionButtonRestore
             onClick={() => handleRestore(row.original.id)}
           />

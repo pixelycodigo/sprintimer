@@ -7,12 +7,15 @@ export interface UsuarioCreateData {
   usuario: string;
   email: string;
   password: string;
+  password_confirm?: string;
   rol_id: number;
 }
 
 export interface UsuarioUpdateData {
   nombre?: string;
   email?: string;
+  password?: string;
+  password_confirm?: string;
   activo?: boolean;
 }
 
@@ -72,11 +75,20 @@ export class UsuariosService {
       }
     }
 
-    const updated = await usuarioRepository.update(id, {
+    // Preparar datos de actualización
+    const updateData: any = {
       nombre: data.nombre,
       email: data.email,
       activo: data.activo,
-    });
+    };
+
+    // Hashear contraseña si se proporciona
+    if (data.password && data.password !== '') {
+      const passwordHash = await hashPassword(data.password);
+      updateData.password_hash = passwordHash;
+    }
+
+    const updated = await usuarioRepository.update(id, updateData);
 
     if (!updated) {
       throw new AppError('Error al actualizar el usuario', 500);

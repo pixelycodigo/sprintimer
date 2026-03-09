@@ -33,9 +33,20 @@ export class PerfilRepository {
   }
 
   async update(id: number, data: PerfilUpdate): Promise<boolean> {
+    // Filtrar campos undefined o vacíos
+    const updateData: any = {};
+    
+    Object.keys(data).forEach((key) => {
+      const value = (data as any)[key];
+      // Solo incluir campos que no sean undefined, null, o string vacío
+      if (value !== undefined && value !== null && value !== '') {
+        updateData[key] = value;
+      }
+    });
+
     const updated = await db<Perfil>(this.tableName)
       .where('id', id)
-      .update(data);
+      .update(updateData);
 
     return updated > 0;
   }

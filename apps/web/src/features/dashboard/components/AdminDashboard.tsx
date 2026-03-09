@@ -4,26 +4,27 @@ import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { dashboardService } from '../../../services/dashboard.service';
 
-import { Button } from '@ui/Button';
 import { Spinner } from '@ui/Spinner';
 import { Badge } from '@ui/Badge';
 import { DataTable } from '@ui/DataTable';
 import { Empty } from '@ui/Empty';
 import { HeaderPage } from '@ui/HeaderPage';
 import { QuickActions } from '@ui/QuickActions';
+import { ActionButtonView } from '@ui/ActionButtonTable';
+import { getChartColors, CustomBarTooltip } from '@ui/Chart';
 
 import { StatCard } from './StatCard';
 import { DashboardSection } from './DashboardSection';
 
 import { ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
 
-const COLORS = ['#0f172a', '#334155', '#64748b', '#94a3b8', '#cbd5e1'];
-
 export default function AdminDashboard() {
   const { data: stats, isLoading } = useQuery({
     queryKey: ['dashboard-stats'],
     queryFn: dashboardService.getStats,
   });
+
+  const chartColors = getChartColors();
 
   if (isLoading) {
     return (
@@ -65,7 +66,7 @@ export default function AdminDashboard() {
       accessorKey: 'acciones',
       cell: () => (
         <Link to={`/admin/proyectos`}>
-          <Button variant="ghost" size="sm">Ver</Button>
+          <ActionButtonView />
         </Link>
       ),
     },
@@ -93,16 +94,19 @@ export default function AdminDashboard() {
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={stats.proyectos_por_cliente}>
                 <CartesianGrid strokeDasharray="3 3" className="stroke-slate-200 dark:stroke-zinc-800" />
-                <XAxis dataKey="cliente" className="text-xs text-slate-500 dark:text-zinc-400" />
-                <YAxis className="text-xs text-slate-500 dark:text-zinc-400" />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: 'hsl(var(--card))',
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: '8px',
-                  }}
+                <XAxis
+                  dataKey="cliente"
+                  tick={{ fill: 'var(--chart-axis)', fontSize: '12px' }}
                 />
-                <Bar dataKey="proyectos" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                <YAxis
+                  tick={{ fill: 'var(--chart-axis)', fontSize: '12px' }}
+                />
+                <Tooltip content={<CustomBarTooltip />} />
+                <Bar
+                  dataKey="proyectos"
+                  fill="rgb(var(--chart-1))"
+                  radius={[4, 4, 0, 0]}
+                />
               </BarChart>
             </ResponsiveContainer>
           ) : (
@@ -129,20 +133,15 @@ export default function AdminDashboard() {
                   labelLine={false}
                   label={({ perfil, percent }: any) => `${perfil} (${(percent * 100).toFixed(0)}%)`}
                   outerRadius={80}
-                  fill="#8884d8"
                   dataKey="cantidad"
+                  stroke="var(--chart-border)"
+                  strokeWidth={2}
                 >
                   {stats.talents_por_perfil.map((_entry: any, index: number) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
                   ))}
                 </Pie>
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: 'hsl(var(--card))',
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: '8px',
-                  }}
-                />
+                <Tooltip />
               </PieChart>
             </ResponsiveContainer>
           ) : (

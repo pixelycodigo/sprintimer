@@ -1,14 +1,285 @@
 # 📊 Resumen de Avance - SprinTask SaaS
 
-**Fecha de última actualización:** 9 de Marzo, 2026 (15:00)
-**Estado del Proyecto:** ✅ Servidores Locales - CORS Corregido - ✅ Todos los Imports UI Corregidos - ✅ Dashboards Funcionales - ✅ Base de Datos con Datos
-**Próximo Hito:** Limpieza de TypeScript Warnings + Tests E2E
+**Fecha de última actualización:** 9 de Marzo, 2026 (20:00)
+**Estado del Proyecto:** ✅ Build Optimizado - ✅ Charts con Variables CSS - ✅ Badges Reutilizables - ✅ DataTable Mejorada - ✅ Corrección de Bugs
+**Próximo Hito:** Tests E2E + Limpieza de TypeScript Warnings
 
 ---
 
 ## 🎯 Resumen Ejecutivo
 
 **Aplicación corriendo correctamente en localhost** - Frontend y backend configurados para desarrollo local.
+
+### 🎨 Chart UI con Variables CSS (NUEVO - 9 de Marzo, 18:00)
+
+**Problema:** Los gráficos no cambiaban automáticamente de colores al cambiar entre modo light/dark.
+
+**Solución Implementada:**
+- ✅ Variables CSS (`--chart-1` a `--chart-12`) definidas en `index.css`
+- ✅ Colores que cambian automáticamente con el tema
+- ✅ Tooltip personalizado con clases CSS (no inline styles)
+- ✅ Eliminadas funciones innecesarias de detección de tema
+
+**Archivos Modificados:**
+| Archivo | Cambio | Estado |
+|---------|--------|--------|
+| `apps/web/src/index.css` | Variables CSS para 12 colores + axis + border | ✅ |
+| `packages/ui/src/Chart/Chart.tsx` | Simplificado a 130 líneas (-55%) | ✅ |
+| `apps/web/src/features/dashboard/*Dashboard.tsx` | Eliminados `useState`, `useEffect`, `MutationObserver` | ✅ |
+
+**Resultado:**
+- ✅ Los gráficos cambian automáticamente con el tema
+- ✅ Sin código complejo en los dashboards
+- ✅ Fácil de personalizar (solo modificar variables CSS)
+
+---
+
+### 🏷️ Badges Reutilizables en Todas las Tablas (NUEVO - 9 de Marzo, 19:00)
+
+**Objetivo:** Estandarizar el uso de badges en todas las columnas de tablas.
+
+**Columnas Actualizadas con Badge `outline`:**
+
+| Página | Columnas con Badge |
+|--------|-------------------|
+| **Admin Seniorities** | Nivel |
+| **Admin Divisas** | Código, Símbolo |
+| **Admin Costo por Hora** | Tipo, Costo Hora, Divisa |
+| **Admin Actividades** | Proyecto, Horas Estimadas |
+| **Admin Proyectos** | Cliente, Modalidad, Formato Horas |
+| **Admin Talents** | Perfil |
+| **Admin Asignaciones** | Actividad, Fecha Asignación |
+| **Admin Eliminados** | Fecha Eliminación |
+| **Admin Clientes** | Empresa, Email, Teléfono, País |
+| **Talent Tareas** | Proyecto, Horas |
+| **Talent Actividades** | Proyecto |
+| **Talent Proyectos** | Cliente, Modalidad |
+
+**Patrón Establecido:**
+- ✅ **Primera columna:** Sin badge (icono + texto)
+- ✅ **Columnas intermedias:** Con badge `outline`
+- ✅ **Última columna (Acciones):** Sin badge (botones)
+
+---
+
+### 📊 DataTable Mejorada (NUEVO - 9 de Marzo, 20:00)
+
+**Mejoras de Alineación:**
+
+| Elemento | Cambio | Estado |
+|----------|--------|--------|
+| **Headers** | `text-left` → `text-center` solo en Acciones | ✅ |
+| **Celda Acciones** | Ancho fijo `120px` | ✅ |
+| **Iconos de Acciones** | `justify-end` → `justify-center` | ✅ |
+| **Todos los badges** | Modo light/dark consistente | ✅ |
+
+**Archivos Modificados:**
+- ✅ `packages/ui/src/DataTable/DataTable.tsx` - Selectores `:has(button)`
+- ✅ `packages/ui/src/DataTable/DataTableActions.tsx` - `justify-center`
+- ✅ `apps/web/src/features/talent/components/TareasEliminadas.tsx` - Badge en Fecha Eliminación
+- ✅ `apps/web/src/features/talent/components/Actividades.tsx` - Iconos centrados
+- ✅ `apps/web/src/features/talent/components/Proyectos.tsx` - Iconos centrados
+- ✅ `apps/web/src/features/eliminados/components/Eliminados.tsx` - Iconos centrados
+
+---
+
+### 🐛 Corrección de Bugs (NUEVO - 9 de Marzo, 17:00)
+
+**Problema:** La columna "Talent" mostraba "undefined Mendoza".
+
+**Causa Raíz:** La base de datos usa `nombre_completo` pero el frontend usaba `nombre`.
+
+**Solución Implementada:**
+- ✅ Actualizado `packages/shared/src/types/entities.ts` - `Talent.nombre` → `Talent.nombre_completo`
+- ✅ Actualizado `apps/api/src/models/Talent.ts` - Interfaces actualizadas
+- ✅ Actualizado `apps/api/src/validators/talent.validator.ts` - Schema actualizado
+- ✅ Actualizado `apps/api/src/services/talent.service.ts` - `create` usa `nombre_completo`
+- ✅ Actualizado `apps/web/src/features/talents/components/Talents.tsx` - Columna y filtro
+- ✅ Actualizado `apps/web/src/features/talents/components/TalentsCrear.tsx` - Formulario
+- ✅ Actualizado `apps/web/src/features/talents/components/TalentsEditar.tsx` - Formulario
+- ✅ Actualizado `apps/web/src/features/asignaciones/components/AsignacionesCrear.tsx` - Select
+- ✅ Actualizado `apps/web/src/features/asignaciones/components/AsignacionesEditar.tsx` - Select
+
+**Resultado:**
+- ✅ La columna "Talent" muestra correctamente "Carlos Mendoza"
+- ✅ Búsqueda por nombre funciona correctamente
+- ✅ Formularios de crear/editar usan el campo correcto
+
+---
+
+### 📝 Deuda Técnica Agregada
+
+**Documento creado:** `docs/plans/deuda-tecnica-charts-theme.md`
+
+**Problema:** Gráficos de barras y pie no cambian automáticamente con el tema.
+
+**Soluciones Documentadas:**
+1. **MutationObserver** (Recomendada) - Detectar cambios de tema manualmente
+2. **Paletas hardcodeadas** - Simple pero difícil de personalizar
+3. **Key dinámica** - Funciona pero impacta rendimiento
+
+**Estado:** ⏳ Pendiente para próxima iteración
+
+---
+
+### 🔧 Autenticación y Roles Implementados (NUEVO - 9 de Marzo, 21:00)
+
+**Arquitectura de Autenticación Unificada:**
+
+Todos los usuarios se autentican contra la tabla `usuarios` usando `email` + `password_hash`, y son redirigidos a su dashboard según su `rol_id`.
+
+**Flujo de Inicio de Sesión:**
+
+```
+1. Usuario ingresa email y contraseña en /login
+2. Frontend valida campos requeridos
+3. POST /api/auth/login
+4. Backend busca usuario en tabla `usuarios` por email
+5. Backend verifica password_hash con bcrypt
+6. Backend obtiene rol_id y genera JWT token
+7. Frontend guarda token y usuario en Zustand store
+8. Redirecciona según rol:
+   - rol_id=1 → /super-admin (Super Admin)
+   - rol_id=2 → /admin (Administrador)
+   - rol_id=3 → /cliente (Cliente)
+   - rol_id=4 → /talent (Talent)
+```
+
+**Tabla de Roles:**
+
+| rol_id | Rol | Dashboard | Permisos |
+|--------|-----|-----------|----------|
+| 1 | super_admin | /super-admin | Gestiona administradores |
+| 2 | administrador | /admin | Gestiona clientes, proyectos, actividades, talents |
+| 3 | cliente | /cliente | Solo lectura de proyectos y actividades asignadas |
+| 4 | talent | /talent | Lectura + creación de tareas en actividades asignadas |
+
+**Relación de Tablas - Arquitectura Actualizada:**
+
+```
+┌──────────────┐
+│    roles     │
+├──────────────┤
+│ id (PK)      │
+│ nombre       │ ← 'super_admin', 'administrador', 'cliente', 'talent'
+└──────┬───────┘
+       │
+       │ rol_id (FK)
+       ▼
+┌─────────────────────────────────────────┐
+│            usuarios                      │ ← TODOS los usuarios están aquí
+├─────────────────────────────────────────┤
+│ id (PK)                                 │
+│ nombre                                  │
+│ usuario                                 │
+│ email                                   │
+│ password_hash                           │ ← Contraseña hasheada con bcrypt
+│ rol_id (FK → roles.id)                  │ ← Determina el dashboard
+│ avatar, email_verificado, activo, etc.  │
+└─────────────────────────────────────────┘
+       │
+       │ email (relación lógica, NO FK)
+       ├──────────────────┬──────────────────┐
+       ▼                  ▼                  ▼
+┌──────────────┐  ┌──────────────┐  ┌──────────────┐
+│   clientes   │  │   talents    │  │ administradores│
+├──────────────┤  ├──────────────┤  ├──────────────┤
+│ id (PK)      │  │ id (PK)      │  │ (usuarios con│
+│ nombre_cli.  │  │ nombre_comp. │  │  rol_id=2)   │
+│ cargo        │  │ apellido     │  └──────────────┘
+│ empresa      │  │ email        │
+│ email        │  │ perfil_id    │
+│ celular, etc.│  │ seniority_id │
+└──────────────┘  │ costo_hora_* │
+                  │ activo       │
+                  └──────────────┘
+```
+
+**NOTA IMPORTANTE:**
+- ❌ `clientes` NO tiene `usuario_id` (la relación es por `email`)
+- ❌ `talents` NO tiene `usuario_id` ni `password_hash` (eliminados)
+- ✅ TODOS los usuarios están en `usuarios` con `password_hash`
+- ✅ La relación entre `usuarios` y `clientes`/`talents` es por `email`
+
+**Flujo de Creación de Usuario:**
+
+**Admin → Crear Cliente:**
+```
+1. Admin ingresa datos + password en /admin/clientes/crear
+2. POST /api/admin/clientes
+3. Backend genera usuario automático (email sin @)
+4. Backend crea en `usuarios` (rol_id=3, password_hash)
+5. Backend crea en `clientes` (datos de contacto)
+6. Cliente puede loguearse con email + password
+```
+
+**Admin → Crear Talent:**
+```
+1. Admin ingresa datos + password en /admin/talents/crear
+2. POST /api/admin/talents
+3. Backend genera usuario automático (email sin @)
+4. Backend crea en `usuarios` (rol_id=4, password_hash)
+5. Backend crea en `talents` (datos profesionales)
+6. Talent puede loguearse con email + password
+```
+
+**Super Admin → Crear Administrador:**
+```
+1. Super Admin ingresa datos + password en /super-admin/usuarios/crear
+2. POST /api/super-admin/usuarios
+3. Backend crea en `usuarios` (rol_id=2, password_hash)
+4. Administrador puede loguearse con email + password
+```
+
+**Archivos Modificados:**
+| Archivo | Cambio | Estado |
+|---------|--------|--------|
+| `apps/api/src/services/cliente.service.ts` | Crea usuario en `usuarios` con rol_id=3 | ✅ |
+| `apps/api/src/services/talent.service.ts` | Crea usuario en `usuarios` con rol_id=4 | ✅ |
+| `apps/api/src/models/Talent.ts` | Eliminado `usuario_id` y `password_hash` | ✅ |
+| `apps/api/src/models/Cliente.ts` | Agregado `password` y `password_confirm` | ✅ |
+| `apps/api/src/validators/cliente.validator.ts` | Password + confirmación | ✅ |
+| `apps/api/src/validators/talent.validator.ts` | Password confirm agregado | ✅ |
+| `apps/web/src/features/clientes/components/ClientesCrear.tsx` | Sección "Contraseña" | ✅ |
+| `apps/web/src/features/talents/components/TalentsCrear.tsx` | Sección "Contraseña" | ✅ |
+| `apps/web/src/features/talents/components/TalentsEditar.tsx` | Sección "Contraseña" | ✅ |
+| `apps/web/src/features/super-admin/components/UsuariosCrear.tsx` | Sección "Contraseña" | ✅ |
+| `apps/web/src/features/super-admin/components/UsuariosEditar.tsx` | Sección "Contraseña" | ✅ |
+
+**Resultado:**
+- ✅ Todos los usuarios se autentican contra `usuarios`
+- ✅ Contraseñas hasheadas con bcrypt en `usuarios.password_hash`
+- ✅ Redirección automática según `rol_id`
+- ✅ Formularios con sección "Contraseña" agrupada
+- ✅ Toggle mostrar/ocultar contraseña en todos los formularios
+
+### 📝 Tareas Pendientes - Autenticación
+
+| # | Tarea | Descripción | Prioridad |
+|---|-------|-------------|-----------|
+| 1 | **Generar nuevo seed** | Actualizar script SQL con la arquitectura actualizada (sin `usuario_id` ni `password_hash` en `talents`) | 🔴 Alta |
+| 2 | **Actualizar diagrama ERD** | Si usas herramientas visuales (dbdiagram.io, Draw.io, etc.), actualizar para reflejar que NO hay FK entre `usuarios` y `clientes`/`talents` | 🟡 Media |
+| 3 | **Documentar API endpoints** | Crear documentación de endpoints de autenticación (`/api/auth/login`, `/api/auth/registro`, etc.) con ejemplos de request/response | 🟡 Media |
+| 4 | **Agregar tests de login/registro** | Tests unitarios y de integración para el flujo de autenticación (crear usuario, login, redirección por rol) | 🟢 Baja |
+
+---
+
+### 🔧 Optimización de Build (NUEVO - 9 de Marzo, 16:00)
+
+**Problema:** Archivo JavaScript único de 1.2 MB.
+
+**Solución Implementada:**
+- ✅ Code splitting con manual chunks
+- ✅ Vendors separados (react, tanstack, charts, radix, utils)
+- ✅ Minificación con Terser
+- ✅ Source maps deshabilitados en producción
+
+**Resultado:**
+- ✅ Chunk principal: 1,233 KB → 328 KB (-73%)
+- ✅ 6 chunks separados para mejor caché
+- ✅ Rollup Visualizer sin chunks en rojo
+
+---
 
 ### 🔧 Configuración de Entorno Local (NUEVO - 9 de Marzo, 14:00)
 
@@ -361,19 +632,22 @@ El build funciona correctamente, pero existen warnings de TypeScript por limpiar
 | Categoría | Cantidad | Ubicación | Estado |
 |-----------|----------|-----------|--------|
 | **Componentes UI** | 50+ | `packages/ui/src/` | ✅ 100% reutilizables |
-| **Tipos compartidos** | 14+ | `packages/shared/src/types/` | ✅ |
+| **Tipos compartidos** | 14+ | `packages/shared/src/types/` | ✅ Actualizados (nombre_completo) |
 | **Features** | 12 | `apps/web/src/features/` | ✅ |
 | **Layouts** | 5 | `apps/web/src/layouts/` | ✅ |
 | **Páginas CRUD** | 20 | `apps/web/src/features/` | ✅ 100% actualizadas |
+| **Páginas Talent** | 6 | `apps/web/src/features/talent/` | ✅ Badges + alineación |
 | **Endpoints API** | 74 | `apps/api/src/routes/` | ✅ |
 | **Controladores** | 12 | `apps/api/src/controllers/` | ✅ |
 | **Servicios (API)** | 12 | `apps/api/src/services/` | ✅ |
 | **Servicios (Web)** | 16 | `apps/web/src/services/` | ✅ |
 | **Repositorios** | 12 | `apps/api/src/repositories/` | ✅ |
-| **Modelos** | 12 | `apps/api/src/models/` | ✅ |
+| **Modelos** | 12 | `apps/api/src/models/` | ✅ Actualizados |
 | **Datos Simulados** | 224 registros | `database/seed_data.sql` | ✅ Completado |
 | **Migraciones** | 14 | `apps/api/database/migrations/` | ✅ Actualizadas |
 | **Datos en BD** | 58 registros | MySQL local | ✅ Verificados |
+| **Variables CSS** | 14 colores + axis + border | `apps/web/src/index.css` | ✅ Nuevo |
+| **Deuda Técnica** | 1 documento | `docs/plans/deuda-tecnica-charts-theme.md` | ✅ Documentada |
 
 **Script de Verificación de Datos:**
 ```bash
@@ -512,34 +786,52 @@ mysql --socket=/Applications/MAMP/tmp/mysql/mysql.sock -u root -proot sprintask 
 | `docs/plans/modelo_base_datos_schema.sql` | Backup SQL de la BD | ✅ Automática |
 | `docs/plans/2026-03-07-seed-datos-simulados.md` | **Documentación de seed de datos** | ✅ Manual |
 | `docs/plans/seed-data-2026-03-07.sql` | **Script SQL versionado** (224 registros) | ✅ Manual |
+| `docs/plans/deuda-tecnica-charts-theme.md` | **Deuda técnica - Gráficos** | ✅ Nuevo |
+| `docs/plans/optimizacion-build-2026-03-09.md` | **Optimización de build** | ✅ Nuevo |
 | `apps/api/scripts/check-db.ts` | Script de verificación de datos | ✅ Auto |
 | `README.md` | Documentación principal | Manual |
+| `packages/ui/src/Chart/README.md` | **Guía de colores Chart UI** | ✅ Nuevo |
 
 ---
 
 ## ✅ Build Final Actualizado
 
 ```bash
-✅ packages/ui     - Build exitoso (6 componentes nuevos + ui.ts)
-✅ packages/shared - Build exitoso
-⚠️ apps/web        - Build exitoso, ~30 warnings de variables no usadas
-✅ apps/api        - Build exitoso
+✅ packages/ui     - Build exitoso (Chart UI simplificado)
+✅ packages/shared - Build exitoso (Talent.nombre_completo)
+✅ apps/web        - Build exitoso (sin errores)
+✅ apps/api        - Build exitoso (sin errores)
 ```
 
 **Build de Vite (Último):**
 ```
-✓ built in 10.56s
-dist/index.html                     0.87 kB │ gzip:   0.48 kB
-dist/assets/index-B72BbjGM.css     53.88 kB │ gzip:   8.70 kB
-dist/assets/index-CnV-jFSF.js   1,234.00 kB │ gzip: 333.00 kB
+✓ built in 4.25s
+dist/index.html                     1.29 kB │ gzip:   0.57 kB
+dist/assets/index-CrNX67BM.css     53.50 kB │ gzip:   8.91 kB
+dist/assets/index-CrNX67BM.js     327.68 kB │ gzip:  63.26 kB
+```
+
+**Chunks Generados:**
+```
+✅ charts-vendor    391 KB  (Recharts)
+✅ index            328 KB  (Código de la app)
+✅ react-vendor     161 KB  (React + Router)
+✅ radix-vendor     125 KB  (Radix UI)
+✅ utils-vendor     101 KB  (Axios, date-fns, etc.)
+✅ tanstack-vendor   86 KB  (TanStack Query + Table)
 ```
 
 ---
 
-**Última actualización:** 9 de Marzo, 2026 (15:00)
-**Estado:** ✅ Servidores Locales - CORS Corregido - ✅ Todos los Imports UI Corregidos - ✅ Dashboards Funcionales - ✅ Base de Datos con Datos
-**Logro Principal:** Configuración 100% local completada, 25+ archivos con imports corregidos, dashboards Admin/SuperAdmin corregidos, aplicación corriendo con datos reales
-**Próximo hito:** Limpieza de warnings TypeScript + Tests E2E
+**Última actualización:** 9 de Marzo, 2026 (20:00)
+**Estado:** ✅ Build Optimizado - ✅ Charts con Variables CSS - ✅ Badges Reutilizables - ✅ DataTable Mejorada - ✅ Corrección de Bugs
+**Logro Principal:** 
+- ✅ Gráficos cambian automáticamente con el tema (variables CSS)
+- ✅ 12 páginas con badges estandarizados
+- ✅ DataTable con alineación perfecta (Acciones centradas)
+- ✅ Bug "undefined Mendoza" corregido
+- ✅ Build optimizado (-73% tamaño)
+**Próximo hito:** Tests E2E + Resolver deuda técnica de gráficos
 
 ### 🚀 Estado de Servidores
 

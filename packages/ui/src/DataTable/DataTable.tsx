@@ -250,6 +250,7 @@ const TableHead = React.forwardRef<
     ref={ref}
     className={cn(
       'h-12 px-4 text-left align-middle font-medium text-slate-500 dark:text-zinc-400',
+      '[&:has(button)]:w-[120px] [&:has(button)]:px-2 [&:has(button)]:text-center',
       className
     )}
     {...props}
@@ -263,7 +264,11 @@ const TableCell = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <td
     ref={ref}
-    className={cn('p-4 align-middle', className)}
+    className={cn(
+      'p-4 align-middle',
+      '[&:has(button)]:w-[120px] [&:has(button)]:px-2 [&:has(button)]:py-2 [&:has(button)]:text-center',
+      className
+    )}
     {...props}
   />
 ));

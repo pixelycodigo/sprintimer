@@ -33,9 +33,20 @@ export class ClienteRepository {
   }
 
   async update(id: number, data: ClienteUpdate): Promise<boolean> {
+    // Filtrar campos undefined o vacíos
+    const updateData: any = {};
+    
+    Object.keys(data).forEach((key) => {
+      const value = (data as any)[key];
+      // Solo incluir campos que no sean undefined, null, o string vacío
+      if (value !== undefined && value !== null && value !== '') {
+        updateData[key] = value;
+      }
+    });
+
     const updated = await db<Cliente>(this.tableName)
       .where('id', id)
-      .update({ ...data, updated_at: new Date() });
+      .update({ ...updateData, updated_at: new Date() });
 
     return updated > 0;
   }

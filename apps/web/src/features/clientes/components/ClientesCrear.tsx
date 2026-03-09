@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Building2, Mail, Phone, MapPin } from 'lucide-react';
+import { ArrowLeft, Building2, Mail, Phone, MapPin, Eye, EyeOff } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { clientesService } from '../../../services/clientes.service';
@@ -14,11 +14,14 @@ import type { CreateClienteInput } from '@shared';
 
 export default function AdminClientesCrear() {
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState<CreateClienteInput>({
     nombre_cliente: '',
     cargo: '',
     empresa: '',
     email: '',
+    password: '',
+    password_confirm: '',
     celular: '',
     telefono: '',
     anexo: '',
@@ -32,8 +35,15 @@ export default function AdminClientesCrear() {
       toast.success('Cliente creado exitosamente');
       navigate('/admin/clientes');
     },
-    onError: (error: Error) => {
-      toast.error(error.message || 'Error al crear cliente');
+    onError: (error: any) => {
+      // Mostrar mensaje específico del error
+      if (error.response?.data?.issues) {
+        const issues = error.response.data.issues;
+        const messages = issues.map((issue: any) => issue.message).join('\n');
+        toast.error(messages);
+      } else {
+        toast.error(error.message || 'Error al crear cliente');
+      }
     },
   });
 
@@ -102,7 +112,7 @@ export default function AdminClientesCrear() {
                   <Label htmlFor="cargo">Cargo</Label>
                   <Input
                     id="cargo"
-                    value={formData.cargo}
+                    value={formData.cargo || ''}
                     onChange={(e) => setFormData({ ...formData, cargo: e.target.value })}
                     placeholder="Gerente de Proyecto"
                   />
@@ -112,7 +122,7 @@ export default function AdminClientesCrear() {
                   <Label htmlFor="pais">País</Label>
                   <Input
                     id="pais"
-                    value={formData.pais}
+                    value={formData.pais || ''}
                     onChange={(e) => setFormData({ ...formData, pais: e.target.value })}
                     placeholder="Perú"
                     icon={<MapPin className="w-4 h-4" />}
@@ -127,7 +137,7 @@ export default function AdminClientesCrear() {
                 <Mail className="w-5 h-5" />
                 Información de Contacto
               </h3>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="email" variant="required">Email</Label>
@@ -145,7 +155,7 @@ export default function AdminClientesCrear() {
                   <Label htmlFor="celular">Celular</Label>
                   <Input
                     id="celular"
-                    value={formData.celular}
+                    value={formData.celular || ''}
                     onChange={(e) => setFormData({ ...formData, celular: e.target.value })}
                     placeholder="+51 999 999 999"
                     icon={<Phone className="w-4 h-4" />}
@@ -156,7 +166,7 @@ export default function AdminClientesCrear() {
                   <Label htmlFor="telefono">Teléfono</Label>
                   <Input
                     id="telefono"
-                    value={formData.telefono}
+                    value={formData.telefono || ''}
                     onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
                     placeholder="(01) 999-9999"
                     icon={<Phone className="w-4 h-4" />}
@@ -167,10 +177,67 @@ export default function AdminClientesCrear() {
                   <Label htmlFor="anexo">Anexo</Label>
                   <Input
                     id="anexo"
-                    value={formData.anexo}
+                    value={formData.anexo || ''}
                     onChange={(e) => setFormData({ ...formData, anexo: e.target.value })}
                     placeholder="1234"
                   />
+                </div>
+              </div>
+            </div>
+
+            {/* Contraseña */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-zinc-100 flex items-center gap-2">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                Contraseña
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="password" variant="required">Contraseña</Label>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      className="pr-10"
+                      placeholder="••••••••"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"
+                      aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-5 h-5" />
+                      ) : (
+                        <Eye className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-zinc-400">
+                    Mínimo 8 caracteres
+                  </p>
+                </div>
+
+                <div>
+                  <Label htmlFor="password_confirm" variant="required">Confirmar Contraseña</Label>
+                  <Input
+                    id="password_confirm"
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    value={formData.password_confirm}
+                    onChange={(e) => setFormData({ ...formData, password_confirm: e.target.value })}
+                    placeholder="••••••••"
+                  />
+                  <p className="mt-1 text-xs text-slate-500 dark:text-zinc-400">
+                    Debe coincidir con la contraseña anterior
+                  </p>
                 </div>
               </div>
             </div>

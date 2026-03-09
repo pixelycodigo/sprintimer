@@ -1,10 +1,11 @@
-import { Link } from 'react-router-dom';
 import { Users, Shield, Activity, TrendingUp, Briefcase, CheckSquare } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 
 import { Empty } from '@ui/Empty';
 import { Spinner } from '@ui/Spinner';
 import { Badge } from '@ui/Badge';
+import { HeaderPage } from '@ui/HeaderPage';
+import { QuickActions } from '@ui/QuickActions';
 import { Card, CardHeader, CardTitle, CardDescription } from '@ui/Card';
 
 import { StatCard } from './StatCard';
@@ -57,12 +58,10 @@ export default function SuperAdminDashboard() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-zinc-100">Dashboard Super Admin</h1>
-        <p className="text-sm text-slate-500 dark:text-zinc-400">
-          Vista general de toda la plataforma
-        </p>
-      </div>
+      <HeaderPage
+        title="Dashboard Super Admin"
+        description="Vista general de toda la plataforma"
+      />
 
       {/* Stats Grid - Principal */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -111,40 +110,15 @@ export default function SuperAdminDashboard() {
 
       {/* Accesos Rápidos */}
       <DashboardSection title="Accesos Rápidos">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Link to="/super-admin/usuarios">
-            <StatCard
-              name="Gestionar Usuarios"
-              value="→"
-              icon={Shield}
-              color="primary"
-            />
-          </Link>
-          <Link to="/admin">
-            <StatCard
-              name="Panel Admin"
-              value="→"
-              icon={Activity}
-              color="success"
-            />
-          </Link>
-          <Link to="/admin/clientes">
-            <StatCard
-              name="Clientes"
-              value="→"
-              icon={Users}
-              color="primary"
-            />
-          </Link>
-          <Link to="/admin/proyectos">
-            <StatCard
-              name="Proyectos"
-              value="→"
-              icon={Briefcase}
-              color="warning"
-            />
-          </Link>
-        </div>
+        <QuickActions
+          columns={4}
+          actions={[
+            { label: 'Gestionar Usuarios', href: '/super-admin/usuarios', icon: Shield },
+            { label: 'Panel Admin', href: '/admin', icon: Activity },
+            { label: 'Clientes', href: '/admin/clientes', icon: Users },
+            { label: 'Proyectos', href: '/admin/proyectos', icon: Briefcase },
+          ]}
+        />
       </DashboardSection>
     </div>
   );

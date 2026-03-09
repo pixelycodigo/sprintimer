@@ -86,6 +86,7 @@ export default function ClienteLayout() {
               onLogout={handleLogout}
               profileLink="/cliente/perfil"
               settingsLink="/cliente/configuracion"
+              disableMenu
             />
           </HeaderRight>
         </Header>

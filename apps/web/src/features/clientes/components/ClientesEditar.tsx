@@ -136,7 +136,7 @@ export default function AdminClientesEditar() {
                   <Label htmlFor="cargo">Cargo</Label>
                   <Input
                     id="cargo"
-                    value={formData.cargo}
+                    value={formData.cargo || ''}
                     onChange={(e) => setFormData({ ...formData, cargo: e.target.value })}
                     placeholder="Gerente de Proyecto"
                   />
@@ -146,7 +146,7 @@ export default function AdminClientesEditar() {
                   <Label htmlFor="pais">País</Label>
                   <Input
                     id="pais"
-                    value={formData.pais}
+                    value={formData.pais || ''}
                     onChange={(e) => setFormData({ ...formData, pais: e.target.value })}
                     placeholder="Perú"
                     icon={<MapPin className="w-4 h-4" />}
@@ -179,7 +179,7 @@ export default function AdminClientesEditar() {
                   <Label htmlFor="celular">Celular</Label>
                   <Input
                     id="celular"
-                    value={formData.celular}
+                    value={formData.celular || ''}
                     onChange={(e) => setFormData({ ...formData, celular: e.target.value })}
                     placeholder="+51 999 999 999"
                     icon={<Phone className="w-4 h-4" />}
@@ -190,7 +190,7 @@ export default function AdminClientesEditar() {
                   <Label htmlFor="telefono">Teléfono</Label>
                   <Input
                     id="telefono"
-                    value={formData.telefono}
+                    value={formData.telefono || ''}
                     onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
                     placeholder="(01) 999-9999"
                     icon={<Phone className="w-4 h-4" />}
@@ -201,7 +201,7 @@ export default function AdminClientesEditar() {
                   <Label htmlFor="anexo">Anexo</Label>
                   <Input
                     id="anexo"
-                    value={formData.anexo}
+                    value={formData.anexo || ''}
                     onChange={(e) => setFormData({ ...formData, anexo: e.target.value })}
                     placeholder="1234"
                   />

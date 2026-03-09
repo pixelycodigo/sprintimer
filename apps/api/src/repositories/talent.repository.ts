@@ -49,14 +49,30 @@ export class TalentRepository {
   }
 
   async create(data: TalentCreate): Promise<number> {
-    const [id] = await db<Talent>(this.tableName).insert(data);
+    // Eliminar campos que no existen en la tabla talents
+    const { password, password_confirm, ...insertData } = data;
+    
+    const [id] = await db<Talent>(this.tableName).insert(insertData);
     return id;
   }
 
   async update(id: number, data: TalentUpdate): Promise<boolean> {
-    // Remover password si está vacío o no se debe actualizar
-    const { password, ...updateData } = data;
+    // Filtrar campos undefined o vacíos
+    const updateData: any = {};
     
+    Object.keys(data).forEach((key) => {
+      const value = (data as any)[key];
+      // Solo incluir campos que no sean undefined, null, o string vacío
+      if (value !== undefined && value !== null && value !== '') {
+        updateData[key] = value;
+      }
+    });
+
+    // Remover password si existe (ya debería estar hasheado en password_hash)
+    if (updateData.password) {
+      delete updateData.password;
+    }
+
     const updated = await db<Talent>(this.tableName)
       .where('id', id)
       .update({ ...updateData, updated_at: new Date() });
@@ -92,17 +108,6 @@ export class TalentRepository {
 
     const exists = await query.first();
     return !!exists;
-  }
-
-  async updatePassword(id: number, passwordHash: string): Promise<boolean> {
-    const updated = await db<Talent>(this.tableName)
-      .where('id', id)
-      .update({
-        password_hash: passwordHash,
-        updated_at: new Date()
-      });
-
-    return updated > 0;
   }
 }
 

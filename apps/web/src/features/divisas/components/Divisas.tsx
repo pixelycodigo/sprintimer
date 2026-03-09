@@ -28,11 +28,9 @@ export default function AdminDivisas() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['divisas'] });
       toast.success('Divisa eliminada exitosamente');
-      setDeleteId(null);
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al eliminar divisa');
-      setDeleteId(null);
     },
   });
 
@@ -50,8 +48,14 @@ export default function AdminDivisas() {
         <EntityCell
           icon={Coins}
           title={row.original.nombre}
-          subtitle={row.original.codigo}
         />
+      ),
+    },
+    {
+      header: 'Código',
+      accessorKey: 'codigo',
+      cell: ({ getValue }) => (
+        <Badge variant="outline">{getValue<string>()}</Badge>
       ),
     },
     {
@@ -75,10 +79,6 @@ export default function AdminDivisas() {
           deleteId={row.original.id}
           deleteNombre={`${row.original.nombre} (${row.original.codigo})`}
           onEdit={(id) => navigate(`/admin/divisas/${id}`)}
-          onDelete={(id, nombre) => {
-            setDeleteId(id);
-            setDeleteNombre(nombre);
-          }}
           onConfirmDelete={(id: number | string) => deleteMutation.mutate(Number(id))}
           deleteTitle="¿Eliminar divisa?"
           deleteDescription="Esta acción no se puede deshacer. Se eliminará permanentemente la divisa"

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link, useParams } from 'react-router-dom';
-import { ArrowLeft, Shield, Mail, User } from 'lucide-react';
+import { ArrowLeft, Shield, Mail, User, Eye, EyeOff } from 'lucide-react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { usuariosService } from '../../../services/usuarios.service';
@@ -13,14 +13,22 @@ import { HeaderPage } from '@ui/HeaderPage';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/Select';
 import type { UpdateUsuarioInput } from '@shared';
 
+interface UpdateUsuarioForm extends UpdateUsuarioInput {
+  password?: string;
+  password_confirm?: string;
+}
+
 export default function SuperAdminUsuariosEditar() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
-  const [formData, setFormData] = useState<UpdateUsuarioInput>({
+  const [formData, setFormData] = useState<UpdateUsuarioForm>({
     nombre: '',
     email: '',
     activo: true,
+    password: '',
+    password_confirm: '',
   });
 
   // Fetch usuario
@@ -32,13 +40,20 @@ export default function SuperAdminUsuariosEditar() {
 
   // Update mutation
   const updateMutation = useMutation({
-    mutationFn: (data: UpdateUsuarioInput) => usuariosService.update(Number(id), data),
+    mutationFn: (data: UpdateUsuarioForm) => usuariosService.update(Number(id), data),
     onSuccess: () => {
       toast.success('Usuario actualizado exitosamente');
       navigate('/super-admin/usuarios');
     },
-    onError: (error: Error) => {
-      toast.error(error.message || 'Error al actualizar usuario');
+    onError: (error: any) => {
+      // Mostrar mensaje específico del error
+      if (error.response?.data?.issues) {
+        const issues = error.response.data.issues;
+        const messages = issues.map((issue: any) => issue.message).join('\n');
+        toast.error(messages);
+      } else {
+        toast.error(error.message || 'Error al actualizar usuario');
+      }
     },
   });
 
@@ -48,6 +63,8 @@ export default function SuperAdminUsuariosEditar() {
         nombre: usuario.nombre,
         email: usuario.email,
         activo: usuario.activo,
+        password: '',
+        password_confirm: '',
       });
     }
   }, [usuario]);
@@ -151,6 +168,56 @@ export default function SuperAdminUsuariosEditar() {
               </Select>
               <p className="mt-1 text-xs text-slate-500 dark:text-zinc-400">
                 Los usuarios inactivos no pueden iniciar sesión
+              </p>
+            </div>
+
+            {/* Contraseña */}
+            <div>
+              <Label htmlFor="password">
+                Nueva contraseña (opcional)
+              </Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  className="pr-10 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500"
+                  placeholder="Dejar vacío para no cambiar"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 dark:text-zinc-500 hover:text-slate-600 dark:hover:text-zinc-300"
+                  aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" aria-hidden="true" />
+                  ) : (
+                    <Eye className="w-5 h-5" aria-hidden="true" />
+                  )}
+                </button>
+              </div>
+              <p className="mt-1 text-xs text-slate-500 dark:text-zinc-400">
+                Dejar vacío para mantener la contraseña actual
+              </p>
+            </div>
+
+            {/* Confirmar Contraseña */}
+            <div>
+              <Label htmlFor="password_confirm">
+                Confirmar nueva contraseña
+              </Label>
+              <Input
+                id="password_confirm"
+                type={showPassword ? 'text' : 'password'}
+                value={formData.password_confirm}
+                onChange={(e) => setFormData({ ...formData, password_confirm: e.target.value })}
+                className="dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500"
+                placeholder="Repetir contraseña"
+              />
+              <p className="mt-1 text-xs text-slate-500 dark:text-zinc-400">
+                Debe coincidir con la contraseña anterior
               </p>
             </div>
 

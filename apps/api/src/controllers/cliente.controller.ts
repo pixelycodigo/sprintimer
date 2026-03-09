@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { clienteService } from '../services/cliente.service.js';
-import { clienteCreateSchema, clienteParamsSchema } from '../validators/cliente.validator.js';
+import { clienteCreateSchema, clienteUpdateSchema, clienteParamsSchema } from '../validators/cliente.validator.js';
 
 export class ClienteController {
   async findAll(req: Request, res: Response, next: NextFunction) {
@@ -54,7 +54,7 @@ export class ClienteController {
   async update(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = clienteParamsSchema.parse(req.params);
-      const data = clienteCreateSchema.partial().parse(req.body);
+      const data = clienteUpdateSchema.parse(req.body);
       const cliente = await clienteService.update(Number(id), data);
 
       res.json({

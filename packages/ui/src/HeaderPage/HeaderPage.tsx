@@ -25,9 +25,9 @@ const HeaderPage = React.forwardRef<HTMLDivElement, HeaderPageProps>(
         )}
         {...props}
       >
-        <div className="flex items-center gap-4 flex-1">
+        <div className="flex items-center gap-4 flex-1 min-w-0">
           {backLink && <div className="flex-shrink-0">{backLink}</div>}
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             {typeof title === 'string' ? (
               <h1 className="text-2xl font-bold text-slate-900 dark:text-zinc-100">
                 {title}

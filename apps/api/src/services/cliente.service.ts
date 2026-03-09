@@ -1,4 +1,6 @@
 import { clienteRepository } from '../repositories/cliente.repository.js';
+import { usuarioRepository } from '../repositories/usuario.repository.js';
+import { hashPassword } from '../utils/hash.js';
 import { Cliente, ClienteCreate, ClienteUpdate } from '../models/Cliente.js';
 
 export class ClienteService {
@@ -21,11 +23,35 @@ export class ClienteService {
   }
 
   async create(data: ClienteCreate): Promise<Cliente> {
-    // Verificar si el email ya existe
+    // Verificar si el email ya existe en clientes
     if (await clienteRepository.emailExists(data.email)) {
       throw new Error('Ya existe un cliente con ese email');
     }
 
+    // Verificar si el email ya existe en usuarios
+    if (await usuarioRepository.emailExists(data.email)) {
+      throw new Error('Ya existe un usuario con ese email');
+    }
+
+    // Generar usuario a partir del email (parte antes del @)
+    const usuario = data.email.split('@')[0];
+    const usuarioDisponible = await this.generarUsuarioDisponible(usuario);
+
+    // Hashear contraseña
+    const passwordHash = await hashPassword(data.password);
+
+    // Crear usuario con rol_id=3 (cliente)
+    const userId = await usuarioRepository.create({
+      nombre: data.nombre_cliente,
+      usuario: usuarioDisponible,
+      email: data.email,
+      password_hash: passwordHash,
+      rol_id: 3, // rol de cliente
+      email_verificado: false,
+      activo: true,
+    });
+
+    // Crear cliente
     const id = await clienteRepository.create(data);
     const cliente = await clienteRepository.findById(id);
 
@@ -34,6 +60,18 @@ export class ClienteService {
     }
 
     return cliente;
+  }
+
+  async generarUsuarioDisponible(baseUsuario: string): Promise<string> {
+    let usuario = baseUsuario;
+    let contador = 1;
+    
+    while (await usuarioRepository.usuarioExists(usuario)) {
+      usuario = `${baseUsuario}${contador}`;
+      contador++;
+    }
+    
+    return usuario;
   }
 
   async update(id: number, data: ClienteUpdate): Promise<Cliente> {

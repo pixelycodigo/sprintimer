@@ -56,14 +56,14 @@ export default function AdminActividades() {
       header: 'Proyecto',
       accessorKey: 'proyecto_nombre',
       cell: ({ getValue }) => (
-        <span className="text-slate-600 dark:text-zinc-300">{getValue<string>() || '—'}</span>
+        <Badge variant="outline">{getValue<string>() || '—'}</Badge>
       ),
     },
     {
       header: 'Horas Estimadas',
       accessorKey: 'horas_estimadas',
       cell: ({ getValue }) => (
-        <Badge variant="default">{getValue<number>()}h</Badge>
+        <Badge variant="outline">{getValue<number>()}h</Badge>
       ),
     },
     {

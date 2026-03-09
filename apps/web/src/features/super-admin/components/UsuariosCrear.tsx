@@ -22,6 +22,7 @@ interface CreateUsuarioForm {
 export default function SuperAdminUsuariosCrear() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState<CreateUsuarioForm>({
     nombre: '',
     usuario: '',
@@ -32,7 +33,7 @@ export default function SuperAdminUsuariosCrear() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: Omit<CreateUsuarioForm, 'password_confirm'>) => 
+    mutationFn: (data: Omit<CreateUsuarioForm, 'password_confirm'>) =>
       usuariosService.create({
         nombre: data.nombre,
         usuario: data.usuario,
@@ -44,18 +45,20 @@ export default function SuperAdminUsuariosCrear() {
       toast.success('Usuario creado exitosamente');
       navigate('/super-admin/usuarios');
     },
-    onError: (error: Error) => {
-      toast.error(error.message || 'Error al crear usuario');
+    onError: (error: any) => {
+      // Mostrar mensaje específico del error
+      if (error.response?.data?.issues) {
+        const issues = error.response.data.issues;
+        const messages = issues.map((issue: any) => issue.message).join('\n');
+        toast.error(messages);
+      } else {
+        toast.error(error.message || 'Error al crear usuario');
+      }
     },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (formData.password !== formData.password_confirm) {
-      toast.error('Las contraseñas no coinciden');
-      return;
-    }
 
     if (formData.password.length < 8) {
       toast.error('La contraseña debe tener al menos 8 caracteres');
@@ -181,15 +184,32 @@ export default function SuperAdminUsuariosCrear() {
               <Label htmlFor="password_confirm">
                 Confirmar contraseña *
               </Label>
-              <Input
-                id="password_confirm"
-                type={showPassword ? 'text' : 'password'}
-                required
-                value={formData.password_confirm}
-                onChange={(e) => setFormData({ ...formData, password_confirm: e.target.value })}
-                className="dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500"
-                placeholder="••••••••"
-              />
+              <div className="relative">
+                <Input
+                  id="password_confirm"
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={formData.password_confirm}
+                  onChange={(e) => setFormData({ ...formData, password_confirm: e.target.value })}
+                  className="pr-10 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500"
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 dark:text-zinc-500 hover:text-slate-600 dark:hover:text-zinc-300"
+                  aria-label={showConfirmPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff className="w-5 h-5" aria-hidden="true" />
+                  ) : (
+                    <Eye className="w-5 h-5" aria-hidden="true" />
+                  )}
+                </button>
+              </div>
+              <p className="mt-1 text-xs text-slate-500 dark:text-zinc-400">
+                Debe coincidir con la contraseña anterior
+              </p>
             </div>
 
             {/* Tipo de Rol */}

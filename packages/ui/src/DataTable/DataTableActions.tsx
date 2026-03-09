@@ -93,7 +93,7 @@ export function DataTableActions({
 
   return (
     <>
-      <div className={`flex items-center justify-end gap-2 ${className || ''}`}>
+      <div className={`flex items-center justify-center gap-2 ${className || ''}`}>
         {editId !== undefined && editId !== null && (
           <ActionButtonEdit
             onClick={() => onEdit?.(editId)}
@@ -113,10 +113,19 @@ export function DataTableActions({
           <AlertDialogHeader>
             <AlertDialogTitle>{deleteTitle}</AlertDialogTitle>
             <AlertDialogDescription>
-              {isSoftDelete 
-                ? `La ${deleteNombre ? `tarea "${deleteNombre}"` : 'elemento'} se moverá a la papelera de reciclaje. Podrás restaurarla o eliminarla permanentemente antes de los 30 días.`
-                : `${deleteDescription} ${deleteNombre && `Se eliminará `}<strong className="text-slate-900 dark:text-zinc-100">${deleteNombre && `"${deleteNombre}"`}</strong>.`
-              }
+              {isSoftDelete ? (
+                <>
+                  La {deleteNombre ? `tarea "${deleteNombre}"` : 'elemento'} se moverá a la papelera de reciclaje. Podrás restaurarla o eliminarla permanentemente antes de los 30 días.
+                </>
+              ) : (
+                <>
+                  {deleteDescription} {deleteNombre && (
+                    <>
+                      {' '}Se eliminará <strong className="text-slate-900 dark:text-zinc-100">"{deleteNombre}"</strong>.
+                    </>
+                  )}
+                </>
+              )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

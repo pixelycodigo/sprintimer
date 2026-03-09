@@ -20,10 +20,16 @@ export const createUsuarioSchema = z.object({
     .regex(/[A-Z]/, 'La contraseña debe contener al menos una mayúscula')
     .regex(/[a-z]/, 'La contraseña debe contener al menos una minúscula')
     .regex(/[0-9]/, 'La contraseña debe contener al menos un número'),
+  password_confirm: z
+    .string()
+    .min(8, 'La confirmación debe tener al menos 8 caracteres'),
   rol_id: z
     .number()
     .int('El rol debe ser un número entero')
     .positive('El rol debe ser mayor a 0'),
+}).refine((data) => data.password === data.password_confirm, {
+  message: 'Las contraseñas no coinciden',
+  path: ['password_confirm'],
 });
 
 export const updateUsuarioSchema = z.object({
@@ -37,9 +43,23 @@ export const updateUsuarioSchema = z.object({
     .email('Email inválido')
     .max(255, 'El email es muy largo')
     .optional(),
+  password: z
+    .string()
+    .min(8, 'La contraseña debe tener al menos 8 caracteres')
+    .regex(/[A-Z]/, 'La contraseña debe contener al menos una mayúscula')
+    .regex(/[a-z]/, 'La contraseña debe contener al menos una minúscula')
+    .regex(/[0-9]/, 'La contraseña debe contener al menos un número')
+    .optional(),
+  password_confirm: z
+    .string()
+    .min(8, 'La confirmación debe tener al menos 8 caracteres')
+    .optional(),
   activo: z
     .boolean()
     .optional(),
+}).refine((data) => !data.password || data.password === data.password_confirm, {
+  message: 'Las contraseñas no coinciden',
+  path: ['password_confirm'],
 });
 
 export const changePasswordSchema = z.object({

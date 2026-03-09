@@ -34,11 +34,9 @@ export default function AdminProyectos() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['proyectos'] });
       toast.success('Proyecto eliminado exitosamente');
-      setDeleteId(null);
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al eliminar proyecto');
-      setDeleteId(null);
     },
   });
 
@@ -68,14 +66,14 @@ export default function AdminProyectos() {
       header: 'Cliente',
       accessorKey: 'cliente_id',
       cell: ({ getValue }) => (
-        <span className="text-slate-600 dark:text-zinc-300">{getClienteNombre(getValue<number>())}</span>
+        <Badge variant="outline">{getClienteNombre(getValue<number>())}</Badge>
       ),
     },
     {
       header: 'Modalidad',
       accessorKey: 'modalidad',
       cell: ({ getValue }) => (
-        <Badge variant={getValue<string>() === 'sprint' ? 'default' : 'info'}>
+        <Badge variant="outline">
           {getValue<string>() === 'sprint' ? 'Sprint' : 'Ad-hoc'}
         </Badge>
       ),
@@ -84,7 +82,7 @@ export default function AdminProyectos() {
       header: 'Formato Horas',
       accessorKey: 'formato_horas',
       cell: ({ getValue }) => (
-        <span className="text-slate-600 dark:text-zinc-300 capitalize">{getValue<string>()?.replace('_', ' ')}</span>
+        <Badge variant="outline" className="capitalize">{getValue<string>()?.replace('_', ' ')}</Badge>
       ),
     },
     {
@@ -101,10 +99,6 @@ export default function AdminProyectos() {
           deleteId={row.original.id}
           deleteNombre={row.original.nombre}
           onEdit={(id) => navigate(`/admin/proyectos/${id}`)}
-          onDelete={(id, nombre) => {
-            setDeleteId(id);
-            setDeleteNombre(nombre);
-          }}
           onConfirmDelete={(id: number | string) => deleteMutation.mutate(Number(id))}
           deleteTitle="¿Eliminar proyecto?"
           deleteDescription="Esta acción no se puede deshacer. Se eliminará permanentemente el proyecto"

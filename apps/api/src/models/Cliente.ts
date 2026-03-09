@@ -18,6 +18,8 @@ export interface ClienteCreate {
   cargo?: string | null;
   empresa: string;
   email: string;
+  password: string;
+  password_confirm?: string;
   celular?: string | null;
   telefono?: string | null;
   anexo?: string | null;

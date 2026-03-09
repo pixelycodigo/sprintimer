@@ -1,12 +1,10 @@
 export interface Talent {
   id: number;
-  usuario_id: number | null;
   perfil_id: number;
   seniority_id: number;
-  nombre: string;
+  nombre_completo: string;
   apellido: string;
   email: string;
-  password_hash: string;
   costo_hora_fijo: number | null;
   costo_hora_variable_min: number | null;
   costo_hora_variable_max: number | null;
@@ -16,14 +14,13 @@ export interface Talent {
 }
 
 export interface TalentCreate {
-  usuario_id?: number | null;
   perfil_id: number;
   seniority_id: number;
-  nombre: string;
+  nombre_completo: string;
   apellido: string;
   email: string;
-  password?: string;
-  password_hash?: string;
+  password: string;
+  password_confirm?: string;
   costo_hora_fijo?: number | null;
   costo_hora_variable_min?: number | null;
   costo_hora_variable_max?: number | null;
@@ -31,14 +28,13 @@ export interface TalentCreate {
 }
 
 export interface TalentUpdate {
-  usuario_id?: number | null;
   perfil_id?: number;
   seniority_id?: number;
-  nombre?: string;
+  nombre_completo?: string;
   apellido?: string;
   email?: string;
   password?: string;
-  password_hash?: string;
+  password_confirm?: string;
   costo_hora_fijo?: number | null;
   costo_hora_variable_min?: number | null;
   costo_hora_variable_max?: number | null;

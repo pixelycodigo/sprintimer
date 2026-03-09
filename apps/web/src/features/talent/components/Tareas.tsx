@@ -41,12 +41,10 @@ export default function TalentTareas() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['talent-tareas'] });
       toast.success('Tarea eliminada. Se encuentra en la papelera por 30 días.');
-      setDeleteId(null);
       navigate('/talent/tareas/eliminadas');
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al eliminar tarea');
-      setDeleteId(null);
     },
   });
 
@@ -104,7 +102,7 @@ export default function TalentTareas() {
       header: 'Proyecto',
       accessorKey: 'proyecto',
       cell: ({ getValue }) => (
-        <span className="text-slate-600 dark:text-zinc-300">{getValue<string>() || '—'}</span>
+        <Badge variant="outline">{getValue<string>() || '—'}</Badge>
       ),
     },
     {

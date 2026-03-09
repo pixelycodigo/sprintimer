@@ -1,7 +1,8 @@
 # 🗄️ Modelo de Base de Datos - SprinTask SaaS
 
-**Generado:** 7/3/2026, 17:04:21
+**Generado:** 9/3/2026, 21:30:00
 **Base de Datos:** `sprintask`
+**Versión:** 2.0 - Arquitectura de Autenticación Unificada
 
 ---
 
@@ -10,8 +11,8 @@
 | Métrica | Cantidad |
 |---------|----------|
 | **Tablas** | 15 |
-| **Columnas Totales** | 119 |
-| **Claves Foráneas** | 26 |
+| **Columnas Totales** | 115 |
+| **Claves Foráneas** | 24 |
 
 ---
 
@@ -47,28 +48,28 @@
 │ created_at | updated_at                                                  │
 └────────────────────────────┬─────────────────────────────────────────────┘
                              │
-              ┌──────────────┼──────────────┐
-              │              │              │
-              ▼              │              ▼
-     ┌────────────────┐     │     ┌────────────────┐
-     │    clientes    │     │     │    talents     │
-     ├────────────────┤     │     ├────────────────┤
-     │ id (PK)        │     │     │ id (PK)        │
-     │ nombre_cliente │     │     │ usuario_id(FK) │
-     │ cargo          │     │     │ perfil_id (FK) │
-     │ empresa        │     │     │ seniority_id   │
-     │ email          │     │     │ password_hash  │
-     │ celular        │     │     │ costo_hora_*   │
-     │ telefono       │     │     │ activo         │
-     │ anexo          │     │     └────────────────┘
-     │ pais           │     │
-     │ activo         │     │
-     └───────┬────────┘     │
-             │              │
-             │              │
-             ▼              │
-     ┌────────────────┐     │
-     │   proyectos    │◄────┘
+              ┌──────────────┴──────────────┐
+              │                             │
+              │ (relación por email)        │ (relación por email)
+              ▼                             ▼
+     ┌────────────────┐           ┌────────────────┐
+     │    clientes    │           │    talents     │
+     ├────────────────┤           ├────────────────┤
+     │ id (PK)        │           │ id (PK)        │
+     │ nombre_cliente │           │ nombre_completo│
+     │ cargo          │           │ apellido       │
+     │ empresa        │           │ email          │
+     │ email          │           │ perfil_id (FK) │
+     │ celular        │           │ seniority_id   │
+     │ telefono       │           │ costo_hora_*   │
+     │ anexo          │           │ activo         │
+     │ pais           │           └────────────────┘
+     │ activo         │
+     └───────┬────────┘
+             │
+             ▼
+     ┌────────────────┐
+     │   proyectos    │
      ├────────────────┤
      │ id (PK)        │
      │ cliente_id(FK) │
@@ -130,6 +131,32 @@
 │ id (PK) | item_id | item_tipo | eliminado_por (FK)                      │
 │ fecha_eliminacion | fecha_borrado_permanente | datos (JSON)              │
 └──────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 🔐 Arquitectura de Autenticación
+
+**IMPORTANTE:** Todos los usuarios se autentican contra la tabla `usuarios`.
+
+| Tabla | Relación con `usuarios` |
+|-------|------------------------|
+| `clientes` | Relación por `email` (NO FK) |
+| `talents` | Relación por `email` (NO FK) |
+| `administradores` | Son usuarios con `rol_id=2` |
+
+**Flujo de Login:**
+```
+1. Usuario ingresa email + password
+2. Backend busca en `usuarios` por email
+3. Backend verifica password_hash con bcrypt
+4. Backend obtiene rol_id
+5. Genera JWT token
+6. Frontend redirige según rol:
+   - rol_id=1 → /super-admin
+   - rol_id=2 → /admin
+   - rol_id=3 → /cliente
+   - rol_id=4 → /talent
 ```
 
 ---
@@ -450,19 +477,17 @@
 | # | Columna | Tipo | Nullable | Default | PK | FK | UNI | AI |
 |---|---------|------|----------|---------|----|----|-----|----|
 | 1 | `id` | int unsigned |  | undefined | ✓ |  |  | ✓ |
-| 2 | `usuario_id` | int unsigned | ✓ | undefined |  | ✓ |  |  |
-| 3 | `perfil_id` | int unsigned |  | undefined |  | ✓ |  |  |
-| 4 | `seniority_id` | int unsigned |  | undefined |  | ✓ |  |  |
-| 5 | `nombre_completo` | varchar(255) |  | undefined |  |  |  |  |
-| 6 | `apellido` | varchar(255) |  | undefined |  |  |  |  |
-| 7 | `email` | varchar(255) |  | undefined |  |  | ✓ |  |
-| 8 | `password_hash` | varchar(255) |  | undefined |  |  |  |  |
-| 9 | `costo_hora_fijo` | decimal(10,2) | ✓ | undefined |  |  |  |  |
-| 10 | `costo_hora_variable_min` | decimal(10,2) | ✓ | undefined |  |  |  |  |
-| 11 | `costo_hora_variable_max` | decimal(10,2) | ✓ | undefined |  |  |  |  |
-| 12 | `activo` | tinyint(1) | ✓ | 1 |  |  |  |  |
-| 13 | `created_at` | timestamp | ✓ | CURRENT_TIMESTAMP |  |  |  |  |
-| 14 | `updated_at` | timestamp | ✓ | CURRENT_TIMESTAMP |  |  |  |  |
+| 2 | `perfil_id` | int unsigned |  | undefined |  | ✓ |  |  |
+| 3 | `seniority_id` | int unsigned |  | undefined |  | ✓ |  |  |
+| 4 | `nombre_completo` | varchar(255) |  | undefined |  |  |  |  |
+| 5 | `apellido` | varchar(255) |  | undefined |  |  |  |  |
+| 6 | `email` | varchar(255) |  | undefined |  |  | ✓ |  |
+| 7 | `costo_hora_fijo` | decimal(10,2) | ✓ | undefined |  |  |  |  |
+| 8 | `costo_hora_variable_min` | decimal(10,2) | ✓ | undefined |  |  |  |  |
+| 9 | `costo_hora_variable_max` | decimal(10,2) | ✓ | undefined |  |  |  |  |
+| 10 | `activo` | tinyint(1) | ✓ | 1 |  |  |  |  |
+| 11 | `created_at` | timestamp | ✓ | CURRENT_TIMESTAMP |  |  |  |  |
+| 12 | `updated_at` | timestamp | ✓ | CURRENT_TIMESTAMP |  |  |  |  |
 
 #### Claves Foráneas
 
@@ -470,7 +495,6 @@
 |---------|-------------------|---------|-----------|----------|
 | `perfil_id` | perfiles | `id` | NO ACTION | NO ACTION |
 | `seniority_id` | seniorities | `id` | NO ACTION | NO ACTION |
-| `usuario_id` | usuarios | `id` | NO ACTION | NO ACTION |
 
 #### Índices
 
@@ -479,7 +503,8 @@
 | talents_email_unique | `email` | ✓ |
 | talents_perfil_id_foreign | `perfil_id` |  |
 | talents_seniority_id_foreign | `seniority_id` |  |
-| talents_usuario_id_foreign | `usuario_id` |  |
+
+**NOTA:** La contraseña del talent está en la tabla `usuarios` (password_hash). La relación con `usuarios` es por `email`.
 
 ---
 

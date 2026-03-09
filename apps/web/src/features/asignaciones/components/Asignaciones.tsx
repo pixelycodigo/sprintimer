@@ -8,6 +8,7 @@ import { type ColumnDef } from '@tanstack/react-table';
 
 import { DataTable, DataTableActions } from '@ui/DataTable';
 import { EntityCell, StatusBadge } from '@ui';
+import { Badge } from '@ui/Badge';
 import { Button } from '@ui/Button';
 import { FilterPage } from '@ui/FilterPage';
 import { HeaderPage } from '@ui/HeaderPage';
@@ -28,11 +29,9 @@ export default function AdminAsignaciones() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['asignaciones'] });
       toast.success('Asignación eliminada exitosamente');
-      setDeleteId(null);
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al eliminar asignación');
-      setDeleteId(null);
     },
   });
 
@@ -58,19 +57,16 @@ export default function AdminAsignaciones() {
       header: 'Actividad',
       accessorKey: 'actividad_nombre',
       cell: ({ row }) => (
-        <div>
-          <p className="font-medium text-slate-900 dark:text-zinc-100">{row.original.actividad_nombre}</p>
-          <p className="text-sm text-slate-500 dark:text-zinc-400">{row.original.proyecto_nombre}</p>
-        </div>
+        <Badge variant="outline">{row.original.actividad_nombre}</Badge>
       ),
     },
     {
       header: 'Fecha Asignación',
       accessorKey: 'fecha_asignacion',
       cell: ({ getValue }) => (
-        <span className="text-slate-600 dark:text-zinc-300">
+        <Badge variant="outline">
           {getValue<string>() ? new Date(getValue<string>()).toLocaleDateString('es-ES') : '—'}
-        </span>
+        </Badge>
       ),
     },
     {
@@ -87,10 +83,6 @@ export default function AdminAsignaciones() {
           deleteId={row.original.id}
           deleteNombre={`${row.original.talent_nombre} - ${row.original.actividad_nombre}`}
           onEdit={(id) => navigate(`/admin/asignaciones/${id}`)}
-          onDelete={(id, nombre) => {
-            setDeleteId(id);
-            setDeleteNombre(nombre);
-          }}
           onConfirmDelete={(id: number | string) => deleteMutation.mutate(Number(id))}
           deleteTitle="¿Eliminar asignación?"
           deleteDescription="Esta acción no se puede deshacer. Se eliminará permanentemente la asignación"

@@ -29,11 +29,9 @@ export default function AdminCostoPorHora() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['costoPorHora'] });
       toast.success('Costo por hora eliminado exitosamente');
-      setDeleteId(null);
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al eliminar costo por hora');
-      setDeleteId(null);
     },
   });
 
@@ -59,7 +57,7 @@ export default function AdminCostoPorHora() {
       header: 'Tipo',
       accessorKey: 'tipo',
       cell: ({ getValue }) => (
-        <Badge variant={getValue<string>() === 'fijo' ? 'default' : 'info'}>
+        <Badge variant={getValue<string>() === 'fijo' ? 'default' : 'secondary'}>
           {getValue<string>() === 'fijo' ? 'Fijo' : 'Variable'}
         </Badge>
       ),
@@ -68,9 +66,9 @@ export default function AdminCostoPorHora() {
       header: 'Costo Hora',
       accessorKey: 'costo_hora',
       cell: ({ row }) => (
-        <span className="font-medium text-slate-900 dark:text-zinc-100">
+        <Badge variant="outline">
           {row.original.divisa_simbolo}{Number(row.original.costo_hora).toFixed(2)}
-        </span>
+        </Badge>
       ),
     },
     {
@@ -94,10 +92,6 @@ export default function AdminCostoPorHora() {
           deleteId={row.original.id}
           deleteNombre={row.original.concepto || `Costo #${row.original.id}`}
           onEdit={(id) => navigate(`/admin/costo-por-hora/${id}`)}
-          onDelete={(id, nombre) => {
-            setDeleteId(id);
-            setDeleteNombre(nombre);
-          }}
           onConfirmDelete={(id: number | string) => deleteMutation.mutate(Number(id))}
           deleteTitle="¿Eliminar costo por hora?"
           deleteDescription="Esta acción no se puede deshacer. Se eliminará permanentemente el costo por hora"

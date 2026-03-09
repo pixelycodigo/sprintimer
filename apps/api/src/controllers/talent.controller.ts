@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { talentService } from '../services/talent.service.js';
-import { talentCreateSchema, talentParamsSchema, talentPasswordSchema } from '../validators/talent.validator.js';
+import { talentCreateSchema, talentUpdateSchema, talentParamsSchema, talentPasswordSchema } from '../validators/talent.validator.js';
 
 export class TalentController {
   async findAll(req: Request, res: Response, next: NextFunction) {
@@ -47,7 +47,7 @@ export class TalentController {
   async update(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = talentParamsSchema.parse(req.params);
-      const data = talentCreateSchema.partial().parse(req.body);
+      const data = talentUpdateSchema.parse(req.body);
       const talent = await talentService.update(Number(id), data);
 
       res.json({

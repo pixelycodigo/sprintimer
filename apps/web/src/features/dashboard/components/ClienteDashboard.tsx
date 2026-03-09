@@ -4,15 +4,10 @@ import { clienteDashboardService } from '../../../services/cliente-dashboard.ser
 
 import { Spinner } from '@ui/Spinner';
 import { Empty } from '@ui/Empty';
+import { HeaderPage } from '@ui/HeaderPage';
 import { DashboardSection } from './DashboardSection';
 import { StatCard } from './StatCard';
-import {
-  getChartColors,
-  CHART_BAR_COLORS,
-  CHART_TOOLTIP_STYLES,
-  CHART_AXIS_STYLES,
-  CHART_GRID_CLASSES,
-} from '@ui/Chart';
+import { getChartColors, CustomBarTooltip } from '@ui/Chart';
 
 import {
   BarChart,
@@ -33,13 +28,7 @@ export default function ClienteDashboard() {
     queryFn: clienteDashboardService.getStats,
   });
 
-  // Detectar modo oscuro
-  const isDark = typeof window !== 'undefined' && 
-    document.documentElement.classList.contains('dark');
-  
-  // Obtener colores del componente Chart
-  const chartColors = getChartColors(isDark);
-  const barColors = CHART_BAR_COLORS[isDark ? 'dark' : 'light'];
+  const chartColors = getChartColors();
 
   if (isLoading) {
     return (
@@ -76,10 +65,10 @@ export default function ClienteDashboard() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-zinc-100">Dashboard Cliente</h1>
-        <p className="text-sm text-slate-500 dark:text-zinc-400">Resumen de tus proyectos y actividades</p>
-      </div>
+      <HeaderPage
+        title="Dashboard Cliente"
+        description="Resumen de tus proyectos y actividades"
+      />
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -95,18 +84,18 @@ export default function ClienteDashboard() {
           {proyectosData.some((p) => p.value > 0) ? (
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={proyectosData}>
-                <CartesianGrid strokeDasharray="3 3" className={CHART_GRID_CLASSES} />
-                <XAxis 
-                  dataKey="name" 
-                  tick={CHART_AXIS_STYLES(isDark).tick}
+                <CartesianGrid strokeDasharray="3 3" className="stroke-slate-200 dark:stroke-zinc-800" />
+                <XAxis
+                  dataKey="name"
+                  tick={{ fill: 'var(--chart-axis)', fontSize: '12px' }}
                 />
-                <YAxis 
-                  tick={CHART_AXIS_STYLES(isDark).tick}
+                <YAxis
+                  tick={{ fill: 'var(--chart-axis)', fontSize: '12px' }}
                 />
-                <Tooltip contentStyle={CHART_TOOLTIP_STYLES(isDark).contentStyle} />
+                <Tooltip content={<CustomBarTooltip />} />
                 <Bar dataKey="value" radius={[6, 6, 0, 0]}>
                   {proyectosData.map((_entry, index) => (
-                    <Cell key={`cell-${index}`} fill={barColors[index]} />
+                    <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
                   ))}
                 </Bar>
               </BarChart>
@@ -132,16 +121,15 @@ export default function ClienteDashboard() {
                   labelLine={false}
                   label={({ name, percent }: any) => `${name} (${(percent * 100).toFixed(0)}%)`}
                   outerRadius={80}
-                  fill="#8884d8"
                   dataKey="value"
-                  stroke={isDark ? '#18181b' : '#ffffff'}
+                  stroke="var(--chart-border)"
                   strokeWidth={2}
                 >
                   {talentsData.map((_entry: any, index: number) => (
                     <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
                   ))}
                 </Pie>
-                <Tooltip contentStyle={CHART_TOOLTIP_STYLES(isDark).contentStyle} />
+                <Tooltip />
               </PieChart>
             </ResponsiveContainer>
           ) : (

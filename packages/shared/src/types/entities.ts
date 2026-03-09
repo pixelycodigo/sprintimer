@@ -34,7 +34,7 @@ export interface Talent {
   usuario_id?: number;
   perfil_id: number;
   seniority_id: number;
-  nombre: string;
+  nombre_completo: string;
   apellido: string;
   email: string;
   costo_hora_fijo?: number;
@@ -160,7 +160,17 @@ export interface Eliminado {
 }
 
 // Tipos para creación y actualización
-export interface CreateClienteInput extends Omit<Cliente, 'id' | 'created_at' | 'updated_at'> {
+export interface CreateClienteInput {
+  nombre_cliente: string;
+  cargo?: string | null;
+  empresa: string;
+  email: string;
+  password: string;
+  password_confirm?: string;
+  celular?: string | null;
+  telefono?: string | null;
+  anexo?: string | null;
+  pais?: string | null;
   activo?: boolean;
 }
 export interface UpdateClienteInput extends Partial<CreateClienteInput> {}
@@ -170,6 +180,7 @@ export interface CreateTalentInput extends Omit<Talent, 'id' | 'created_at' | 'u
   perfil_nombre?: string;
   seniority_nombre?: string;
   password?: string;
+  password_confirm?: string;
 }
 export interface UpdateTalentInput extends Partial<CreateTalentInput> {}
 
@@ -224,7 +235,10 @@ export interface CreateUsuarioInput extends Omit<Usuario, 'id' | 'rol' | 'avatar
   rol_id: number;
   activo?: boolean;
 }
-export interface UpdateUsuarioInput extends Partial<Pick<Usuario, 'nombre' | 'email' | 'activo'>> {}
+export interface UpdateUsuarioInput extends Partial<Pick<Usuario, 'nombre' | 'email' | 'activo'>> {
+  password?: string;
+  password_confirm?: string;
+}
 
 export interface CreateEliminadoInput extends Omit<Eliminado, 'id' | 'fecha_eliminacion' | 'fecha_borrado_permanente' | 'datos' | 'dias_restantes'> {}
 export interface UpdateEliminadoInput extends Partial<CreateEliminadoInput> {}
@@ -239,6 +253,8 @@ export interface AsignacionWithRelations extends Asignacion {
   talent_nombre?: string;
   talent_email?: string;
   perfil_nombre?: string;
+  seniority_nombre?: string;
+  proyecto_nombre?: string;
 }
 
 export interface TalentWithRelations extends Talent {

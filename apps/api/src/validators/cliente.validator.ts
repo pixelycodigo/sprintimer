@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const clienteCreateSchema = z.object({
+export const clienteBaseSchema = z.object({
   nombre_cliente: z
     .string()
     .min(1, 'El nombre del cliente es requerido')
@@ -18,6 +18,13 @@ export const clienteCreateSchema = z.object({
     .string()
     .email('Email inválido')
     .max(255, 'El email no puede exceder 255 caracteres'),
+  password: z
+    .string()
+    .min(8, 'La contraseña debe tener al menos 8 caracteres')
+    .max(255, 'La contraseña no puede exceder 255 caracteres'),
+  password_confirm: z
+    .string()
+    .min(8, 'La confirmación debe tener al menos 8 caracteres'),
   celular: z
     .string()
     .max(20, 'El celular no puede exceder 20 caracteres')
@@ -41,7 +48,12 @@ export const clienteCreateSchema = z.object({
   activo: z.boolean().optional().default(true),
 });
 
-export const clienteUpdateSchema = clienteCreateSchema.partial();
+export const clienteCreateSchema = clienteBaseSchema.refine((data) => data.password === data.password_confirm, {
+  message: 'Las contraseñas no coinciden',
+  path: ['password_confirm'],
+});
+
+export const clienteUpdateSchema = clienteBaseSchema.partial();
 
 export const clienteParamsSchema = z.object({
   id: z.string().regex(/^\d+$/, 'El ID debe ser un número'),

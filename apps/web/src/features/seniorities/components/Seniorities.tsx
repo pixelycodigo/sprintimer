@@ -28,11 +28,9 @@ export default function AdminSeniorities() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['seniorities'] });
       toast.success('Seniority eliminado exitosamente');
-      setDeleteId(null);
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al eliminar seniority');
-      setDeleteId(null);
     },
   });
 
@@ -48,7 +46,6 @@ export default function AdminSeniorities() {
         <EntityCell
           icon={Award}
           title={row.original.nombre}
-          subtitle={`Nivel ${row.original.nivel_orden}`}
         />
       ),
     },
@@ -68,10 +65,6 @@ export default function AdminSeniorities() {
           deleteId={row.original.id}
           deleteNombre={row.original.nombre}
           onEdit={(id) => navigate(`/admin/seniorities/${id}`)}
-          onDelete={(id, nombre) => {
-            setDeleteId(id);
-            setDeleteNombre(nombre);
-          }}
           onConfirmDelete={(id: number | string) => deleteMutation.mutate(Number(id))}
           deleteTitle="¿Eliminar seniority?"
           deleteDescription="Esta acción no se puede deshacer. Se eliminará permanentemente el seniority"

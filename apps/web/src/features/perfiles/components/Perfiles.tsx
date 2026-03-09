@@ -27,11 +27,9 @@ export default function AdminPerfiles() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['perfiles'] });
       toast.success('Perfil eliminado exitosamente');
-      setDeleteId(null);
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al eliminar perfil');
-      setDeleteId(null);
     },
   });
 
@@ -66,10 +64,6 @@ export default function AdminPerfiles() {
           deleteId={row.original.id}
           deleteNombre={row.original.nombre}
           onEdit={(id) => navigate(`/admin/perfiles/${id}`)}
-          onDelete={(id, nombre) => {
-            setDeleteId(id);
-            setDeleteNombre(nombre);
-          }}
           onConfirmDelete={(id: number | string) => deleteMutation.mutate(Number(id))}
           deleteTitle="¿Eliminar perfil?"
           deleteDescription="Esta acción no se puede deshacer. Se eliminará permanentemente el perfil"

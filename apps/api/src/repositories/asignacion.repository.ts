@@ -8,11 +8,15 @@ export class AsignacionRepository {
     const asignacion = await db<AsignacionWithDetails>(this.tableName)
       .leftJoin('actividades', 'actividades_integrantes.actividad_id', 'actividades.id')
       .leftJoin('talents', 'actividades_integrantes.talent_id', 'talents.id')
+      .leftJoin('perfiles', 'talents.perfil_id', 'perfiles.id')
+      .leftJoin('seniorities', 'talents.seniority_id', 'seniorities.id')
       .select(
         'actividades_integrantes.*',
         'actividades.nombre as actividad_nombre',
         'talents.nombre_completo as talent_nombre',
-        'talents.email as talent_email'
+        'talents.email as talent_email',
+        'perfiles.nombre as perfil_nombre',
+        'seniorities.nombre as seniority_nombre'
       )
       .where('actividades_integrantes.id', id)
       .first();
@@ -24,11 +28,15 @@ export class AsignacionRepository {
     const asignaciones = await db<AsignacionWithDetails>(this.tableName)
       .leftJoin('actividades', 'actividades_integrantes.actividad_id', 'actividades.id')
       .leftJoin('talents', 'actividades_integrantes.talent_id', 'talents.id')
+      .leftJoin('perfiles', 'talents.perfil_id', 'perfiles.id')
+      .leftJoin('seniorities', 'talents.seniority_id', 'seniorities.id')
       .select(
         'actividades_integrantes.*',
         'actividades.nombre as actividad_nombre',
         'talents.nombre_completo as talent_nombre',
-        'talents.email as talent_email'
+        'talents.email as talent_email',
+        'perfiles.nombre as perfil_nombre',
+        'seniorities.nombre as seniority_nombre'
       )
       .orderBy('actividades_integrantes.fecha_asignacion', 'desc');
 
@@ -38,10 +46,14 @@ export class AsignacionRepository {
   async findByActividadId(actividadId: number): Promise<AsignacionWithDetails[]> {
     const asignaciones = await db<AsignacionWithDetails>(this.tableName)
       .leftJoin('talents', 'actividades_integrantes.talent_id', 'talents.id')
+      .leftJoin('perfiles', 'talents.perfil_id', 'perfiles.id')
+      .leftJoin('seniorities', 'talents.seniority_id', 'seniorities.id')
       .select(
         'actividades_integrantes.*',
         'talents.nombre_completo as talent_nombre',
-        'talents.email as talent_email'
+        'talents.email as talent_email',
+        'perfiles.nombre as perfil_nombre',
+        'seniorities.nombre as seniority_nombre'
       )
       .where('actividades_integrantes.actividad_id', actividadId);
 

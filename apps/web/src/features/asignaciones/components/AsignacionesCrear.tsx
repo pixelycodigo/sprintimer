@@ -113,7 +113,7 @@ export default function AdminAsignacionesCrear() {
                     <SelectContent>
                       {talents?.filter(t => t.activo).map((talent) => (
                         <SelectItem key={talent.id} value={talent.id.toString()}>
-                          {talent.nombre} {talent.apellido} - {talent.perfil_nombre}
+                          {talent.nombre_completo} {talent.apellido} - {talent.perfil_nombre}
                         </SelectItem>
                       ))}
                     </SelectContent>

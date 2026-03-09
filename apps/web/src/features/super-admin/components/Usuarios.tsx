@@ -28,11 +28,9 @@ export default function SuperAdminUsuarios() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['usuarios'] });
       toast.success('Usuario eliminado exitosamente');
-      setDeleteId(null);
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al eliminar usuario');
-      setDeleteId(null);
     },
   });
 
@@ -97,10 +95,6 @@ export default function SuperAdminUsuarios() {
           deleteId={row.original.id}
           deleteNombre={row.original.nombre}
           onEdit={(id) => navigate(`/super-admin/usuarios/${id}`)}
-          onDelete={(id, nombre) => {
-            setDeleteId(id);
-            setDeleteNombre(nombre);
-          }}
           onConfirmDelete={(id: number | string) => deleteMutation.mutate(Number(id))}
           deleteTitle="¿Eliminar usuario?"
           deleteDescription="Esta acción no se puede deshacer. Se eliminará permanentemente el usuario"

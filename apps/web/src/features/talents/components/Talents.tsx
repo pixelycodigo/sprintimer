@@ -28,18 +28,16 @@ export default function AdminTalents() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['talents'] });
       toast.success('Talent eliminado exitosamente');
-      setDeleteId(null);
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al eliminar talent');
-      setDeleteId(null);
     },
   });
 
   const filteredTalents = talents?.filter((talent) => {
     const search = searchTerm.toLowerCase();
     return (
-      talent.nombre?.toLowerCase().includes(search) ||
+      talent.nombre_completo?.toLowerCase().includes(search) ||
       talent.apellido?.toLowerCase().includes(search) ||
       talent.email?.toLowerCase().includes(search) ||
       talent.perfil_nombre?.toLowerCase().includes(search) ||
@@ -50,11 +48,11 @@ export default function AdminTalents() {
   const columns: ColumnDef<any>[] = [
     {
       header: 'Talent',
-      accessorKey: 'nombre',
+      accessorKey: 'nombre_completo',
       cell: ({ row }) => (
         <EntityCell
           icon={User}
-          title={`${row.original.nombre} ${row.original.apellido}`}
+          title={`${row.original.nombre_completo || ''} ${row.original.apellido || ''}`.trim()}
           subtitle={row.original.email}
         />
       ),
@@ -63,7 +61,7 @@ export default function AdminTalents() {
       header: 'Perfil',
       accessorKey: 'perfil_nombre',
       cell: ({ getValue }) => (
-        <span className="text-slate-600 dark:text-zinc-300">{getValue<string>() || '—'}</span>
+        <Badge variant="outline">{getValue<string>() || '—'}</Badge>
       ),
     },
     {
@@ -85,12 +83,8 @@ export default function AdminTalents() {
         <DataTableActions
           editId={row.original.id}
           deleteId={row.original.id}
-          deleteNombre={`${row.original.nombre} ${row.original.apellido}`}
+          deleteNombre={`${row.original.nombre_completo || ''} ${row.original.apellido || ''}`.trim()}
           onEdit={(id) => navigate(`/admin/talents/${id}`)}
-          onDelete={(id, nombre) => {
-            setDeleteId(id);
-            setDeleteNombre(nombre);
-          }}
           onConfirmDelete={(id: number | string) => deleteMutation.mutate(Number(id))}
           deleteTitle="¿Eliminar talent?"
           deleteDescription="Esta acción no se puede deshacer. Se eliminará permanentemente el talent"

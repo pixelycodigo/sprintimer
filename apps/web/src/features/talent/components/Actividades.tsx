@@ -53,7 +53,7 @@ export default function TalentActividades() {
       header: 'Proyecto',
       accessorKey: 'proyecto',
       cell: ({ getValue }) => (
-        <span className="text-slate-600 dark:text-zinc-400">{getValue<string>()}</span>
+        <Badge variant="outline">{getValue<string>()}</Badge>
       ),
     },
     {
@@ -72,7 +72,7 @@ export default function TalentActividades() {
       header: 'Acciones',
       accessorKey: 'id',
       cell: ({ row }) => (
-        <div className="flex items-center justify-end gap-2">
+        <div className="flex items-center justify-center gap-2">
           <Button
             variant="ghost"
             size="sm"

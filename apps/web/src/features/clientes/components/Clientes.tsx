@@ -8,6 +8,7 @@ import { type ColumnDef } from '@tanstack/react-table';
 
 import { DataTable, DataTableActions } from '@ui/DataTable';
 import { EntityCell, StatusBadge, LoadingState } from '@ui';
+import { Badge } from '@ui/Badge';
 import { Button } from '@ui/Button';
 import { FilterPage } from '@ui/FilterPage';
 import { HeaderPage } from '@ui/HeaderPage';
@@ -27,11 +28,9 @@ export default function AdminClientes() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clientes'] });
       toast.success('Cliente eliminado exitosamente');
-      setDeleteId(null);
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al eliminar cliente');
-      setDeleteId(null);
     },
   });
 
@@ -57,35 +56,37 @@ export default function AdminClientes() {
       header: 'Empresa',
       accessorKey: 'empresa',
       cell: ({ getValue }) => (
-        <span className="text-slate-600 dark:text-zinc-300">{getValue<string>()}</span>
+        <Badge variant="outline">{getValue<string>()}</Badge>
       ),
     },
     {
       header: 'Email',
       accessorKey: 'email',
       cell: ({ getValue }) => (
-        <div className="flex items-center gap-2 text-slate-600 dark:text-zinc-300">
-          <Mail className="w-4 h-4 text-slate-400 dark:text-zinc-400" />
-          {getValue<string>()}
-        </div>
+        <Badge variant="outline">
+          <div className="flex items-center gap-2">
+            <Mail className="w-3 h-3" />
+            {getValue<string>()}
+          </div>
+        </Badge>
       ),
     },
     {
       header: 'Teléfono',
       accessorKey: 'celular',
       cell: ({ getValue, row }) => (
-        <span className="text-slate-600 dark:text-zinc-300">
+        <Badge variant="outline">
           {getValue<string>() || row.original.telefono || '—'}
-        </span>
+        </Badge>
       ),
     },
     {
       header: 'País',
       accessorKey: 'pais',
       cell: ({ getValue }) => (
-        <span className="text-slate-600 dark:text-zinc-300">
+        <Badge variant="outline">
           {getValue<string>() || '—'}
-        </span>
+        </Badge>
       ),
     },
     {
@@ -102,10 +103,6 @@ export default function AdminClientes() {
           deleteId={row.original.id}
           deleteNombre={row.original.nombre_cliente}
           onEdit={(id) => navigate(`/admin/clientes/${id}`)}
-          onDelete={(id, nombre) => {
-            setDeleteId(id);
-            setDeleteNombre(nombre);
-          }}
           onConfirmDelete={(id: number | string) => deleteMutation.mutate(Number(id))}
           deleteTitle="¿Eliminar cliente?"
           deleteDescription="Esta acción no se puede deshacer. Se eliminará permanentemente el cliente"
