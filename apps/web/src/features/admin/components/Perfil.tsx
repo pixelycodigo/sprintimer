@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { authService } from '../../../services/auth.service';
 import { Button } from '@ui/Button';
 import { Spinner } from '@ui/Spinner';
+import { Badge } from '@ui/Badge';
 import { Input } from '@ui/Input';
 import { Label } from '@ui/Label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/Card';
