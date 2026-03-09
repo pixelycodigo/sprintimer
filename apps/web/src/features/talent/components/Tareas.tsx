@@ -1,31 +1,18 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { type ColumnDef } from '@tanstack/react-table';
-import { ClipboardList, Plus, CheckCircle2, Circle } from 'lucide-react';
-import { talentDashboardService } from '../../../services/talent-dashboard.service';
-import { toast } from 'sonner';
-
-import { DataTable } from '@ui/DataTable';
-import { FilterPage } from '@ui/FilterPage';
-import { HeaderPage } from '@ui/HeaderPage';
-import { Badge } from '@ui/Badge';
-import { Spinner } from '@ui/Spinner';
-import { Empty } from '@ui/Empty';
-import { Muted } from '@ui/Typography';
-import { Button } from '@ui/Button';
-import { ActionButtonEdit, ActionButtonDelete } from '@ui/ActionButtonTable';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@ui/AlertDialog';
-
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Plus, ClipboardList, CheckCircle2, Circle } from 'lucide-react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { talentDashboardService } from '../../../services/talent-dashboard.service';
+import { type ColumnDef } from '@tanstack/react-table';
+
+import { DataTable, DataTableActions } from '@ui/DataTable';
+import { EntityCell, LoadingState, StatusBadge } from '@ui';
+import { Badge } from '@ui/Badge';
+import { Button } from '@ui/Button';
+import { FilterPage } from '@ui/FilterPage';
+import { HeaderPage } from '@ui/HeaderPage';
+import { Muted } from '@ui/Typography';
 
 export default function TalentTareas() {
   const queryClient = useQueryClient();
@@ -34,10 +21,9 @@ export default function TalentTareas() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [deleteNombre, setDeleteNombre] = useState<string>('');
 
-  const { data: tareas, isLoading, error } = useQuery({
+  const { data: tareas, isLoading } = useQuery({
     queryKey: ['talent-tareas'],
     queryFn: talentDashboardService.getTareas,
-    retry: 1,
   });
 
   const toggleMutation = useMutation({
@@ -70,26 +56,11 @@ export default function TalentTareas() {
     toggleMutation.mutate({ id, completado: !currentStatus });
   };
 
-  const handleDelete = (id: number, nombre: string) => {
-    setDeleteId(id);
-    setDeleteNombre(nombre);
-  };
-
-  const handleConfirmDelete = () => {
-    if (deleteId) {
-      deleteMutation.mutate(deleteId);
-    }
-  };
-
   const filteredTareas = tareas?.filter((tarea: any) =>
     tarea.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
     tarea.actividad?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     tarea.proyecto?.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  const handleClear = () => {
-    setSearchTerm('');
-  };
 
   const columns: ColumnDef<any>[] = [
     {
@@ -135,7 +106,7 @@ export default function TalentTareas() {
       header: 'Proyecto',
       accessorKey: 'proyecto',
       cell: ({ getValue }) => (
-        <span className="text-slate-600 dark:text-zinc-400">{getValue<string>()}</span>
+        <span className="text-slate-600 dark:text-zinc-300">{getValue<string>() || '—'}</span>
       ),
     },
     {
@@ -148,39 +119,34 @@ export default function TalentTareas() {
       ),
     },
     {
+      header: 'Estado',
+      accessorKey: 'completado',
+      cell: ({ getValue }) => <StatusBadge active={!getValue<boolean>()} activeLabel="Pendiente" inactiveLabel="Completada" />,
+    },
+    {
       header: 'Acciones',
-      accessorKey: 'acciones',
-      cell: ({ row }) => {
-        const id = row.original.id;
-        const nombre = row.original.nombre;
-        return (
-          <div className="flex items-center justify-end gap-2">
-            <ActionButtonEdit onClick={() => navigate(`/talent/tareas/${id}/editar`)} />
-            <ActionButtonDelete onClick={() => handleDelete(id, nombre)} />
-          </div>
-        );
-      },
+      accessorKey: 'id',
+      cell: ({ row }) => (
+        <DataTableActions
+          editId={row.original.id}
+          deleteId={row.original.id}
+          deleteNombre={row.original.nombre}
+          onEdit={(id) => navigate(`/talent/tareas/${id}/editar`)}
+          onDelete={(id, nombre) => {
+            setDeleteId(id);
+            setDeleteNombre(nombre);
+          }}
+          onConfirmDelete={(id) => deleteMutation.mutate(id)}
+          deleteTitle="¿Eliminar tarea?"
+          deleteDescription="La tarea se moverá a la papelera de reciclaje. Podrás restaurarla o eliminarla permanentemente antes de los 30 días."
+          isLoading={deleteMutation.isPending}
+        />
+      ),
     },
   ];
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <Spinner size="lg" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <Empty
-          icon={<ClipboardList className="w-12 h-12 text-red-400" />}
-          title="Error al cargar"
-          description="No se pudieron cargar las tareas"
-        />
-      </div>
-    );
+    return <LoadingState message="Cargando tareas..." />;
   }
 
   return (
@@ -189,58 +155,28 @@ export default function TalentTareas() {
         title="Mis Tareas"
         description="Tus tareas asignadas en actividades"
         action={
-          <Button asChild>
-            <Link to="/talent/tareas/crear">
+          <Link to="/talent/tareas/crear">
+            <Button variant="default" size="default">
               <Plus className="w-4 h-4 mr-2" />
               Nueva Tarea
-            </Link>
-          </Button>
+            </Button>
+          </Link>
         }
       />
 
       <FilterPage
         searchTerm={searchTerm}
-        onSearchChange={(value) => setSearchTerm(value)}
-        onClear={handleClear}
+        onSearchChange={setSearchTerm}
+        onClear={() => setSearchTerm('')}
         searchPlaceholder="Buscar tarea..."
       />
 
-      {filteredTareas && filteredTareas.length > 0 ? (
-        <DataTable
-          data={filteredTareas as any}
-          columns={columns as any}
-          pageSize={10}
-          emptyMessage="No se encontraron tareas"
-        />
-      ) : (
-        <Empty
-          icon={<ClipboardList className="w-12 h-12 text-slate-400" />}
-          title="Sin tareas"
-          description="Aún no tienes tareas asignadas. Contacta a tu administrador."
-        />
-      )}
-
-      {/* Dialogo de confirmación para eliminar */}
-      <AlertDialog open={deleteId !== null} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>¿Eliminar tarea?</AlertDialogTitle>
-            <AlertDialogDescription>
-              La tarea <strong className="text-slate-900 dark:text-zinc-100">"{deleteNombre}"</strong> se moverá a la papelera de reciclaje.
-              Podrás restaurarla o eliminarla permanentemente antes de los 30 días.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setDeleteId(null)}>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleConfirmDelete}
-              className="bg-red-600 text-white hover:bg-red-700 dark:bg-red-700 dark:text-white dark:hover:bg-red-600"
-            >
-              Eliminar
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DataTable
+        data={filteredTareas || []}
+        columns={columns as any}
+        pageSize={10}
+        emptyMessage="No se encontraron tareas"
+      />
     </div>
   );
 }
