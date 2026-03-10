@@ -78,10 +78,7 @@ export default function TalentTareasCrear() {
         title="Nueva Tarea"
         description="Crea una nueva tarea en una actividad asignada"
         backLink={
-          <Link
-            to="/talent/tareas"
-            className="inline-flex items-center justify-center p-2 text-slate-400 dark:text-zinc-500 hover:text-slate-600 dark:hover:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-md transition-colors"
-          >
+          <Link to="/talent/tareas">
             <ArrowLeft className="w-5 h-5" aria-hidden="true" />
           </Link>
         }

@@ -56,17 +56,22 @@ export const errorHandler = (
 
   // Error de validación de Zod
   if (err instanceof ZodError) {
-    const message = 'Error de validación de datos';
+    // Construir mensaje específico combinando los errores por campo
     const details = err.errors.map(e => ({
       field: e.path.join('.'),
       message: e.message,
     }));
     
+    // Usar el primer mensaje de error como mensaje principal si hay errores específicos
+    const message = details.length > 0 
+      ? details.map(d => `${d.field ? d.field + ': ' : ''}${d.message}`).join('; ')
+      : 'Error de validación de datos';
+
     logger.warn(`${req.method} ${req.originalUrl} - ${message}`, {
       ...errorContext,
       details,
     });
-    
+
     return res.status(400).json({
       success: false,
       message,

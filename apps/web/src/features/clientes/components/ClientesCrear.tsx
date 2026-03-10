@@ -41,20 +41,20 @@ export default function AdminClientesCrear() {
       // Mostrar mensaje específico del error de validación
       if (error.response?.data?.issues) {
         const issues = error.response.data.issues;
-        
+
         // Agrupar errores por campo para mostrar mensaje claro
         const passwordErrors = issues
           .filter((issue: any) => issue.field === 'password')
           .map((issue: any) => issue.message);
-        
+
         const confirmErrors = issues
           .filter((issue: any) => issue.field === 'password_confirm')
           .map((issue: any) => issue.message);
-        
+
         const otherErrors = issues
           .filter((issue: any) => !['password', 'password_confirm'].includes(issue.field))
           .map((issue: any) => issue.message);
-        
+
         // Mostrar errores de contraseña primero (los más importantes)
         if (passwordErrors.length > 0) {
           toast.error(
@@ -69,14 +69,17 @@ export default function AdminClientesCrear() {
             { duration: 8000 }
           );
         }
-        
+
         if (confirmErrors.length > 0) {
           toast.error(confirmErrors.join('\n'), { duration: 5000 });
         }
-        
+
         if (otherErrors.length > 0) {
           toast.error(otherErrors.join('\n'), { duration: 5000 });
         }
+      } else if (error.response?.data?.message) {
+        // Usar mensaje específico del backend
+        toast.error(error.response.data.message, { duration: 5000 });
       } else {
         toast.error(error.message || 'Error al crear cliente');
       }
@@ -149,10 +152,7 @@ export default function AdminClientesCrear() {
         title="Nuevo Cliente"
         description="Crea un nuevo cliente en la plataforma"
         backLink={
-          <Link
-            to="/admin/clientes"
-            className="inline-flex items-center justify-center p-2 text-slate-400 dark:text-zinc-500 hover:text-slate-600 dark:hover:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-md transition-colors"
-          >
+          <Link to="/admin/clientes">
             <ArrowLeft className="w-5 h-5" aria-hidden="true" />
           </Link>
         }

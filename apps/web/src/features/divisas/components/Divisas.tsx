@@ -81,8 +81,9 @@ export default function AdminDivisas() {
           onEdit={(id) => navigate(`/admin/divisas/${id}`)}
           onConfirmDelete={(id: number | string) => deleteMutation.mutate(Number(id))}
           deleteTitle="¿Eliminar divisa?"
-          deleteDescription="Esta acción no se puede deshacer. Se eliminará permanentemente la divisa"
+          deleteDescription="La divisa se moverá a la papelera de reciclaje. Podrás restaurarla o eliminarla permanentemente antes de los 30 días."
           isLoading={deleteMutation.isPending}
+          isSoftDelete={true}
         />
       ),
     },

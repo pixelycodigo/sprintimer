@@ -28,12 +28,12 @@ export class TalentService {
   async create(data: TalentCreate): Promise<TalentWithDetails> {
     // Verificar si el email ya existe en talents
     if (await talentRepository.emailExists(data.email)) {
-      throw new Error('Ya existe un talent con ese email');
+      throw new AppError('Ya existe un talent registrado con este email', 400);
     }
 
     // Verificar si el email ya existe en usuarios
     if (await usuarioRepository.emailExists(data.email)) {
-      throw new Error('Ya existe un usuario con ese email');
+      throw new AppError('Ya existe un usuario registrado con este email', 400);
     }
 
     // Generar usuario a partir del email (parte antes del @)

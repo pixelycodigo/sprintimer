@@ -1,5 +1,6 @@
 import { seniorityRepository } from '../repositories/seniority.repository.js';
 import { Seniority, SeniorityCreate, SeniorityUpdate } from '../models/Seniority.js';
+import { eliminadoService } from './eliminado.service.js';
 
 export class SeniorityService {
   async findAll(): Promise<Seniority[]> {
@@ -73,7 +74,7 @@ export class SeniorityService {
     }
   }
 
-  async softDelete(id: number): Promise<void> {
+  async softDelete(id: number, eliminadoPor?: number): Promise<void> {
     const seniority = await this.findById(id);
 
     if (!seniority) {
@@ -85,6 +86,21 @@ export class SeniorityService {
     if (!updated) {
       throw new Error('Error al eliminar el seniority');
     }
+
+    // Registrar en la tabla eliminados
+    const fechaBorradoPermanente = new Date();
+    fechaBorradoPermanente.setDate(fechaBorradoPermanente.getDate() + 30);
+
+    await eliminadoService.create({
+      item_id: id,
+      item_tipo: 'seniority',
+      eliminado_por: eliminadoPor || 1,
+      fecha_borrado_permanente: fechaBorradoPermanente,
+      datos: {
+        nombre: seniority.nombre,
+        nivel_orden: seniority.nivel_orden,
+      },
+    });
   }
 }
 

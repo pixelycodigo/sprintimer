@@ -26,7 +26,16 @@ const HeaderPage = React.forwardRef<HTMLDivElement, HeaderPageProps>(
         {...props}
       >
         <div className="flex items-center gap-4 flex-1 min-w-0">
-          {backLink && <div className="flex-shrink-0">{backLink}</div>}
+          {backLink && (
+            <div className="flex-shrink-0">
+              {React.isValidElement(backLink) && React.cloneElement(backLink as React.ReactElement<any>, {
+                className: cn(
+                  'inline-flex items-center justify-center p-2 text-slate-400 dark:text-zinc-500 hover:text-slate-600 dark:hover:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-md transition-colors',
+                  (backLink as React.ReactElement<any>).props.className
+                )
+              })}
+            </div>
+          )}
           <div className="flex-1 min-w-0">
             {typeof title === 'string' ? (
               <h1 className="text-2xl font-bold text-slate-900 dark:text-zinc-100">

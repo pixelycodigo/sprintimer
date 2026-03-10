@@ -1,0 +1,301 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - heading "SPRINTASK" [level=1] [ref=e6]
+      - generic [ref=e7]:
+        - generic [ref=e8]:
+          - link "Dashboard" [ref=e9] [cursor=pointer]:
+            - /url: /admin
+            - img [ref=e11]
+            - text: Dashboard
+          - link "Clientes" [ref=e16] [cursor=pointer]:
+            - /url: /admin/clientes
+            - img [ref=e18]
+            - text: Clientes
+          - link "Proyectos" [ref=e23] [cursor=pointer]:
+            - /url: /admin/proyectos
+            - img [ref=e25]
+            - text: Proyectos
+          - link "Actividades" [ref=e27] [cursor=pointer]:
+            - /url: /admin/actividades
+            - img [ref=e29]
+            - text: Actividades
+        - generic [ref=e32]:
+          - generic [ref=e33]:
+            - img [ref=e34]
+            - text: TeamWork
+          - link "Talents" [ref=e36] [cursor=pointer]:
+            - /url: /admin/talents
+            - img [ref=e38]
+            - text: Talents
+          - link "Perfiles" [ref=e41] [cursor=pointer]:
+            - /url: /admin/perfiles
+            - img [ref=e43]
+            - text: Perfiles
+          - link "Seniority" [ref=e46] [cursor=pointer]:
+            - /url: /admin/seniorities
+            - img [ref=e48]
+            - text: Seniority
+          - link "Asignaciones" [ref=e51] [cursor=pointer]:
+            - /url: /admin/asignaciones
+            - img [ref=e53]
+            - text: Asignaciones
+        - generic [ref=e58]:
+          - link "Divisas" [ref=e59] [cursor=pointer]:
+            - /url: /admin/divisas
+            - img [ref=e61]
+            - text: Divisas
+          - link "Costo por Hora" [ref=e66] [cursor=pointer]:
+            - /url: /admin/costo-por-hora
+            - img [ref=e68]
+            - text: Costo por Hora
+          - link "Eliminados" [ref=e70] [cursor=pointer]:
+            - /url: /admin/eliminados
+            - img [ref=e72]
+            - text: Eliminados
+      - button "Cerrar sesión" [ref=e76] [cursor=pointer]:
+        - img [ref=e77]
+        - text: Cerrar sesión
+    - generic [ref=e80]:
+      - banner [ref=e81]:
+        - button "Contraer menú" [ref=e83] [cursor=pointer]:
+          - img [ref=e84]
+        - generic [ref=e87]:
+          - button "Cambiar a modo oscuro" [ref=e88] [cursor=pointer]:
+            - img [ref=e89]
+          - button "Abrir menú de usuario" [ref=e95] [cursor=pointer]:
+            - generic [ref=e97]: A
+            - generic [ref=e98]:
+              - paragraph [ref=e99]: Administrador
+              - paragraph [ref=e100]: administrador
+      - main [ref=e101]:
+        - generic [ref=e103]:
+          - generic [ref=e104]:
+            - generic [ref=e106]:
+              - heading "Actividades" [level=1] [ref=e107]
+              - paragraph [ref=e108]: Gestiona las actividades de los proyectos
+            - link "Nueva Actividad" [ref=e110] [cursor=pointer]:
+              - /url: /admin/actividades/crear
+              - button "Nueva Actividad" [ref=e111]:
+                - img [ref=e112]
+                - text: Nueva Actividad
+          - generic [ref=e115]:
+            - img [ref=e116]
+            - textbox "Buscar por nombre, descripción o proyecto..." [ref=e119]
+          - generic [ref=e120]:
+            - table [ref=e122]:
+              - rowgroup [ref=e123]:
+                - row "Actividad Proyecto Horas Estimadas Estado Acciones" [ref=e124]:
+                  - columnheader "Actividad" [ref=e125]
+                  - columnheader "Proyecto" [ref=e126]
+                  - columnheader "Horas Estimadas" [ref=e127]
+                  - columnheader "Estado" [ref=e128]
+                  - columnheader "Acciones" [ref=e129]
+              - rowgroup [ref=e130]:
+                - row "Diseño de UI/UX Diseño de interfaces y experiencia de usuario para e-commerce incluyendo wireframes y prototipos E-commerce Platform 40.00h Activo Editar Eliminar" [ref=e131]:
+                  - cell "Diseño de UI/UX Diseño de interfaces y experiencia de usuario para e-commerce incluyendo wireframes y prototipos" [ref=e132]:
+                    - generic [ref=e133]:
+                      - img [ref=e135]
+                      - generic [ref=e137]:
+                        - paragraph [ref=e138]: Diseño de UI/UX
+                        - text: Diseño de interfaces y experiencia de usuario para e-commerce incluyendo wireframes y prototipos
+                  - cell "E-commerce Platform" [ref=e139]:
+                    - generic [ref=e140]: E-commerce Platform
+                  - cell "40.00h" [ref=e141]:
+                    - generic [ref=e142]: 40.00h
+                  - cell "Activo" [ref=e143]:
+                    - generic [ref=e144]: Activo
+                  - cell "Editar Eliminar" [ref=e145]:
+                    - generic [ref=e146]:
+                      - button "Editar" [ref=e147] [cursor=pointer]:
+                        - img [ref=e148]
+                      - button "Eliminar" [ref=e151] [cursor=pointer]:
+                        - img [ref=e152]
+                - row "Desarrollo Frontend React Implementación de componentes React para catálogo, carrito y checkout E-commerce Platform 80.00h Activo Editar Eliminar" [ref=e155]:
+                  - cell "Desarrollo Frontend React Implementación de componentes React para catálogo, carrito y checkout" [ref=e156]:
+                    - generic [ref=e157]:
+                      - img [ref=e159]
+                      - generic [ref=e161]:
+                        - paragraph [ref=e162]: Desarrollo Frontend React
+                        - text: Implementación de componentes React para catálogo, carrito y checkout
+                  - cell "E-commerce Platform" [ref=e163]:
+                    - generic [ref=e164]: E-commerce Platform
+                  - cell "80.00h" [ref=e165]:
+                    - generic [ref=e166]: 80.00h
+                  - cell "Activo" [ref=e167]:
+                    - generic [ref=e168]: Activo
+                  - cell "Editar Eliminar" [ref=e169]:
+                    - generic [ref=e170]:
+                      - button "Editar" [ref=e171] [cursor=pointer]:
+                        - img [ref=e172]
+                      - button "Eliminar" [ref=e175] [cursor=pointer]:
+                        - img [ref=e176]
+                - row "Desarrollo iOS Native Desarrollo de aplicación iOS nativa con Swift para banca móvil Mobile Banking App 120.00h Activo Editar Eliminar" [ref=e179]:
+                  - cell "Desarrollo iOS Native Desarrollo de aplicación iOS nativa con Swift para banca móvil" [ref=e180]:
+                    - generic [ref=e181]:
+                      - img [ref=e183]
+                      - generic [ref=e185]:
+                        - paragraph [ref=e186]: Desarrollo iOS Native
+                        - text: Desarrollo de aplicación iOS nativa con Swift para banca móvil
+                  - cell "Mobile Banking App" [ref=e187]:
+                    - generic [ref=e188]: Mobile Banking App
+                  - cell "120.00h" [ref=e189]:
+                    - generic [ref=e190]: 120.00h
+                  - cell "Activo" [ref=e191]:
+                    - generic [ref=e192]: Activo
+                  - cell "Editar Eliminar" [ref=e193]:
+                    - generic [ref=e194]:
+                      - button "Editar" [ref=e195] [cursor=pointer]:
+                        - img [ref=e196]
+                      - button "Eliminar" [ref=e199] [cursor=pointer]:
+                        - img [ref=e200]
+                - row "Desarrollo Android Native Desarrollo de aplicación Android nativa con Kotlin para banca móvil Mobile Banking App 120.00h Activo Editar Eliminar" [ref=e203]:
+                  - cell "Desarrollo Android Native Desarrollo de aplicación Android nativa con Kotlin para banca móvil" [ref=e204]:
+                    - generic [ref=e205]:
+                      - img [ref=e207]
+                      - generic [ref=e209]:
+                        - paragraph [ref=e210]: Desarrollo Android Native
+                        - text: Desarrollo de aplicación Android nativa con Kotlin para banca móvil
+                  - cell "Mobile Banking App" [ref=e211]:
+                    - generic [ref=e212]: Mobile Banking App
+                  - cell "120.00h" [ref=e213]:
+                    - generic [ref=e214]: 120.00h
+                  - cell "Activo" [ref=e215]:
+                    - generic [ref=e216]: Activo
+                  - cell "Editar Eliminar" [ref=e217]:
+                    - generic [ref=e218]:
+                      - button "Editar" [ref=e219] [cursor=pointer]:
+                        - img [ref=e220]
+                      - button "Eliminar" [ref=e223] [cursor=pointer]:
+                        - img [ref=e224]
+                - row "Arquitectura Microservicios Diseño e implementación de arquitectura de microservicios con API Gateway API Gateway 60.00h Activo Editar Eliminar" [ref=e227]:
+                  - cell "Arquitectura Microservicios Diseño e implementación de arquitectura de microservicios con API Gateway" [ref=e228]:
+                    - generic [ref=e229]:
+                      - img [ref=e231]
+                      - generic [ref=e233]:
+                        - paragraph [ref=e234]: Arquitectura Microservicios
+                        - text: Diseño e implementación de arquitectura de microservicios con API Gateway
+                  - cell "API Gateway" [ref=e235]:
+                    - generic [ref=e236]: API Gateway
+                  - cell "60.00h" [ref=e237]:
+                    - generic [ref=e238]: 60.00h
+                  - cell "Activo" [ref=e239]:
+                    - generic [ref=e240]: Activo
+                  - cell "Editar Eliminar" [ref=e241]:
+                    - generic [ref=e242]:
+                      - button "Editar" [ref=e243] [cursor=pointer]:
+                        - img [ref=e244]
+                      - button "Eliminar" [ref=e247] [cursor=pointer]:
+                        - img [ref=e248]
+                - row "Implementación Backend Desarrollo de endpoints REST con autenticación JWT y rate limiting API Gateway 80.00h Activo Editar Eliminar" [ref=e251]:
+                  - cell "Implementación Backend Desarrollo de endpoints REST con autenticación JWT y rate limiting" [ref=e252]:
+                    - generic [ref=e253]:
+                      - img [ref=e255]
+                      - generic [ref=e257]:
+                        - paragraph [ref=e258]: Implementación Backend
+                        - text: Desarrollo de endpoints REST con autenticación JWT y rate limiting
+                  - cell "API Gateway" [ref=e259]:
+                    - generic [ref=e260]: API Gateway
+                  - cell "80.00h" [ref=e261]:
+                    - generic [ref=e262]: 80.00h
+                  - cell "Activo" [ref=e263]:
+                    - generic [ref=e264]: Activo
+                  - cell "Editar Eliminar" [ref=e265]:
+                    - generic [ref=e266]:
+                      - button "Editar" [ref=e267] [cursor=pointer]:
+                        - img [ref=e268]
+                      - button "Eliminar" [ref=e271] [cursor=pointer]:
+                        - img [ref=e272]
+                - row "Integración de Datos Integración de fuentes de datos múltiples y ETL para analytics Dashboard Analytics 50.00h Activo Editar Eliminar" [ref=e275]:
+                  - cell "Integración de Datos Integración de fuentes de datos múltiples y ETL para analytics" [ref=e276]:
+                    - generic [ref=e277]:
+                      - img [ref=e279]
+                      - generic [ref=e281]:
+                        - paragraph [ref=e282]: Integración de Datos
+                        - text: Integración de fuentes de datos múltiples y ETL para analytics
+                  - cell "Dashboard Analytics" [ref=e283]:
+                    - generic [ref=e284]: Dashboard Analytics
+                  - cell "50.00h" [ref=e285]:
+                    - generic [ref=e286]: 50.00h
+                  - cell "Activo" [ref=e287]:
+                    - generic [ref=e288]: Activo
+                  - cell "Editar Eliminar" [ref=e289]:
+                    - generic [ref=e290]:
+                      - button "Editar" [ref=e291] [cursor=pointer]:
+                        - img [ref=e292]
+                      - button "Eliminar" [ref=e295] [cursor=pointer]:
+                        - img [ref=e296]
+                - row "Visualización de Métricas Desarrollo de dashboards interactivos con gráficos y KPIs en tiempo real Dashboard Analytics 45.00h Activo Editar Eliminar" [ref=e299]:
+                  - cell "Visualización de Métricas Desarrollo de dashboards interactivos con gráficos y KPIs en tiempo real" [ref=e300]:
+                    - generic [ref=e301]:
+                      - img [ref=e303]
+                      - generic [ref=e305]:
+                        - paragraph [ref=e306]: Visualización de Métricas
+                        - text: Desarrollo de dashboards interactivos con gráficos y KPIs en tiempo real
+                  - cell "Dashboard Analytics" [ref=e307]:
+                    - generic [ref=e308]: Dashboard Analytics
+                  - cell "45.00h" [ref=e309]:
+                    - generic [ref=e310]: 45.00h
+                  - cell "Activo" [ref=e311]:
+                    - generic [ref=e312]: Activo
+                  - cell "Editar Eliminar" [ref=e313]:
+                    - generic [ref=e314]:
+                      - button "Editar" [ref=e315] [cursor=pointer]:
+                        - img [ref=e316]
+                      - button "Eliminar" [ref=e319] [cursor=pointer]:
+                        - img [ref=e320]
+                - row "Módulo de Ventas Implementación de módulo de ventas con escaneo de productos y múltiples formas de pago POS System 70.00h Activo Editar Eliminar" [ref=e323]:
+                  - cell "Módulo de Ventas Implementación de módulo de ventas con escaneo de productos y múltiples formas de pago" [ref=e324]:
+                    - generic [ref=e325]:
+                      - img [ref=e327]
+                      - generic [ref=e329]:
+                        - paragraph [ref=e330]: Módulo de Ventas
+                        - text: Implementación de módulo de ventas con escaneo de productos y múltiples formas de pago
+                  - cell "POS System" [ref=e331]:
+                    - generic [ref=e332]: POS System
+                  - cell "70.00h" [ref=e333]:
+                    - generic [ref=e334]: 70.00h
+                  - cell "Activo" [ref=e335]:
+                    - generic [ref=e336]: Activo
+                  - cell "Editar Eliminar" [ref=e337]:
+                    - generic [ref=e338]:
+                      - button "Editar" [ref=e339] [cursor=pointer]:
+                        - img [ref=e340]
+                      - button "Eliminar" [ref=e343] [cursor=pointer]:
+                        - img [ref=e344]
+                - row "Módulo de Inventario Desarrollo de módulo de control de inventario con alertas de stock mínimo POS System 65.00h Activo Editar Eliminar" [ref=e347]:
+                  - cell "Módulo de Inventario Desarrollo de módulo de control de inventario con alertas de stock mínimo" [ref=e348]:
+                    - generic [ref=e349]:
+                      - img [ref=e351]
+                      - generic [ref=e353]:
+                        - paragraph [ref=e354]: Módulo de Inventario
+                        - text: Desarrollo de módulo de control de inventario con alertas de stock mínimo
+                  - cell "POS System" [ref=e355]:
+                    - generic [ref=e356]: POS System
+                  - cell "65.00h" [ref=e357]:
+                    - generic [ref=e358]: 65.00h
+                  - cell "Activo" [ref=e359]:
+                    - generic [ref=e360]: Activo
+                  - cell "Editar Eliminar" [ref=e361]:
+                    - generic [ref=e362]:
+                      - button "Editar" [ref=e363] [cursor=pointer]:
+                        - img [ref=e364]
+                      - button "Eliminar" [ref=e367] [cursor=pointer]:
+                        - img [ref=e368]
+            - generic [ref=e371]:
+              - generic [ref=e372]: Mostrando 1 a 10 de 20 registros
+              - generic [ref=e373]:
+                - button [disabled]:
+                  - img
+                - button [disabled]:
+                  - img
+                - generic [ref=e374]: Página 1 de 2
+                - button [ref=e375] [cursor=pointer]:
+                  - img [ref=e376]
+                - button [ref=e378] [cursor=pointer]:
+                  - img [ref=e379]
+  - region "Notifications alt+T"
+```

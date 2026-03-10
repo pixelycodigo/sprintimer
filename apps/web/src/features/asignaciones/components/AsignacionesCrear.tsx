@@ -8,6 +8,7 @@ import { actividadesService } from '../../../services/actividades.service';
 import { talentsService } from '../../../services/talents.service';
 import { Button } from '@ui/Button';
 import { Label } from '@ui/Label';
+import { Checkbox } from '@ui/Checkbox';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/Card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/Select';
 import { HeaderPage } from '@ui/HeaderPage';
@@ -19,6 +20,7 @@ export default function AdminAsignacionesCrear() {
     actividad_id: 0,
     talent_id: 0,
     fecha_asignacion: new Date().toISOString(),
+    activo: true,
   });
 
   // Fetch actividades para el select
@@ -56,10 +58,7 @@ export default function AdminAsignacionesCrear() {
         title="Nueva Asignación"
         description="Asigna un talent a una actividad"
         backLink={
-          <Link
-            to="/admin/asignaciones"
-            className="p-2 text-slate-400 dark:text-zinc-500 hover:text-slate-600 dark:hover:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-md transition-colors"
-          >
+          <Link to="/admin/asignaciones">
             <ArrowLeft className="w-5 h-5" aria-hidden="true" />
           </Link>
         }
@@ -120,6 +119,18 @@ export default function AdminAsignacionesCrear() {
                   </Select>
                 </div>
               </div>
+            </div>
+
+            {/* Estado */}
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="activo"
+                checked={formData.activo}
+                onCheckedChange={(checked) => setFormData({ ...formData, activo: checked as boolean })}
+              />
+              <Label htmlFor="activo" className="cursor-pointer">
+                Asignación activa
+              </Label>
             </div>
 
             {/* Actions */}

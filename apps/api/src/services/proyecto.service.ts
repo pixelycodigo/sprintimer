@@ -1,5 +1,6 @@
 import { proyectoRepository } from '../repositories/proyecto.repository.js';
 import { Proyecto, ProyectoCreate, ProyectoUpdate } from '../models/Proyecto.js';
+import { eliminadoService } from './eliminado.service.js';
 
 export class ProyectoService {
   async findAll(): Promise<Proyecto[]> {
@@ -65,7 +66,7 @@ export class ProyectoService {
     }
   }
 
-  async softDelete(id: number): Promise<void> {
+  async softDelete(id: number, eliminadoPor?: number): Promise<void> {
     const proyecto = await this.findById(id);
 
     if (!proyecto) {
@@ -77,6 +78,22 @@ export class ProyectoService {
     if (!updated) {
       throw new Error('Error al eliminar el proyecto');
     }
+
+    // Registrar en la tabla eliminados
+    const fechaBorradoPermanente = new Date();
+    fechaBorradoPermanente.setDate(fechaBorradoPermanente.getDate() + 30);
+
+    await eliminadoService.create({
+      item_id: id,
+      item_tipo: 'proyecto',
+      eliminado_por: eliminadoPor || 1,
+      fecha_borrado_permanente: fechaBorradoPermanente,
+      datos: {
+        nombre: proyecto.nombre,
+        descripcion: proyecto.descripcion,
+        modalidad: proyecto.modalidad,
+      },
+    });
   }
 
   async search(term: string): Promise<Proyecto[]> {

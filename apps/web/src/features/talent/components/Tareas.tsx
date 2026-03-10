@@ -41,7 +41,6 @@ export default function TalentTareas() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['talent-tareas'] });
       toast.success('Tarea eliminada. Se encuentra en la papelera por 30 días.');
-      navigate('/talent/tareas/eliminadas');
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al eliminar tarea');
@@ -130,8 +129,9 @@ export default function TalentTareas() {
           onEdit={(id) => navigate(`/talent/tareas/${id}/editar`)}
           onConfirmDelete={(id: number | string) => deleteMutation.mutate(Number(id))}
           deleteTitle="¿Eliminar tarea?"
-          isSoftDelete
+          deleteDescription="La tarea se moverá a la papelera de reciclaje. Podrás restaurarla o eliminarla permanentemente antes de los 30 días."
           isLoading={deleteMutation.isPending}
+          isSoftDelete={true}
         />
       ),
     },

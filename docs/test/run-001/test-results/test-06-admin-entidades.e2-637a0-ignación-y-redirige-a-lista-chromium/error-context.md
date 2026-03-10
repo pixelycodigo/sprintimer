@@ -1,0 +1,115 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - heading "SPRINTASK" [level=1] [ref=e6]
+      - generic [ref=e7]:
+        - generic [ref=e8]:
+          - link "Dashboard" [ref=e9] [cursor=pointer]:
+            - /url: /admin
+            - img [ref=e11]
+            - text: Dashboard
+          - link "Clientes" [ref=e16] [cursor=pointer]:
+            - /url: /admin/clientes
+            - img [ref=e18]
+            - text: Clientes
+          - link "Proyectos" [ref=e23] [cursor=pointer]:
+            - /url: /admin/proyectos
+            - img [ref=e25]
+            - text: Proyectos
+          - link "Actividades" [ref=e27] [cursor=pointer]:
+            - /url: /admin/actividades
+            - img [ref=e29]
+            - text: Actividades
+        - generic [ref=e32]:
+          - generic [ref=e33]:
+            - img [ref=e34]
+            - text: TeamWork
+          - link "Talents" [ref=e36] [cursor=pointer]:
+            - /url: /admin/talents
+            - img [ref=e38]
+            - text: Talents
+          - link "Perfiles" [ref=e41] [cursor=pointer]:
+            - /url: /admin/perfiles
+            - img [ref=e43]
+            - text: Perfiles
+          - link "Seniority" [ref=e46] [cursor=pointer]:
+            - /url: /admin/seniorities
+            - img [ref=e48]
+            - text: Seniority
+          - link "Asignaciones" [ref=e51] [cursor=pointer]:
+            - /url: /admin/asignaciones
+            - img [ref=e53]
+            - text: Asignaciones
+        - generic [ref=e58]:
+          - link "Divisas" [ref=e59] [cursor=pointer]:
+            - /url: /admin/divisas
+            - img [ref=e61]
+            - text: Divisas
+          - link "Costo por Hora" [ref=e66] [cursor=pointer]:
+            - /url: /admin/costo-por-hora
+            - img [ref=e68]
+            - text: Costo por Hora
+          - link "Eliminados" [ref=e70] [cursor=pointer]:
+            - /url: /admin/eliminados
+            - img [ref=e72]
+            - text: Eliminados
+      - button "Cerrar sesión" [ref=e76] [cursor=pointer]:
+        - img [ref=e77]
+        - text: Cerrar sesión
+    - generic [ref=e80]:
+      - banner [ref=e81]:
+        - button "Contraer menú" [ref=e83] [cursor=pointer]:
+          - img [ref=e84]
+        - generic [ref=e87]:
+          - button "Cambiar a modo oscuro" [ref=e88] [cursor=pointer]:
+            - img [ref=e89]
+          - button "Abrir menú de usuario" [ref=e95] [cursor=pointer]:
+            - generic [ref=e97]: A
+            - generic [ref=e98]:
+              - paragraph [ref=e99]: Administrador
+              - paragraph [ref=e100]: administrador
+      - main [ref=e101]:
+        - generic [ref=e103]:
+          - generic [ref=e105]:
+            - link [ref=e107] [cursor=pointer]:
+              - /url: /admin/asignaciones
+              - img [ref=e108]
+            - generic [ref=e110]:
+              - heading "Nueva Asignación" [level=1] [ref=e111]
+              - paragraph [ref=e112]: Asigna un talent a una actividad
+          - generic [ref=e113]:
+            - generic [ref=e114]:
+              - heading "Información de la Asignación" [level=3] [ref=e115]
+              - paragraph [ref=e116]: Completa los datos de la asignación. Los campos marcados con * son obligatorios.
+            - generic [ref=e118]:
+              - generic [ref=e119]:
+                - heading "Información de la Asignación" [level=3] [ref=e120]:
+                  - img [ref=e121]
+                  - text: Información de la Asignación
+                - generic [ref=e126]:
+                  - generic [ref=e127]:
+                    - text: Actividad*
+                    - combobox [ref=e128] [cursor=pointer]:
+                      - generic: Diseño de UI/UX
+                      - img [ref=e129]
+                    - combobox [ref=e131]
+                  - generic [ref=e132]:
+                    - text: Talent*
+                    - combobox [ref=e133] [cursor=pointer]:
+                      - generic: Isabel Delgado - UI Designer
+                      - img [ref=e134]
+                    - combobox [ref=e136]
+              - generic [ref=e137]:
+                - checkbox "Asignación activa" [checked] [ref=e138] [cursor=pointer]:
+                  - generic:
+                    - img
+                - checkbox [checked]
+                - generic [ref=e139] [cursor=pointer]: Asignación activa
+              - generic [ref=e140]:
+                - button "Crear Asignación" [ref=e141] [cursor=pointer]
+                - button "Cancelar" [ref=e142] [cursor=pointer]
+  - region "Notifications alt+T"
+```

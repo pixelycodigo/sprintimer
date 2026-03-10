@@ -2,11 +2,15 @@
 
 **Fecha:** 10 de Marzo, 2026 | **Estado:** ✅ Implementado
 
-**Entidades:** Clientes, Talents, Proyectos, Actividades, Perfiles, Seniorities, Divisas, Costo por Hora
+**Alcance:** Todo el proyecto (Admin, Talent, Super Admin)
 
 ---
 
 ## 🎯 Visión General
+
+### 📌 Comportamiento Estándar del Proyecto
+
+**Este documento define el comportamiento estándar para TODAS las entidades del proyecto.** Cualquier nueva página o feature que gestione entidades debe seguir este patrón para mantener consistencia en la UX.
 
 ### Estados de una Entidad
 
@@ -24,196 +28,85 @@ CREAR → EDITAR → ELIMINAR → { RESTAURAR | ELIMINAR PERM. }
 
 ---
 
-## 📖 Historias de Usuario
+## 📖 Reglas de Comportamiento
 
-### HU-001 a HU-006: Clientes (Comportamiento Base)
+### ✅ Regla 1: Crear Entidad
 
-#### HU-001: Crear Cliente
-**Como** administrador, **quiero** crear clientes activos o inactivos, **para** controlar su operación.
+**Todas las entidades deben:**
+- Poder crearse activas (`activo: true`) o inactivas (`activo: false`)
+- Mostrarse inmediatamente en la lista después de crear
+- Usar `<Checkbox>` para el campo `activo` (no input nativo)
 
-| Escenario | Criterios |
-|-----------|-----------|
-| **Activo** | `activo: true`, aparece en lista, badge verde |
-| **Inactivo** | `activo: false`, aparece en lista, badge gris/rojo |
-
-**Archivos:** `ClientesCrear.tsx`, `cliente.repository.ts` (`create()`)
-
----
-
-#### HU-002: Editar Estado
-**Como** administrador, **quiero** cambiar el estado de un cliente, **para** controlar su operación temporal.
-
-| Acción | Resultado |
-|--------|-----------|
-| Activo → Inactivo | `activo: false`, sigue en lista, badge cambia |
-| Inactivo → Activo | `activo: true`, sigue en lista, badge cambia |
-
-**Criterios de Aceptación:**
-- ✅ Los cambios se reflejan **inmediatamente** en la lista/bandeja
-- ✅ No es necesario recargar la página manualmente
-- ✅ El badge de estado actualiza su color (verde/gris/rojo)
-- ✅ Todos los campos editados se actualizan en la tabla
-
-**Archivos:** `ClientesEditar.tsx`, `cliente.repository.ts` (`update()`), `queryClient.invalidateQueries()`
-
----
-
-#### HU-003: Eliminar (Soft Delete)
-**Como** administrador, **quiero** eliminar un cliente, **para** quitarlo de la lista pero poder recuperarlo.
-
-**Criterios:**
-- ✅ Desaparece de `/admin/clientes`
-- ✅ `activo: false` en `clientes`
-- ✅ Registro en `eliminados` (`item_id`, `item_tipo: 'cliente'`, `fecha_borrado_permanente: +30 días`)
-- ✅ Aparece en `/admin/eliminados`
-
-**Archivos:** `Clientes.tsx`, `cliente.service.ts` (`softDelete()`), `eliminado.repository.ts`
-
----
-
-#### HU-004: Restaurar
-**Como** administrador, **quiero** restaurar un cliente eliminado, **para** recuperarlo sin crearlo desde cero.
-
-**Criterios:**
-- ✅ `activo: true` en `clientes`
-- ✅ Elimina registro de `eliminados`
-- ✅ Aparece inmediatamente en lista de clientes
-- ✅ Invalida caché de `eliminados` y `clientes`
-
-**Archivos:** `Eliminados.tsx`, `eliminado.repository.ts` (`restore()`)
-
----
-
-#### HU-005: Eliminar Permanentemente
-**Como** administrador, **quiero** eliminar permanentemente, **para** borrar datos definitivamente.
-
-**Criterios:**
-- ✅ `DELETE` físico de `clientes` y `eliminados`
-- ✅ Irreversible
-- ✅ Diálogo de confirmación claro
-
-**Archivos:** `Eliminados.tsx`, `eliminado.service.ts` (`delete()`)
-
----
-
-#### HU-006: Ver Todos (Activos e Inactivos)
-**Como** administrador, **quiero** ver activos e inactivos, **para** tener visión completa.
-
-**Query:**
-```sql
-SELECT * FROM clientes
-WHERE id NOT IN (
-  SELECT item_id FROM eliminados WHERE item_tipo = 'cliente'
-)
-ORDER BY created_at DESC;
+**Ejemplo:**
+```tsx
+<div className="flex items-center gap-2">
+  <Checkbox
+    id="activo"
+    checked={formData.activo}
+    onCheckedChange={(checked) => setFormData({ ...formData, activo: checked as boolean })}
+  />
+  <Label htmlFor="activo">Entidad activa</Label>
+</div>
 ```
 
-**Archivos:** `Clientes.tsx`, `cliente.repository.ts` (`findAll()`)
+---
+
+### ✅ Regla 2: Editar Estado
+
+**Todas las entidades deben:**
+- Actualizar el campo `activo` inmediatamente
+- Invalidar caché con `queryClient.invalidateQueries()`
+- Reflejar cambios sin recargar la página
+- Actualizar badge de estado (verde/gris/rojo)
 
 ---
 
-### HU-007 a HU-013: Otras Entidades
+### ✅ Regla 3: Eliminar (Soft Delete)
 
-El mismo comportamiento de **Clientes** aplica para:
+**Todas las entidades con soft delete deben:**
+- Desaparecer de la lista principal inmediatamente
+- Registrar en tabla `eliminados` por 30 días
+- Mostrar diálogo: *"Se moverá a la papelera de reciclaje. Podrás restaurarla o eliminarla permanentemente antes de los 30 días."*
+- Usar `isSoftDelete={true}` en `DataTableActions`
+- Invalidar caché después de eliminar
 
-| HU | Entidad | Ruta | Archivos Clave |
-|----|---------|------|----------------|
-| **HU-007** | Talents | `/admin/talents` | `Talents.tsx`, `TalentsCrear.tsx`, `TalentsEditar.tsx` |
-| **HU-008** | Proyectos | `/admin/proyectos` | `Proyectos.tsx`, `ProyectosCrear.tsx`, `ProyectosEditar.tsx` |
-| **HU-009** | Actividades | `/admin/actividades` | `Actividades.tsx`, `ActividadesCrear.tsx`, `ActividadesEditar.tsx` |
-| **HU-010** | Perfiles | `/admin/perfiles` | `Perfiles.tsx`, `PerfilesCrear.tsx`, `PerfilesEditar.tsx` |
-| **HU-011** | Seniorities | `/admin/seniorities` | `Seniorities.tsx`, `SenioritiesCrear.tsx`, `SenioritiesEditar.tsx` |
-| **HU-012** | Divisas | `/admin/divisas` | `Divisas.tsx`, `DivisasCrear.tsx`, `DivisasEditar.tsx` |
-| **HU-013** | Costo por Hora | `/admin/costo-por-hora` | `CostoPorHora.tsx`, `CostoPorHoraCrear.tsx`, `CostoPorHoraEditar.tsx` |
-| **HU-014** | Asignaciones | `/admin/asignaciones` | `Asignaciones.tsx`, `AsignacionesCrear.tsx`, `AsignacionesEditar.tsx` |
-
-**Comportamiento común:**
-1. **Crear:** Activo/inactivo → Se muestra en lista
-2. **Editar:** Cambiar estado → **Se refleja inmediatamente en la bandeja** (invalidación de caché)
-3. **Eliminar:** Soft delete → Va a papelera por 30 días
-4. **Restaurar:** Vuelve activo → Regresa a lista
-5. **Eliminar perm.:** DELETE físico → Sin retorno
-
-**Nota:** Todas las entidades usan `queryClient.invalidateQueries()` para actualizar la bandeja después de editar.
+**Excepción - Hard Delete:**
+Algunas entidades NO tienen soft delete (ej: Tareas en algunos contextos). En ese caso:
+- Mostrar diálogo: *"Esta acción no se puede deshacer. Se eliminará permanentemente."*
+- DELETE físico de la base de datos
 
 ---
 
-### HU-014: Gestionar Asignaciones (Activas/Inactivas/Eliminadas)
+### ✅ Regla 4: Restaurar
 
-**Como** administrador, **quiero** poder crear, editar, eliminar y restaurar asignaciones de talents a actividades, **para** gestionar qué talents trabajan en cada actividad.
-
-**Contexto:**
-Estoy en la página `/admin/asignaciones` gestionando las asignaciones de talents a actividades.
-
-**Criterios de Aceptación:**
-
-✅ **Crear asignación:**
-- Puedo crear una asignación activa (`activo: true`) o inactiva (`activo: false`)
-- La asignación aparece en la lista con talent, actividad, fecha de asignación
-- El badge de estado muestra "Activo" (verde) o "Inactivo" (gris/rojo)
-
-✅ **Editar asignación:**
-- Puedo cambiar el estado de activo a inactivo y viceversa
-- Puedo actualizar el talent o la actividad asignada
-- Los cambios se reflejan **inmediatamente** en la lista
-- No es necesario recargar la página manualmente
-
-✅ **Eliminar asignación:**
-- Al eliminar, la asignación desaparece de la lista
-- Se registra en `eliminados` con `item_tipo: 'asignacion'`
-- La asignación aparece en `/admin/eliminados` por 30 días
-- El diálogo de confirmación indica que es un soft delete (papelera de reciclaje)
-
-✅ **Restaurar asignación:**
-- Desde eliminados, puedo restaurar una asignación
-- Vuelve a la lista con `activo: true`
-- Mantiene el talent y la actividad originales
-
-✅ **Eliminar permanentemente:**
-- Elimino definitivamente la asignación de la base de datos
-- No hay forma de recuperarla
-
-**Archivos Clave:**
-| Archivo | Responsabilidad |
-|---------|----------------|
-| `apps/web/src/features/asignaciones/components/Asignaciones.tsx` | Lista de asignaciones |
-| `apps/web/src/features/asignaciones/components/AsignacionesCrear.tsx` | Crear asignación |
-| `apps/web/src/features/asignaciones/components/AsignacionesEditar.tsx` | Editar asignación |
-| `apps/api/src/repositories/asignacion.repository.ts` | Query `findAll()` con `whereNotIn`, `update()`, `softDelete()` |
-| `apps/api/src/services/asignacion.service.ts` | Soft delete y restore con registro en eliminados |
-
-**Nota:** La tabla `actividades_integrantes` requiere la columna `activo` para habilitar el soft delete.
+**Todas las entidades en papelera deben:**
+- Poder restaurarse dentro de los 30 días
+- Volver a `activo: true` automáticamente
+- Eliminar registro de `eliminados`
+- Invalidar caché de `eliminados` y entidad original
+- Mostrar toast: *"Elemento restaurado exitosamente"*
 
 ---
 
-## 📊 Resumen de Entidades
+### ✅ Regla 5: Eliminar Permanentemente
 
-| Entidad | Ruta | HU | Soft Delete | Update |
-|---------|------|-----|-------------|--------|
-| **Clientes** | `/admin/clientes` | HU-001 a HU-006 | ✅ | ✅ |
-| **Talents** | `/admin/talents` | HU-007 | ✅ | ✅ |
-| **Proyectos** | `/admin/proyectos` | HU-008 | ✅ | ✅ |
-| **Actividades** | `/admin/actividades` | HU-009 | ✅ | ✅ |
-| **Perfiles** | `/admin/perfiles` | HU-010 | ✅ | ✅ |
-| **Seniorities** | `/admin/seniorities` | HU-011 | ✅ | ✅ |
-| **Divisas** | `/admin/divisas` | HU-012 | ✅ | ✅ |
-| **Costo x Hora** | `/admin/costo-por-hora` | HU-013 | ✅ | ✅ |
-| **Asignaciones** | `/admin/asignaciones` | HU-014 | ✅ | ✅ |
-
-**Todas las entidades:**
-- ✅ Usan `whereNotIn` con tabla `eliminados` en `findAll()`
-- ✅ Tienen campo `activo` para estado
-- ✅ Soportan crear activo/inactivo
-- ✅ Actualizan bandeja inmediatamente con `invalidateQueries`
-- ✅ Soft delete registra en tabla `eliminados` por 30 días
-- ✅ Restaurar pone `activo: true` y elimina de `eliminados`
+**Todas las entidades en papelera deben:**
+- Poder eliminarse permanentemente antes de los 30 días
+- Mostrar diálogo de confirmación claro
+- Hacer DELETE físico de `eliminados`
+- Ser irreversible
+- Invalidar caché de `eliminados`
 
 ---
 
-## 🔧 Implementación Técnica
+### ✅ Regla 6: Ver Todos (Activos e Inactivos)
 
-### Patrón de Repositorio (8 entidades)
+**Todas las listas de entidades deben:**
+- Mostrar activos e inactivos (excepto eliminados)
+- Usar query patrón con `whereNotIn` y tabla `eliminados`
+- Ordenar por `created_at DESC`
 
+**Query Patrón:**
 ```typescript
 async findAll(): Promise<Entidad[]> {
   return db<Entidad>(this.tableName)
@@ -226,22 +119,137 @@ async findAll(): Promise<Entidad[]> {
 }
 ```
 
-### Repositorios por Entidad
+---
 
-| Entidad | Repositorio | `item_tipo` |
-|---------|-------------|-------------|
-| Clientes | `cliente.repository.ts` | `'cliente'` |
-| Talents | `talent.repository.ts` | `'talent'` |
-| Proyectos | `proyecto.repository.ts` | `'proyecto'` |
-| Actividades | `actividad.repository.ts` | `'actividad'` |
-| Perfiles | `perfil.repository.ts` | `'perfil'` |
-| Seniorities | `seniority.repository.ts` | `'seniority'` |
-| Divisas | `divisa.repository.ts` | `'divisa'` |
-| Costo por Hora | `costoPorHora.repository.ts` | `'costo_por_hora'` |
+## 📊 Entidades del Proyecto
+
+### Admin (9 entidades)
+
+| Entidad | Ruta | Soft Delete | HU |
+|---------|------|-------------|-----|
+| **Clientes** | `/admin/clientes` | ✅ | HU-001 a HU-006 |
+| **Talents** | `/admin/talents` | ✅ | HU-007 |
+| **Proyectos** | `/admin/proyectos` | ✅ | HU-008 |
+| **Actividades** | `/admin/actividades` | ✅ | HU-009 |
+| **Perfiles** | `/admin/perfiles` | ✅ | HU-010 |
+| **Seniorities** | `/admin/seniorities` | ✅ | HU-011 |
+| **Divisas** | `/admin/divisas` | ✅ | HU-012 |
+| **Costo x Hora** | `/admin/costo-por-hora` | ✅ | HU-013 |
+| **Asignaciones** | `/admin/asignaciones` | ✅ | HU-014 |
+
+### Talent (1 entidad)
+
+| Entidad | Ruta | Soft Delete | HU |
+|---------|------|-------------|-----|
+| **Tareas** | `/talent/tareas` | ✅ | HU-015 |
+
+### Super Admin (1 entidad)
+
+| Entidad | Ruta | Soft Delete | HU |
+|---------|------|-------------|-----|
+| **Usuarios** | `/super-admin/usuarios` | ❌ | HU-016 |
+
+**Nota:** Usuarios no tiene soft delete porque son la base de la autenticación.
 
 ---
 
-### Soft Delete (Service)
+## 🗂️ Historias de Usuario Base
+
+### HU-001 a HU-006: Clientes (Comportamiento Base)
+
+**Las HU-001 a HU-006 definen el comportamiento base que aplica a TODAS las entidades con soft delete.**
+
+#### HU-001: Crear Entidad
+**Como** administrador, **quiero** crear entidades activas o inactivas, **para** controlar su operación.
+
+#### HU-002: Editar Estado
+**Como** administrador, **quiero** cambiar el estado de una entidad, **para** controlar su operación temporal.
+
+#### HU-003: Eliminar (Soft Delete)
+**Como** administrador, **quiero** eliminar una entidad, **para** quitarla de la lista pero poder recuperarla.
+
+#### HU-004: Restaurar
+**Como** administrador, **quiero** restaurar una entidad eliminada, **para** recuperarla sin crearla desde cero.
+
+#### HU-005: Eliminar Permanentemente
+**Como** administrador, **quiero** eliminar permanentemente, **para** borrar datos definitivamente.
+
+#### HU-006: Ver Todos (Activos e Inactivos)
+**Como** administrador, **quiero** ver activos e inactivos, **para** tener visión completa.
+
+---
+
+### HU-007 a HU-014: Entidades Admin
+
+Aplican HU-001 a HU-006 para:
+- Talents, Proyectos, Actividades, Perfiles, Seniorities, Divisas, Costo x Hora, Asignaciones
+
+---
+
+### HU-015: Gestionar Tareas (Talent)
+
+**Como** talent, **quiero** gestionar mis tareas asignadas, **para** organizar mi trabajo.
+
+**Criterios de Aceptación:**
+- ✅ Crear tarea en actividad asignada
+- ✅ Editar tarea (nombre, descripción, horas)
+- ✅ Marcar tarea como completada/pendiente
+- ✅ Eliminar tarea → Soft delete (papelera 30 días)
+- ✅ Ver tareas eliminadas
+- ✅ Restaurar tarea eliminada
+- ✅ Eliminar tarea permanentemente
+
+**Archivos Clave:**
+| Archivo | Responsabilidad |
+|---------|----------------|
+| `apps/web/src/features/talent/components/Tareas.tsx` | Lista de tareas |
+| `apps/web/src/features/talent/components/TareasCrear.tsx` | Crear tarea |
+| `apps/web/src/features/talent/components/TareasEditar.tsx` | Editar tarea |
+| `apps/web/src/features/talent/components/TareasEliminadas.tsx` | Tareas eliminadas |
+| `apps/api/src/services/talent-dashboard.service.ts` | `getTareas()` con `whereNotIn`, `deleteTarea()` con soft delete |
+
+---
+
+### HU-016: Gestionar Usuarios (Super Admin)
+
+**Como** super admin, **quiero** gestionar usuarios administradores, **para** controlar el acceso al sistema.
+
+**Criterios de Aceptación:**
+- ✅ Crear usuario administrador
+- ✅ Editar usuario (nombre, email, estado)
+- ✅ Cambiar estado (activo/inactivo)
+- ✅ Eliminar usuario → **Hard delete** (no soft delete)
+- ✅ Cambiar contraseña
+
+**Nota:** Usuarios no tiene soft delete por ser entidad base de autenticación.
+
+---
+
+## 🔧 Implementación Técnica
+
+### Backend
+
+#### Repositorio (Patrón para todas las entidades)
+
+```typescript
+async findAll(): Promise<Entidad[]> {
+  return db<Entidad>(this.tableName)
+    .whereNotIn('id', function() {
+      this.select('item_id')
+        .from('eliminados')
+        .where('item_tipo', 'entidad');
+    })
+    .orderBy('created_at', 'desc');
+}
+
+async softDelete(id: number): Promise<boolean> {
+  return db<Entidad>(this.tableName)
+    .where('id', id)
+    .update({ activo: false, updated_at: new Date() });
+}
+```
+
+#### Servicio (Soft Delete con registro en eliminados)
 
 ```typescript
 async softDelete(id: number, eliminadoPor?: number): Promise<void> {
@@ -264,82 +272,32 @@ async softDelete(id: number, eliminadoPor?: number): Promise<void> {
 }
 ```
 
----
+#### Tabla `eliminados` (item_tipo)
 
-### Restaurar (Repository)
-
-```typescript
-async restore(id: number): Promise<Eliminado | null> {
-  const eliminado = await this.findById(id);
-  if (!eliminado) return null;
-  
-  const { item_id, item_tipo } = eliminado;
-  
-  // 1. Poner activo: true en tabla original
-  await db(item_tipo)
-    .where('id', item_id)
-    .update({ activo: true, updated_at: new Date() });
-  
-  // 2. Eliminar de eliminados
-  await db('eliminados').where('id', id).del();
-  
-  return eliminado;
-}
+```sql
+enum('cliente', 'proyecto', 'actividad', 'talent', 'perfil', 
+     'seniority', 'divisa', 'costo_por_hora', 'asignacion', 'tarea')
 ```
 
 ---
 
-### Frontend: Invalidación de Caché
+### Frontend
 
-```typescript
-const restoreMutation = useMutation({
-  mutationFn: (id: number) => eliminadosService.restore(id),
-  onSuccess: (_, variables) => {
-    queryClient.invalidateQueries({ queryKey: ['eliminados'] });
-    
-    const entityMap: Record<string, string[]> = {
-      'clientes': ['clientes'],
-      'talents': ['talents'],
-      'proyectos': ['proyectos'],
-      'actividades': ['actividades'],
-      'perfiles': ['perfiles'],
-      'seniorities': ['seniorities'],
-      'divisas': ['divisas'],
-      'costo_por_hora': ['costo-por-hora'],
-    };
-    
-    const eliminado = queryClient.getQueryData<any[]>(['eliminados'])
-      ?.find(e => e.id === variables);
-    
-    if (eliminado && entityMap[eliminado.item_tipo]) {
-      queryClient.invalidateQueries({ 
-        queryKey: entityMap[eliminado.item_tipo] 
-      });
-    }
-    
-    toast.success('Elemento restaurado exitosamente');
-  },
-});
-```
+#### Invalidación de Caché (Editar)
 
-### Frontend: Invalidación de Caché
-
-**Editar - Actualizar bandeja:**
 ```typescript
 const editMutation = useMutation({
-  mutationFn: ({ id, data }: { id: number; data: any }) => 
+  mutationFn: ({ id, data }: { id: number; data: any }) =>
     service.update(id, data),
   onSuccess: () => {
-    // Invalida caché para actualizar la bandeja inmediatamente
-    queryClient.invalidateQueries({ 
-      queryKey: ['entidad'] // ej: ['clientes'], ['talents'], etc.
-    });
+    queryClient.invalidateQueries({ queryKey: ['entidad'] });
     toast.success('Elemento actualizado exitosamente');
   },
 });
 ```
 
-**Restaurar - Actualizar múltiples bandejas:**
+#### Invalidación de Caché (Restaurar)
+
 ```typescript
 const restoreMutation = useMutation({
   mutationFn: (id: number) => eliminadosService.restore(id),
@@ -355,36 +313,50 @@ const restoreMutation = useMutation({
       'seniorities': ['seniorities'],
       'divisas': ['divisas'],
       'costo_por_hora': ['costo-por-hora'],
+      'asignaciones': ['asignaciones'],
+      'tareas': ['talent-tareas'],
     };
-
+    
     const eliminado = queryClient.getQueryData<any[]>(['eliminados'])
       ?.find(e => e.id === variables);
-
+    
     if (eliminado && entityMap[eliminado.item_tipo]) {
-      queryClient.invalidateQueries({
-        queryKey: entityMap[eliminado.item_tipo]
-      });
+      queryClient.invalidateQueries({ queryKey: entityMap[eliminado.item_tipo] });
     }
-
+    
     toast.success('Elemento restaurado exitosamente');
   },
 });
 ```
 
+#### DataTableActions (Soft Delete)
+
+```tsx
+<DataTableActions
+  editId={row.original.id}
+  deleteId={row.original.id}
+  deleteNombre={row.original.nombre}
+  onEdit={(id) => navigate(`/ruta/${id}`)}
+  onConfirmDelete={(id) => deleteMutation.mutate(Number(id))}
+  deleteTitle="¿Eliminar entidad?"
+  deleteDescription="La entidad se moverá a la papelera de reciclaje. Podrás restaurarla o eliminarla permanentemente antes de los 30 días."
+  isLoading={deleteMutation.isPending}
+  isSoftDelete={true}
+/>
+```
+
 ---
 
-## 📊 Resumen
+## 📊 Resumen de Comportamiento
 
 | Acción | Resultado | ¿Visible en lista? | Actualización bandeja |
 |--------|-----------|-------------------|----------------------|
 | Crear activo | `activo: true` | ✅ Sí | Automática (queryKeys) |
 | Crear inactivo | `activo: false` | ✅ Sí | Automática (queryKeys) |
-| **Editar estado** | Actualiza `activo` | ✅ Sí | **Inmediata (invalidateQueries)** |
+| Editar estado | Actualiza `activo` | ✅ Sí | **Inmediata (invalidateQueries)** |
 | Eliminar | `activo: false` + `eliminados` | ❌ No (papelera) | Automática (queryKeys) |
 | Restaurar | `activo: true` - `eliminados` | ✅ Sí (vuelve) | Automática (invalidateQueries) |
 | Eliminar perm. | DELETE físico | ❌ No (borrado total) | Automática (invalidateQueries) |
-
-**Nota:** Todas las actualizaciones usan `queryClient.invalidateQueries()` para refrescar la bandeja sin recargar la página.
 
 ---
 
@@ -399,7 +371,7 @@ const restoreMutation = useMutation({
 | Visible en lista | ✅ Sí | ❌ No |
 | Restaurar | N/A | ✅ Sí (30 días) |
 
-### Validaciones Opcionales (por implementar)
+### Validaciones Futuras (Opcional)
 
 - ⚠️ **Perfiles:** Validar que no haya talents usando el perfil antes de eliminar
 - ⚠️ **Seniorities:** Validar que no haya talents usando el seniority antes de eliminar
@@ -410,5 +382,5 @@ const restoreMutation = useMutation({
 ---
 
 **Documento optimizado:** 10 de Marzo, 2026  
-**Líneas:** ~350 (reducido de 1263)  
-**Reducción:** 72% menos texto redundante
+**Líneas:** ~450  
+**Entidades cubiertas:** 11 (9 Admin + 1 Talent + 1 Super Admin)

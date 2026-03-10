@@ -101,8 +101,9 @@ export default function AdminProyectos() {
           onEdit={(id) => navigate(`/admin/proyectos/${id}`)}
           onConfirmDelete={(id: number | string) => deleteMutation.mutate(Number(id))}
           deleteTitle="¿Eliminar proyecto?"
-          deleteDescription="Esta acción no se puede deshacer. Se eliminará permanentemente el proyecto"
+          deleteDescription="El proyecto se moverá a la papelera de reciclaje. Podrás restaurarlo o eliminarlo permanentemente antes de los 30 días."
           isLoading={deleteMutation.isPending}
+          isSoftDelete={true}
         />
       ),
     },

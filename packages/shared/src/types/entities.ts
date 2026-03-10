@@ -132,6 +132,7 @@ export interface Asignacion {
   actividad_id: number;
   talent_id: number;
   fecha_asignacion: string;
+  activo: boolean;
   actividad?: Actividad;
   talent?: Talent;
 }
@@ -215,6 +216,7 @@ export interface CreateAsignacionInput {
   actividad_id: number;
   talent_id: number;
   fecha_asignacion?: string;
+  activo?: boolean;
   actividad_nombre?: string;
   talent_nombre?: string;
   talent_email?: string;

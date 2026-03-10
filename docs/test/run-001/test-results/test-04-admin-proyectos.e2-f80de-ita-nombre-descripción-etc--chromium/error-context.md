@@ -1,0 +1,130 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - heading "SPRINTASK" [level=1] [ref=e6]
+      - generic [ref=e7]:
+        - generic [ref=e8]:
+          - link "Dashboard" [ref=e9] [cursor=pointer]:
+            - /url: /admin
+            - img [ref=e11]
+            - text: Dashboard
+          - link "Clientes" [ref=e16] [cursor=pointer]:
+            - /url: /admin/clientes
+            - img [ref=e18]
+            - text: Clientes
+          - link "Proyectos" [ref=e23] [cursor=pointer]:
+            - /url: /admin/proyectos
+            - img [ref=e25]
+            - text: Proyectos
+          - link "Actividades" [ref=e27] [cursor=pointer]:
+            - /url: /admin/actividades
+            - img [ref=e29]
+            - text: Actividades
+        - generic [ref=e32]:
+          - generic [ref=e33]:
+            - img [ref=e34]
+            - text: TeamWork
+          - link "Talents" [ref=e36] [cursor=pointer]:
+            - /url: /admin/talents
+            - img [ref=e38]
+            - text: Talents
+          - link "Perfiles" [ref=e41] [cursor=pointer]:
+            - /url: /admin/perfiles
+            - img [ref=e43]
+            - text: Perfiles
+          - link "Seniority" [ref=e46] [cursor=pointer]:
+            - /url: /admin/seniorities
+            - img [ref=e48]
+            - text: Seniority
+          - link "Asignaciones" [ref=e51] [cursor=pointer]:
+            - /url: /admin/asignaciones
+            - img [ref=e53]
+            - text: Asignaciones
+        - generic [ref=e58]:
+          - link "Divisas" [ref=e59] [cursor=pointer]:
+            - /url: /admin/divisas
+            - img [ref=e61]
+            - text: Divisas
+          - link "Costo por Hora" [ref=e66] [cursor=pointer]:
+            - /url: /admin/costo-por-hora
+            - img [ref=e68]
+            - text: Costo por Hora
+          - link "Eliminados" [ref=e70] [cursor=pointer]:
+            - /url: /admin/eliminados
+            - img [ref=e72]
+            - text: Eliminados
+      - button "Cerrar sesión" [ref=e76] [cursor=pointer]:
+        - img [ref=e77]
+        - text: Cerrar sesión
+    - generic [ref=e80]:
+      - banner [ref=e81]:
+        - button "Contraer menú" [ref=e83] [cursor=pointer]:
+          - img [ref=e84]
+        - generic [ref=e87]:
+          - button "Cambiar a modo oscuro" [ref=e88] [cursor=pointer]:
+            - img [ref=e89]
+          - button "Abrir menú de usuario" [ref=e95] [cursor=pointer]:
+            - generic [ref=e97]: A
+            - generic [ref=e98]:
+              - paragraph [ref=e99]: Administrador
+              - paragraph [ref=e100]: administrador
+      - main [ref=e101]:
+        - generic [ref=e103]:
+          - generic [ref=e105]:
+            - link [ref=e107] [cursor=pointer]:
+              - /url: /admin/proyectos
+              - img [ref=e108]
+            - generic [ref=e110]:
+              - heading "Editar Proyecto" [level=1] [ref=e111]
+              - paragraph [ref=e112]: Actualiza la información del proyecto
+          - generic [ref=e113]:
+            - generic [ref=e114]:
+              - heading "Información del Proyecto" [level=3] [ref=e115]
+              - paragraph [ref=e116]: Actualiza los datos del proyecto. Los campos marcados con * son obligatorios.
+            - generic [ref=e118]:
+              - generic [ref=e119]:
+                - heading "Información Básica" [level=3] [ref=e120]:
+                  - img [ref=e121]
+                  - text: Información Básica
+                - generic [ref=e123]:
+                  - generic [ref=e124]:
+                    - text: Cliente*
+                    - combobox [ref=e125] [cursor=pointer]:
+                      - generic: Roberto Gómez - Tech Corp S.A.C.
+                      - img [ref=e126]
+                    - combobox [ref=e128]
+                  - generic [ref=e129]:
+                    - text: Nombre del Proyecto*
+                    - textbox "Nombre del Proyecto*" [ref=e130]:
+                      - /placeholder: Desarrollo de Aplicación Web
+                      - text: E-commerce Platform - Editado
+                  - generic [ref=e131]:
+                    - text: Descripción
+                    - textbox "Descripción" [ref=e132]:
+                      - /placeholder: Descripción del proyecto
+                      - text: Plataforma de comercio electrónico con carrito de compras, pasarela de pagos y gestión de inventario
+                  - generic [ref=e133]:
+                    - generic [ref=e134]:
+                      - text: Modalidad*
+                      - combobox [ref=e135] [cursor=pointer]:
+                        - generic: Sprint
+                        - img [ref=e136]
+                      - combobox [ref=e138]
+                    - generic [ref=e139]:
+                      - text: Formato de Horas*
+                      - combobox [ref=e140] [cursor=pointer]:
+                        - generic: Minutos
+                        - img [ref=e141]
+                      - combobox [ref=e143]
+              - generic [ref=e144]:
+                - checkbox "Proyecto activo" [ref=e145] [cursor=pointer]
+                - checkbox
+                - generic [ref=e146] [cursor=pointer]: Proyecto activo
+              - generic [ref=e147]:
+                - button "Guardar Cambios" [ref=e148] [cursor=pointer]
+                - button "Cancelar" [ref=e149] [cursor=pointer]
+  - region "Notifications alt+T"
+```

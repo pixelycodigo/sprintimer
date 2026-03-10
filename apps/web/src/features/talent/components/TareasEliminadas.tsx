@@ -10,6 +10,7 @@ import { DataTable } from '@ui/DataTable';
 import { Muted } from '@ui/Typography';
 import { Badge } from '@ui/Badge';
 import { Spinner } from '@ui/Spinner';
+import { FilterPage } from '@ui/FilterPage';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,6 +28,7 @@ import { HeaderPage } from '@ui/HeaderPage';
 
 export default function TalentTareasEliminadas() {
   const queryClient = useQueryClient();
+  const [searchTerm, setSearchTerm] = useState('');
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [deleteNombre, setDeleteNombre] = useState('');
 
@@ -35,6 +37,12 @@ export default function TalentTareasEliminadas() {
     queryKey: ['talent-tareas-eliminadas'],
     queryFn: talentDashboardService.getTareasEliminadas,
   });
+
+  // Filtrar tareas por búsqueda
+  const filteredTareas = tareas?.filter((tarea: any) =>
+    tarea.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    String(tarea.item_id).includes(searchTerm)
+  );
 
   // Restore mutation
   const restoreMutation = useMutation({
@@ -178,9 +186,16 @@ export default function TalentTareasEliminadas() {
         </CardContent>
       </Card>
 
+      <FilterPage
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        onClear={() => setSearchTerm('')}
+        searchPlaceholder="Buscar tarea eliminada..."
+      />
+
       {/* Table */}
       <DataTable
-        data={tareas || []}
+        data={filteredTareas || []}
         columns={columns as any}
         pageSize={10}
         emptyMessage="No hay tareas eliminadas"

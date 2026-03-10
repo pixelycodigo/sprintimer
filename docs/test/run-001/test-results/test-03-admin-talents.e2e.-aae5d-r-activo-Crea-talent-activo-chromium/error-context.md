@@ -1,0 +1,169 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - heading "SPRINTASK" [level=1] [ref=e6]
+      - generic [ref=e7]:
+        - generic [ref=e8]:
+          - link "Dashboard" [ref=e9] [cursor=pointer]:
+            - /url: /admin
+            - img [ref=e11]
+            - text: Dashboard
+          - link "Clientes" [ref=e16] [cursor=pointer]:
+            - /url: /admin/clientes
+            - img [ref=e18]
+            - text: Clientes
+          - link "Proyectos" [ref=e23] [cursor=pointer]:
+            - /url: /admin/proyectos
+            - img [ref=e25]
+            - text: Proyectos
+          - link "Actividades" [ref=e27] [cursor=pointer]:
+            - /url: /admin/actividades
+            - img [ref=e29]
+            - text: Actividades
+        - generic [ref=e32]:
+          - generic [ref=e33]:
+            - img [ref=e34]
+            - text: TeamWork
+          - link "Talents" [ref=e36] [cursor=pointer]:
+            - /url: /admin/talents
+            - img [ref=e38]
+            - text: Talents
+          - link "Perfiles" [ref=e41] [cursor=pointer]:
+            - /url: /admin/perfiles
+            - img [ref=e43]
+            - text: Perfiles
+          - link "Seniority" [ref=e46] [cursor=pointer]:
+            - /url: /admin/seniorities
+            - img [ref=e48]
+            - text: Seniority
+          - link "Asignaciones" [ref=e51] [cursor=pointer]:
+            - /url: /admin/asignaciones
+            - img [ref=e53]
+            - text: Asignaciones
+        - generic [ref=e58]:
+          - link "Divisas" [ref=e59] [cursor=pointer]:
+            - /url: /admin/divisas
+            - img [ref=e61]
+            - text: Divisas
+          - link "Costo por Hora" [ref=e66] [cursor=pointer]:
+            - /url: /admin/costo-por-hora
+            - img [ref=e68]
+            - text: Costo por Hora
+          - link "Eliminados" [ref=e70] [cursor=pointer]:
+            - /url: /admin/eliminados
+            - img [ref=e72]
+            - text: Eliminados
+      - button "Cerrar sesión" [ref=e76] [cursor=pointer]:
+        - img [ref=e77]
+        - text: Cerrar sesión
+    - generic [ref=e80]:
+      - banner [ref=e81]:
+        - button "Contraer menú" [ref=e83] [cursor=pointer]:
+          - img [ref=e84]
+        - generic [ref=e87]:
+          - button "Cambiar a modo oscuro" [ref=e88] [cursor=pointer]:
+            - img [ref=e89]
+          - button "Abrir menú de usuario" [ref=e95] [cursor=pointer]:
+            - generic [ref=e97]: A
+            - generic [ref=e98]:
+              - paragraph [ref=e99]: Administrador
+              - paragraph [ref=e100]: administrador
+      - main [ref=e101]:
+        - generic [ref=e103]:
+          - generic [ref=e105]:
+            - link [ref=e107] [cursor=pointer]:
+              - /url: /admin/talents
+              - img [ref=e108]
+            - generic [ref=e110]:
+              - heading "Nuevo Talent" [level=1] [ref=e111]
+              - paragraph [ref=e112]: Crea un nuevo talent en la plataforma
+          - generic [ref=e113]:
+            - generic [ref=e114]:
+              - heading "Información del Talent" [level=3] [ref=e115]
+              - paragraph [ref=e116]: Completa los datos del talent. Los campos marcados con * son obligatorios.
+            - generic [ref=e118]:
+              - generic [ref=e119]:
+                - heading "Información Personal" [level=3] [ref=e120]:
+                  - img [ref=e121]
+                  - text: Información Personal
+                - generic [ref=e124]:
+                  - generic [ref=e125]:
+                    - text: Nombre*
+                    - textbox "Nombre*" [ref=e126]:
+                      - /placeholder: Juan
+                      - text: Test Talent 1773183836125
+                  - generic [ref=e127]:
+                    - text: Apellido*
+                    - textbox "Apellido*" [ref=e128]:
+                      - /placeholder: Pérez
+                      - text: Apellido 1773183836125
+                  - generic [ref=e129]:
+                    - text: Email*
+                    - textbox "Email*" [ref=e130]:
+                      - /placeholder: juan@ejemplo.com
+                      - text: test.talent.1773183836125@sprintask.com
+                  - generic [ref=e131]:
+                    - text: Contraseña*
+                    - generic [ref=e132]:
+                      - textbox "Contraseña*" [ref=e133]:
+                        - /placeholder: ••••••••
+                        - text: Test1234!
+                      - button "Mostrar contraseña" [ref=e134] [cursor=pointer]:
+                        - img [ref=e135]
+                    - paragraph [ref=e138]: Mínimo 8 caracteres
+                  - generic [ref=e139]:
+                    - text: Confirmar Contraseña*
+                    - textbox "Confirmar Contraseña*" [ref=e140]:
+                      - /placeholder: ••••••••
+                      - text: Test1234!
+                    - paragraph [ref=e141]: Debe coincidir con la contraseña anterior
+              - generic [ref=e142]:
+                - heading "Perfil y Seniority" [level=3] [ref=e143]:
+                  - img [ref=e144]
+                  - text: Perfil y Seniority
+                - generic [ref=e147]:
+                  - generic [ref=e148]:
+                    - text: Perfil*
+                    - combobox [ref=e149] [cursor=pointer]:
+                      - img [ref=e150]
+                    - combobox [ref=e152]
+                  - generic [ref=e153]:
+                    - text: Seniority*
+                    - combobox [ref=e154] [cursor=pointer]:
+                      - img [ref=e155]
+                    - combobox [ref=e157]
+              - generic [ref=e158]:
+                - heading "Costo por Hora" [level=3] [ref=e159]:
+                  - img [ref=e160]
+                  - text: Costo por Hora
+                - generic [ref=e162]:
+                  - generic [ref=e163]:
+                    - text: Costo Fijo
+                    - spinbutton "Costo Fijo" [ref=e164]
+                  - generic [ref=e165]:
+                    - text: Costo Variable Mín
+                    - spinbutton "Costo Variable Mín" [ref=e166]
+                  - generic [ref=e167]:
+                    - text: Costo Variable Máx
+                    - spinbutton "Costo Variable Máx" [ref=e168]
+              - generic [ref=e169]:
+                - checkbox "Talent activo" [checked] [ref=e170] [cursor=pointer]:
+                  - generic:
+                    - img
+                - checkbox [checked]
+                - generic [ref=e171] [cursor=pointer]: Talent activo
+              - generic [ref=e172]:
+                - button "Crear Talent" [active] [ref=e173] [cursor=pointer]
+                - button "Cancelar" [ref=e174] [cursor=pointer]
+  - region "Notifications alt+T":
+    - list:
+      - listitem [ref=e175]:
+        - generic [ref=e176]:
+          - paragraph [ref=e177]: "❌ Campos requeridos:"
+          - list [ref=e178]:
+            - listitem [ref=e179]: El perfil es requerido
+            - listitem [ref=e180]: El seniority es requerido
+```

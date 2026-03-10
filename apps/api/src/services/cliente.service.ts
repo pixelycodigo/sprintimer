@@ -27,12 +27,12 @@ export class ClienteService {
   async create(data: ClienteCreate): Promise<Cliente> {
     // Verificar si el email ya existe en clientes
     if (await clienteRepository.emailExists(data.email)) {
-      throw new AppError('Ya existe un cliente con ese email', 400);
+      throw new AppError('Ya existe un cliente registrado con este email', 400);
     }
 
     // Verificar si el email ya existe en usuarios
     if (await usuarioRepository.emailExists(data.email)) {
-      throw new AppError('Ya existe un usuario con ese email', 400);
+      throw new AppError('Ya existe un usuario registrado con este email', 400);
     }
 
     // Generar usuario a partir del email (parte antes del @)

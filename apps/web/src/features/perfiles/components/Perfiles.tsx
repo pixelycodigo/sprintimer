@@ -66,8 +66,9 @@ export default function AdminPerfiles() {
           onEdit={(id) => navigate(`/admin/perfiles/${id}`)}
           onConfirmDelete={(id: number | string) => deleteMutation.mutate(Number(id))}
           deleteTitle="¿Eliminar perfil?"
-          deleteDescription="Esta acción no se puede deshacer. Se eliminará permanentemente el perfil"
+          deleteDescription="El perfil se moverá a la papelera de reciclaje. Podrás restaurarlo o eliminarlo permanentemente antes de los 30 días."
           isLoading={deleteMutation.isPending}
+          isSoftDelete={true}
         />
       ),
     },

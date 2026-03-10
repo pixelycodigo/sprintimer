@@ -1,5 +1,6 @@
 import { costoPorHoraRepository } from '../repositories/costoPorHora.repository.js';
 import { CostoPorHoraCreate, CostoPorHoraUpdate, CostoPorHoraWithDetails } from '../models/CostoPorHora.js';
+import { eliminadoService } from './eliminado.service.js';
 
 export class CostoPorHoraService {
   async findAll(): Promise<CostoPorHoraWithDetails[]> {
@@ -57,7 +58,7 @@ export class CostoPorHoraService {
     }
   }
 
-  async softDelete(id: number): Promise<void> {
+  async softDelete(id: number, eliminadoPor?: number): Promise<void> {
     const costo = await this.findById(id);
 
     if (!costo) {
@@ -69,6 +70,25 @@ export class CostoPorHoraService {
     if (!updated) {
       throw new Error('Error al eliminar el costo por hora');
     }
+
+    // Registrar en la tabla eliminados
+    const fechaBorradoPermanente = new Date();
+    fechaBorradoPermanente.setDate(fechaBorradoPermanente.getDate() + 30);
+
+    await eliminadoService.create({
+      item_id: id,
+      item_tipo: 'costo_por_hora',
+      eliminado_por: eliminadoPor || 1,
+      fecha_borrado_permanente: fechaBorradoPermanente,
+      datos: {
+        tipo: costo.tipo,
+        costo_hora: costo.costo_hora,
+        concepto: costo.concepto,
+        divisa_codigo: costo.divisa_codigo,
+        perfil_nombre: costo.perfil_nombre,
+        seniority_nombre: costo.seniority_nombre,
+      },
+    });
   }
 }
 

@@ -73,10 +73,7 @@ export default function AdminPerfilesEditar() {
         title="Editar Perfil"
         description="Actualiza la información del perfil"
         backLink={
-          <Link
-            to="/admin/perfiles"
-            className="p-2 text-slate-400 dark:text-zinc-500 hover:text-slate-600 dark:hover:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-md transition-colors"
-          >
+          <Link to="/admin/perfiles">
             <ArrowLeft className="w-5 h-5" aria-hidden="true" />
           </Link>
         }

@@ -7,6 +7,7 @@ import { clientesService } from '../../../services/clientes.service';
 import { Button } from '@ui/Button';
 import { Input } from '@ui/Input';
 import { Label } from '@ui/Label';
+import { Checkbox } from '@ui/Checkbox';
 import { Muted } from '@ui/Typography';
 import { Spinner } from '@ui/Spinner';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/Card';
@@ -279,12 +280,10 @@ export default function AdminClientesEditar() {
 
             {/* Estado */}
             <div className="flex items-center gap-2">
-              <input
+              <Checkbox
                 id="activo"
-                type="checkbox"
                 checked={formData.activo}
-                onChange={(e) => setFormData({ ...formData, activo: e.target.checked })}
-                className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900 dark:border-zinc-700 dark:bg-zinc-800"
+                onCheckedChange={(checked) => setFormData({ ...formData, activo: checked as boolean })}
               />
               <Label htmlFor="activo" className="cursor-pointer">
                 Cliente activo

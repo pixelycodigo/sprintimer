@@ -105,8 +105,9 @@ export default function AdminClientes() {
           onEdit={(id) => navigate(`/admin/clientes/${id}`)}
           onConfirmDelete={(id: number | string) => deleteMutation.mutate(Number(id))}
           deleteTitle="¿Eliminar cliente?"
-          deleteDescription="Esta acción no se puede deshacer. Se eliminará permanentemente el cliente"
+          deleteDescription="El cliente se moverá a la papelera de reciclaje. Podrás restaurarlo o eliminarlo permanentemente antes de los 30 días."
           isLoading={deleteMutation.isPending}
+          isSoftDelete={true}
         />
       ),
     },

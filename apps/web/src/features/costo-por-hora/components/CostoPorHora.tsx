@@ -94,8 +94,9 @@ export default function AdminCostoPorHora() {
           onEdit={(id) => navigate(`/admin/costo-por-hora/${id}`)}
           onConfirmDelete={(id: number | string) => deleteMutation.mutate(Number(id))}
           deleteTitle="¿Eliminar costo por hora?"
-          deleteDescription="Esta acción no se puede deshacer. Se eliminará permanentemente el costo por hora"
+          deleteDescription="El costo por hora se moverá a la papelera de reciclaje. Podrás restaurarlo o eliminarlo permanentemente antes de los 30 días."
           isLoading={deleteMutation.isPending}
+          isSoftDelete={true}
         />
       ),
     },

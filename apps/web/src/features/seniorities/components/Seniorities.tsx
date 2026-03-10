@@ -67,8 +67,9 @@ export default function AdminSeniorities() {
           onEdit={(id) => navigate(`/admin/seniorities/${id}`)}
           onConfirmDelete={(id: number | string) => deleteMutation.mutate(Number(id))}
           deleteTitle="¿Eliminar seniority?"
-          deleteDescription="Esta acción no se puede deshacer. Se eliminará permanentemente el seniority"
+          deleteDescription="El seniority se moverá a la papelera de reciclaje. Podrás restaurarlo o eliminarlo permanentemente antes de los 30 días."
           isLoading={deleteMutation.isPending}
+          isSoftDelete={true}
         />
       ),
     },

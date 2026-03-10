@@ -7,10 +7,10 @@ import { usuariosService } from '../../../services/usuarios.service';
 import { Button } from '@ui/Button';
 import { Input } from '@ui/Input';
 import { Label } from '@ui/Label';
+import { Checkbox } from '@ui/Checkbox';
 import { Spinner } from '@ui/Spinner';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/Card';
 import { HeaderPage } from '@ui/HeaderPage';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/Select';
 import type { UpdateUsuarioInput } from '@shared';
 
 interface UpdateUsuarioForm extends UpdateUsuarioInput {
@@ -108,9 +108,7 @@ export default function SuperAdminUsuariosEditar() {
         description="Modificar información del usuario administrador"
         backLink={
           <Link to="/super-admin/usuarios">
-            <Button variant="ghost" size="icon">
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
+            <ArrowLeft className="w-5 h-5" aria-hidden="true" />
           </Link>
         }
       />
@@ -168,23 +166,16 @@ export default function SuperAdminUsuariosEditar() {
             </div>
 
             {/* Estado */}
-            <div>
-              <Label htmlFor="activo">
-                Estado del usuario
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="activo"
+                checked={formData.activo}
+                onCheckedChange={(checked) => setFormData({ ...formData, activo: checked as boolean })}
+              />
+              <Label htmlFor="activo" className="cursor-pointer">
+                Usuario activo
               </Label>
-              <Select
-                value={formData.activo ? 'true' : 'false'}
-                onValueChange={(value) => setFormData({ ...formData, activo: value === 'true' })}
-              >
-                <SelectTrigger className="dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-100">
-                  <SelectValue placeholder="Seleccionar estado" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="true">Activo</SelectItem>
-                  <SelectItem value="false">Inactivo</SelectItem>
-                </SelectContent>
-              </Select>
-              <p className="mt-1 text-xs text-slate-500 dark:text-zinc-400">
+              <p className="text-xs text-slate-500 dark:text-zinc-400">
                 Los usuarios inactivos no pueden iniciar sesión
               </p>
             </div>

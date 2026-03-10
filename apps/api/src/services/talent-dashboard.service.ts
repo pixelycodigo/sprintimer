@@ -122,10 +122,16 @@ export class TalentDashboardService {
   }
 
   async getTareas(talentId: number) {
+    // Obtener tareas EXCEPTO las que están en la tabla eliminados
     const tareas = await db('tareas')
       .leftJoin('actividades', 'tareas.actividad_id', 'actividades.id')
       .leftJoin('proyectos', 'actividades.proyecto_id', 'proyectos.id')
       .where('tareas.talent_id', talentId)
+      .whereNotIn('tareas.id', function() {
+        this.select('item_id')
+          .from('eliminados')
+          .where('item_tipo', 'tarea');
+      })
       .select(
         'tareas.id',
         'tareas.nombre',

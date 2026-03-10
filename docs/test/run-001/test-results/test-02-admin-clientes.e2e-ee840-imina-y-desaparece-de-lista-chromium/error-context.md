@@ -1,0 +1,353 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - heading "SPRINTASK" [level=1] [ref=e6]
+      - generic [ref=e7]:
+        - generic [ref=e8]:
+          - link "Dashboard" [ref=e9] [cursor=pointer]:
+            - /url: /admin
+            - img [ref=e11]
+            - text: Dashboard
+          - link "Clientes" [ref=e16] [cursor=pointer]:
+            - /url: /admin/clientes
+            - img [ref=e18]
+            - text: Clientes
+          - link "Proyectos" [ref=e23] [cursor=pointer]:
+            - /url: /admin/proyectos
+            - img [ref=e25]
+            - text: Proyectos
+          - link "Actividades" [ref=e27] [cursor=pointer]:
+            - /url: /admin/actividades
+            - img [ref=e29]
+            - text: Actividades
+        - generic [ref=e32]:
+          - generic [ref=e33]:
+            - img [ref=e34]
+            - text: TeamWork
+          - link "Talents" [ref=e36] [cursor=pointer]:
+            - /url: /admin/talents
+            - img [ref=e38]
+            - text: Talents
+          - link "Perfiles" [ref=e41] [cursor=pointer]:
+            - /url: /admin/perfiles
+            - img [ref=e43]
+            - text: Perfiles
+          - link "Seniority" [ref=e46] [cursor=pointer]:
+            - /url: /admin/seniorities
+            - img [ref=e48]
+            - text: Seniority
+          - link "Asignaciones" [ref=e51] [cursor=pointer]:
+            - /url: /admin/asignaciones
+            - img [ref=e53]
+            - text: Asignaciones
+        - generic [ref=e58]:
+          - link "Divisas" [ref=e59] [cursor=pointer]:
+            - /url: /admin/divisas
+            - img [ref=e61]
+            - text: Divisas
+          - link "Costo por Hora" [ref=e66] [cursor=pointer]:
+            - /url: /admin/costo-por-hora
+            - img [ref=e68]
+            - text: Costo por Hora
+          - link "Eliminados" [ref=e70] [cursor=pointer]:
+            - /url: /admin/eliminados
+            - img [ref=e72]
+            - text: Eliminados
+      - button "Cerrar sesión" [ref=e76] [cursor=pointer]:
+        - img [ref=e77]
+        - text: Cerrar sesión
+    - generic [ref=e80]:
+      - banner [ref=e81]:
+        - button "Contraer menú" [ref=e83] [cursor=pointer]:
+          - img [ref=e84]
+        - generic [ref=e87]:
+          - button "Cambiar a modo oscuro" [ref=e88] [cursor=pointer]:
+            - img [ref=e89]
+          - button "Abrir menú de usuario" [ref=e95] [cursor=pointer]:
+            - generic [ref=e97]: A
+            - generic [ref=e98]:
+              - paragraph [ref=e99]: Administrador
+              - paragraph [ref=e100]: administrador
+      - main [ref=e101]:
+        - generic [ref=e103]:
+          - generic [ref=e104]:
+            - generic [ref=e106]:
+              - heading "Clientes" [level=1] [ref=e107]
+              - paragraph [ref=e108]: Gestiona los clientes de la plataforma
+            - link "Nuevo Cliente" [ref=e110] [cursor=pointer]:
+              - /url: /admin/clientes/crear
+              - button "Nuevo Cliente" [ref=e111]:
+                - img [ref=e112]
+                - text: Nuevo Cliente
+          - generic [ref=e115]:
+            - img [ref=e116]
+            - textbox "Buscar por nombre, empresa o email..." [ref=e119]
+          - generic [ref=e120]:
+            - table [ref=e122]:
+              - rowgroup [ref=e123]:
+                - row "Cliente Empresa Email Teléfono País Estado Acciones" [ref=e124]:
+                  - columnheader "Cliente" [ref=e125]
+                  - columnheader "Empresa" [ref=e126]
+                  - columnheader "Email" [ref=e127]
+                  - columnheader "Teléfono" [ref=e128]
+                  - columnheader "País" [ref=e129]
+                  - columnheader "Estado" [ref=e130]
+                  - columnheader "Acciones" [ref=e131]
+              - rowgroup [ref=e132]:
+                - row "Test Cliente Inactivo 1773183795328 Test Empresa 1773183795328 test.cliente.inactivo.1773183795328@sprintask.com — — Activo Editar Eliminar" [ref=e133]:
+                  - cell "Test Cliente Inactivo 1773183795328" [ref=e134]:
+                    - generic [ref=e135]:
+                      - img [ref=e137]
+                      - paragraph [ref=e142]: Test Cliente Inactivo 1773183795328
+                  - cell "Test Empresa 1773183795328" [ref=e143]:
+                    - generic [ref=e144]: Test Empresa 1773183795328
+                  - cell "test.cliente.inactivo.1773183795328@sprintask.com" [ref=e145]:
+                    - generic [ref=e147]:
+                      - img [ref=e148]
+                      - text: test.cliente.inactivo.1773183795328@sprintask.com
+                  - cell "—" [ref=e151]:
+                    - generic [ref=e152]: —
+                  - cell "—" [ref=e153]:
+                    - generic [ref=e154]: —
+                  - cell "Activo" [ref=e155]:
+                    - generic [ref=e156]: Activo
+                  - cell "Editar Eliminar" [ref=e157]:
+                    - generic [ref=e158]:
+                      - button "Editar" [ref=e159] [cursor=pointer]:
+                        - img [ref=e160]
+                      - button "Eliminar" [ref=e163] [cursor=pointer]:
+                        - img [ref=e164]
+                - row "Test Cliente 1773183792655 Test Empresa 1773183792655 test.cliente.1773183792655@sprintask.com — — Activo Editar Eliminar" [ref=e167]:
+                  - cell "Test Cliente 1773183792655" [ref=e168]:
+                    - generic [ref=e169]:
+                      - img [ref=e171]
+                      - paragraph [ref=e176]: Test Cliente 1773183792655
+                  - cell "Test Empresa 1773183792655" [ref=e177]:
+                    - generic [ref=e178]: Test Empresa 1773183792655
+                  - cell "test.cliente.1773183792655@sprintask.com" [ref=e179]:
+                    - generic [ref=e181]:
+                      - img [ref=e182]
+                      - text: test.cliente.1773183792655@sprintask.com
+                  - cell "—" [ref=e185]:
+                    - generic [ref=e186]: —
+                  - cell "—" [ref=e187]:
+                    - generic [ref=e188]: —
+                  - cell "Activo" [ref=e189]:
+                    - generic [ref=e190]: Activo
+                  - cell "Editar Eliminar" [ref=e191]:
+                    - generic [ref=e192]:
+                      - button "Editar" [ref=e193] [cursor=pointer]:
+                        - img [ref=e194]
+                      - button "Eliminar" [ref=e197] [cursor=pointer]:
+                        - img [ref=e198]
+                - row "Test Editado 1773173953889 Test Empresa 1773173941051 test.cliente.exito.1773173941051@sprintask.com — — Activo Editar Eliminar" [ref=e201]:
+                  - cell "Test Editado 1773173953889" [ref=e202]:
+                    - generic [ref=e203]:
+                      - img [ref=e205]
+                      - paragraph [ref=e210]: Test Editado 1773173953889
+                  - cell "Test Empresa 1773173941051" [ref=e211]:
+                    - generic [ref=e212]: Test Empresa 1773173941051
+                  - cell "test.cliente.exito.1773173941051@sprintask.com" [ref=e213]:
+                    - generic [ref=e215]:
+                      - img [ref=e216]
+                      - text: test.cliente.exito.1773173941051@sprintask.com
+                  - cell "—" [ref=e219]:
+                    - generic [ref=e220]: —
+                  - cell "—" [ref=e221]:
+                    - generic [ref=e222]: —
+                  - cell "Activo" [ref=e223]:
+                    - generic [ref=e224]: Activo
+                  - cell "Editar Eliminar" [ref=e225]:
+                    - generic [ref=e226]:
+                      - button "Editar" [ref=e227] [cursor=pointer]:
+                        - img [ref=e228]
+                      - button "Eliminar" [ref=e231] [cursor=pointer]:
+                        - img [ref=e232]
+                - row "Test Cliente Inactivo 1773173924942 Test Empresa 1773173924942 test.cliente.inactivo.1773173924942@sprintask.com — — Activo Editar Eliminar" [ref=e235]:
+                  - cell "Test Cliente Inactivo 1773173924942" [ref=e236]:
+                    - generic [ref=e237]:
+                      - img [ref=e239]
+                      - paragraph [ref=e244]: Test Cliente Inactivo 1773173924942
+                  - cell "Test Empresa 1773173924942" [ref=e245]:
+                    - generic [ref=e246]: Test Empresa 1773173924942
+                  - cell "test.cliente.inactivo.1773173924942@sprintask.com" [ref=e247]:
+                    - generic [ref=e249]:
+                      - img [ref=e250]
+                      - text: test.cliente.inactivo.1773173924942@sprintask.com
+                  - cell "—" [ref=e253]:
+                    - generic [ref=e254]: —
+                  - cell "—" [ref=e255]:
+                    - generic [ref=e256]: —
+                  - cell "Activo" [ref=e257]:
+                    - generic [ref=e258]: Activo
+                  - cell "Editar Eliminar" [ref=e259]:
+                    - generic [ref=e260]:
+                      - button "Editar" [ref=e261] [cursor=pointer]:
+                        - img [ref=e262]
+                      - button "Eliminar" [ref=e265] [cursor=pointer]:
+                        - img [ref=e266]
+                - row "Test Cliente 1773173922300 Test Empresa 1773173922300 test.cliente.1773173922300@sprintask.com — — Activo Editar Eliminar" [ref=e269]:
+                  - cell "Test Cliente 1773173922300" [ref=e270]:
+                    - generic [ref=e271]:
+                      - img [ref=e273]
+                      - paragraph [ref=e278]: Test Cliente 1773173922300
+                  - cell "Test Empresa 1773173922300" [ref=e279]:
+                    - generic [ref=e280]: Test Empresa 1773173922300
+                  - cell "test.cliente.1773173922300@sprintask.com" [ref=e281]:
+                    - generic [ref=e283]:
+                      - img [ref=e284]
+                      - text: test.cliente.1773173922300@sprintask.com
+                  - cell "—" [ref=e287]:
+                    - generic [ref=e288]: —
+                  - cell "—" [ref=e289]:
+                    - generic [ref=e290]: —
+                  - cell "Activo" [ref=e291]:
+                    - generic [ref=e292]: Activo
+                  - cell "Editar Eliminar" [ref=e293]:
+                    - generic [ref=e294]:
+                      - button "Editar" [ref=e295] [cursor=pointer]:
+                        - img [ref=e296]
+                      - button "Eliminar" [ref=e299] [cursor=pointer]:
+                        - img [ref=e300]
+                - row "Test Cliente Inactivo 1773173817426 Test Empresa 1773173817426 test.cliente.inactivo.1773173817426@sprintask.com — — Activo Editar Eliminar" [ref=e303]:
+                  - cell "Test Cliente Inactivo 1773173817426" [ref=e304]:
+                    - generic [ref=e305]:
+                      - img [ref=e307]
+                      - paragraph [ref=e312]: Test Cliente Inactivo 1773173817426
+                  - cell "Test Empresa 1773173817426" [ref=e313]:
+                    - generic [ref=e314]: Test Empresa 1773173817426
+                  - cell "test.cliente.inactivo.1773173817426@sprintask.com" [ref=e315]:
+                    - generic [ref=e317]:
+                      - img [ref=e318]
+                      - text: test.cliente.inactivo.1773173817426@sprintask.com
+                  - cell "—" [ref=e321]:
+                    - generic [ref=e322]: —
+                  - cell "—" [ref=e323]:
+                    - generic [ref=e324]: —
+                  - cell "Activo" [ref=e325]:
+                    - generic [ref=e326]: Activo
+                  - cell "Editar Eliminar" [ref=e327]:
+                    - generic [ref=e328]:
+                      - button "Editar" [ref=e329] [cursor=pointer]:
+                        - img [ref=e330]
+                      - button "Eliminar" [ref=e333] [cursor=pointer]:
+                        - img [ref=e334]
+                - row "Test Cliente 1773173814860 Test Empresa 1773173814860 test.cliente.1773173814860@sprintask.com — — Activo Editar Eliminar" [ref=e337]:
+                  - cell "Test Cliente 1773173814860" [ref=e338]:
+                    - generic [ref=e339]:
+                      - img [ref=e341]
+                      - paragraph [ref=e346]: Test Cliente 1773173814860
+                  - cell "Test Empresa 1773173814860" [ref=e347]:
+                    - generic [ref=e348]: Test Empresa 1773173814860
+                  - cell "test.cliente.1773173814860@sprintask.com" [ref=e349]:
+                    - generic [ref=e351]:
+                      - img [ref=e352]
+                      - text: test.cliente.1773173814860@sprintask.com
+                  - cell "—" [ref=e355]:
+                    - generic [ref=e356]: —
+                  - cell "—" [ref=e357]:
+                    - generic [ref=e358]: —
+                  - cell "Activo" [ref=e359]:
+                    - generic [ref=e360]: Activo
+                  - cell "Editar Eliminar" [ref=e361]:
+                    - generic [ref=e362]:
+                      - button "Editar" [ref=e363] [cursor=pointer]:
+                        - img [ref=e364]
+                      - button "Eliminar" [ref=e367] [cursor=pointer]:
+                        - img [ref=e368]
+                - row "Roberto Gómez CEO Tech Corp S.A.C. roberto.gomez@techcorp.pe +51 999 111 222 Perú Activo Editar Eliminar" [ref=e371]:
+                  - cell "Roberto Gómez CEO" [ref=e372]:
+                    - generic [ref=e373]:
+                      - img [ref=e375]
+                      - generic [ref=e379]:
+                        - paragraph [ref=e380]: Roberto Gómez
+                        - text: CEO
+                  - cell "Tech Corp S.A.C." [ref=e381]:
+                    - generic [ref=e382]: Tech Corp S.A.C.
+                  - cell "roberto.gomez@techcorp.pe" [ref=e383]:
+                    - generic [ref=e385]:
+                      - img [ref=e386]
+                      - text: roberto.gomez@techcorp.pe
+                  - cell "+51 999 111 222" [ref=e389]:
+                    - generic [ref=e390]: +51 999 111 222
+                  - cell "Perú" [ref=e391]:
+                    - generic [ref=e392]: Perú
+                  - cell "Activo" [ref=e393]:
+                    - generic [ref=e394]: Activo
+                  - cell "Editar Eliminar" [ref=e395]:
+                    - generic [ref=e396]:
+                      - button "Editar" [ref=e397] [cursor=pointer]:
+                        - img [ref=e398]
+                      - button "Eliminar" [ref=e401] [cursor=pointer]:
+                        - img [ref=e402]
+                - row "Patricia Silva Gerente de Operaciones Retail Plus E.I.R.L. patricia.silva@retailplus.com +56 9 8765 4321 Chile Activo Editar Eliminar" [ref=e405]:
+                  - cell "Patricia Silva Gerente de Operaciones" [ref=e406]:
+                    - generic [ref=e407]:
+                      - img [ref=e409]
+                      - generic [ref=e413]:
+                        - paragraph [ref=e414]: Patricia Silva
+                        - text: Gerente de Operaciones
+                  - cell "Retail Plus E.I.R.L." [ref=e415]:
+                    - generic [ref=e416]: Retail Plus E.I.R.L.
+                  - cell "patricia.silva@retailplus.com" [ref=e417]:
+                    - generic [ref=e419]:
+                      - img [ref=e420]
+                      - text: patricia.silva@retailplus.com
+                  - cell "+56 9 8765 4321" [ref=e423]:
+                    - generic [ref=e424]: +56 9 8765 4321
+                  - cell "Chile" [ref=e425]:
+                    - generic [ref=e426]: Chile
+                  - cell "Activo" [ref=e427]:
+                    - generic [ref=e428]: Activo
+                  - cell "Editar Eliminar" [ref=e429]:
+                    - generic [ref=e430]:
+                      - button "Editar" [ref=e431] [cursor=pointer]:
+                        - img [ref=e432]
+                      - button "Eliminar" [ref=e435] [cursor=pointer]:
+                        - img [ref=e436]
+                - row "Fernando Díaz CTO Finance App S.A. fernando.diaz@financeapp.io +57 300 123 4567 Colombia Activo Editar Eliminar" [ref=e439]:
+                  - cell "Fernando Díaz CTO" [ref=e440]:
+                    - generic [ref=e441]:
+                      - img [ref=e443]
+                      - generic [ref=e447]:
+                        - paragraph [ref=e448]: Fernando Díaz
+                        - text: CTO
+                  - cell "Finance App S.A." [ref=e449]:
+                    - generic [ref=e450]: Finance App S.A.
+                  - cell "fernando.diaz@financeapp.io" [ref=e451]:
+                    - generic [ref=e453]:
+                      - img [ref=e454]
+                      - text: fernando.diaz@financeapp.io
+                  - cell "+57 300 123 4567" [ref=e457]:
+                    - generic [ref=e458]: +57 300 123 4567
+                  - cell "Colombia" [ref=e459]:
+                    - generic [ref=e460]: Colombia
+                  - cell "Activo" [ref=e461]:
+                    - generic [ref=e462]: Activo
+                  - cell "Editar Eliminar" [ref=e463]:
+                    - generic [ref=e464]:
+                      - button "Editar" [ref=e465] [cursor=pointer]:
+                        - img [ref=e466]
+                      - button "Eliminar" [ref=e469] [cursor=pointer]:
+                        - img [ref=e470]
+            - generic [ref=e473]:
+              - generic [ref=e474]: Mostrando 1 a 10 de 11 registros
+              - generic [ref=e475]:
+                - button [disabled]:
+                  - img
+                - button [disabled]:
+                  - img
+                - generic [ref=e476]: Página 1 de 2
+                - button [ref=e477] [cursor=pointer]:
+                  - img [ref=e478]
+                - button [ref=e480] [cursor=pointer]:
+                  - img [ref=e481]
+  - region "Notifications alt+T":
+    - list:
+      - listitem [ref=e484]:
+        - img [ref=e486]
+        - generic [ref=e489]: Cliente eliminado exitosamente
+```

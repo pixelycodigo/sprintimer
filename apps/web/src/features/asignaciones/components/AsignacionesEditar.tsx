@@ -9,6 +9,7 @@ import { talentsService } from '../../../services/talents.service';
 import { Button } from '@ui/Button';
 import { Spinner } from '@ui/Spinner';
 import { Label } from '@ui/Label';
+import { Checkbox } from '@ui/Checkbox';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/Card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/Select';
 import { HeaderPage } from '@ui/HeaderPage';
@@ -22,6 +23,7 @@ export default function AdminAsignacionesEditar() {
   const [formData, setFormData] = useState<UpdateAsignacionInput>({
     actividad_id: undefined,
     talent_id: undefined,
+    activo: true,
   });
 
   // Fetch asignacion
@@ -61,6 +63,7 @@ export default function AdminAsignacionesEditar() {
       setFormData({
         actividad_id: asignacion.actividad_id,
         talent_id: asignacion.talent_id,
+        activo: asignacion.activo,
       });
     }
   }, [asignacion]);
@@ -85,10 +88,7 @@ export default function AdminAsignacionesEditar() {
         title="Editar Asignación"
         description="Actualiza la información de la asignación"
         backLink={
-          <Link
-            to="/admin/asignaciones"
-            className="p-2 text-slate-400 dark:text-zinc-500 hover:text-slate-600 dark:hover:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-md transition-colors"
-          >
+          <Link to="/admin/asignaciones">
             <ArrowLeft className="w-5 h-5" aria-hidden="true" />
           </Link>
         }
@@ -149,6 +149,18 @@ export default function AdminAsignacionesEditar() {
                   </Select>
                 </div>
               </div>
+            </div>
+
+            {/* Estado */}
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="activo"
+                checked={formData.activo}
+                onCheckedChange={(checked) => setFormData({ ...formData, activo: checked as boolean })}
+              />
+              <Label htmlFor="activo" className="cursor-pointer">
+                Asignación activa
+              </Label>
             </div>
 
             {/* Actions */}

@@ -1,0 +1,180 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - heading "SPRINTASK" [level=1] [ref=e6]
+      - generic [ref=e7]:
+        - generic [ref=e8]:
+          - link "Dashboard" [ref=e9] [cursor=pointer]:
+            - /url: /admin
+            - img [ref=e11]
+            - text: Dashboard
+          - link "Clientes" [ref=e16] [cursor=pointer]:
+            - /url: /admin/clientes
+            - img [ref=e18]
+            - text: Clientes
+          - link "Proyectos" [ref=e23] [cursor=pointer]:
+            - /url: /admin/proyectos
+            - img [ref=e25]
+            - text: Proyectos
+          - link "Actividades" [ref=e27] [cursor=pointer]:
+            - /url: /admin/actividades
+            - img [ref=e29]
+            - text: Actividades
+        - generic [ref=e32]:
+          - generic [ref=e33]:
+            - img [ref=e34]
+            - text: TeamWork
+          - link "Talents" [ref=e36] [cursor=pointer]:
+            - /url: /admin/talents
+            - img [ref=e38]
+            - text: Talents
+          - link "Perfiles" [ref=e41] [cursor=pointer]:
+            - /url: /admin/perfiles
+            - img [ref=e43]
+            - text: Perfiles
+          - link "Seniority" [ref=e46] [cursor=pointer]:
+            - /url: /admin/seniorities
+            - img [ref=e48]
+            - text: Seniority
+          - link "Asignaciones" [ref=e51] [cursor=pointer]:
+            - /url: /admin/asignaciones
+            - img [ref=e53]
+            - text: Asignaciones
+        - generic [ref=e58]:
+          - link "Divisas" [ref=e59] [cursor=pointer]:
+            - /url: /admin/divisas
+            - img [ref=e61]
+            - text: Divisas
+          - link "Costo por Hora" [ref=e66] [cursor=pointer]:
+            - /url: /admin/costo-por-hora
+            - img [ref=e68]
+            - text: Costo por Hora
+          - link "Eliminados" [ref=e70] [cursor=pointer]:
+            - /url: /admin/eliminados
+            - img [ref=e72]
+            - text: Eliminados
+      - button "Cerrar sesión" [ref=e76] [cursor=pointer]:
+        - img [ref=e77]
+        - text: Cerrar sesión
+    - generic [ref=e80]:
+      - banner [ref=e81]:
+        - button "Contraer menú" [ref=e83] [cursor=pointer]:
+          - img [ref=e84]
+        - generic [ref=e87]:
+          - button "Cambiar a modo oscuro" [ref=e88] [cursor=pointer]:
+            - img [ref=e89]
+          - button "Abrir menú de usuario" [ref=e95] [cursor=pointer]:
+            - generic [ref=e97]: A
+            - generic [ref=e98]:
+              - paragraph [ref=e99]: Administrador
+              - paragraph [ref=e100]: administrador
+      - main [ref=e101]:
+        - generic [ref=e103]:
+          - generic [ref=e105]:
+            - link [ref=e107] [cursor=pointer]:
+              - /url: /admin/clientes
+              - img [ref=e108]
+            - generic [ref=e110]:
+              - heading "Nuevo Cliente" [level=1] [ref=e111]
+              - paragraph [ref=e112]: Crea un nuevo cliente en la plataforma
+          - generic [ref=e113]:
+            - generic [ref=e114]:
+              - heading "Información del Cliente" [level=3] [ref=e115]
+              - paragraph [ref=e116]: Completa los datos del cliente. Los campos marcados con * son obligatorios.
+            - generic [ref=e118]:
+              - generic [ref=e119]:
+                - heading "Información Básica" [level=3] [ref=e120]:
+                  - img [ref=e121]
+                  - text: Información Básica
+                - generic [ref=e125]:
+                  - generic [ref=e126]:
+                    - text: Nombre del Cliente*
+                    - textbox "Nombre del Cliente*" [ref=e127]:
+                      - /placeholder: Juan Pérez
+                      - text: Test Cliente 1773183798467
+                  - generic [ref=e128]:
+                    - text: Empresa*
+                    - textbox "Empresa*" [ref=e129]:
+                      - /placeholder: Empresa S.A.
+                      - text: Test Empresa 1773183798467
+                  - generic [ref=e130]:
+                    - text: Cargo
+                    - textbox "Cargo" [ref=e131]:
+                      - /placeholder: Gerente de Proyecto
+                  - generic [ref=e132]:
+                    - text: País
+                    - generic [ref=e133]:
+                      - generic:
+                        - img
+                      - textbox "País" [ref=e134]:
+                        - /placeholder: Perú
+              - generic [ref=e135]:
+                - heading "Información de Contacto" [level=3] [ref=e136]:
+                  - img [ref=e137]
+                  - text: Información de Contacto
+                - generic [ref=e140]:
+                  - generic [ref=e141]:
+                    - text: Email*
+                    - textbox "Email*" [ref=e142]:
+                      - /placeholder: juan@empresa.com
+                      - text: test.cliente.debil.1773183798467@sprintask.com
+                  - generic [ref=e143]:
+                    - text: Celular
+                    - generic [ref=e144]:
+                      - generic:
+                        - img
+                      - textbox "Celular" [ref=e145]:
+                        - /placeholder: +51 999 999 999
+                  - generic [ref=e146]:
+                    - text: Teléfono
+                    - generic [ref=e147]:
+                      - generic:
+                        - img
+                      - textbox "Teléfono" [ref=e148]:
+                        - /placeholder: (01) 999-9999
+                  - generic [ref=e149]:
+                    - text: Anexo
+                    - textbox "Anexo" [ref=e150]:
+                      - /placeholder: "1234"
+              - generic [ref=e151]:
+                - heading "Contraseña" [level=3] [ref=e152]:
+                  - img [ref=e153]
+                  - text: Contraseña
+                - generic [ref=e155]:
+                  - generic [ref=e156]:
+                    - text: Contraseña*
+                    - generic [ref=e157]:
+                      - textbox "Contraseña*" [ref=e158]:
+                        - /placeholder: ••••••••
+                        - text: "123"
+                      - button "Mostrar contraseña" [ref=e159] [cursor=pointer]:
+                        - img [ref=e160]
+                    - paragraph [ref=e163]: Mínimo 8 caracteres
+                  - generic [ref=e164]:
+                    - text: Confirmar Contraseña*
+                    - textbox "Confirmar Contraseña*" [ref=e165]:
+                      - /placeholder: ••••••••
+                      - text: "123"
+                    - paragraph [ref=e166]: Debe coincidir con la contraseña anterior
+              - generic [ref=e167]:
+                - checkbox "Cliente activo" [checked] [ref=e168] [cursor=pointer]:
+                  - generic:
+                    - img
+                - checkbox [checked]
+                - generic [ref=e169] [cursor=pointer]: Cliente activo
+              - generic [ref=e170]:
+                - button "Crear Cliente" [active] [ref=e171] [cursor=pointer]
+                - button "Cancelar" [ref=e172] [cursor=pointer]
+  - region "Notifications alt+T":
+    - list:
+      - listitem [ref=e173]:
+        - generic [ref=e174]:
+          - paragraph [ref=e175]: "❌ Campos requeridos:"
+          - list [ref=e176]:
+            - listitem [ref=e177]: La contraseña debe tener al menos 8 caracteres
+            - listitem [ref=e178]: La contraseña debe contener al menos una letra mayúscula (A-Z)
+            - listitem [ref=e179]: La contraseña debe contener al menos una letra minúscula (a-z)
+```

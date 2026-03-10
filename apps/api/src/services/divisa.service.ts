@@ -1,5 +1,6 @@
 import { divisaRepository } from '../repositories/divisa.repository.js';
 import { Divisa, DivisaCreate, DivisaUpdate } from '../models/Divisa.js';
+import { eliminadoService } from './eliminado.service.js';
 
 export class DivisaService {
   async findAll(): Promise<Divisa[]> {
@@ -73,7 +74,7 @@ export class DivisaService {
     }
   }
 
-  async softDelete(id: number): Promise<void> {
+  async softDelete(id: number, eliminadoPor?: number): Promise<void> {
     const divisa = await this.findById(id);
 
     if (!divisa) {
@@ -85,6 +86,22 @@ export class DivisaService {
     if (!updated) {
       throw new Error('Error al eliminar la divisa');
     }
+
+    // Registrar en la tabla eliminados
+    const fechaBorradoPermanente = new Date();
+    fechaBorradoPermanente.setDate(fechaBorradoPermanente.getDate() + 30);
+
+    await eliminadoService.create({
+      item_id: id,
+      item_tipo: 'divisa',
+      eliminado_por: eliminadoPor || 1,
+      fecha_borrado_permanente: fechaBorradoPermanente,
+      datos: {
+        codigo: divisa.codigo,
+        simbolo: divisa.simbolo,
+        nombre: divisa.nombre,
+      },
+    });
   }
 }
 

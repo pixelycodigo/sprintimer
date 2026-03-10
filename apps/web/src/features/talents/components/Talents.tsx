@@ -89,8 +89,9 @@ export default function AdminTalents() {
           onEdit={(id) => navigate(`/admin/talents/${id}`)}
           onConfirmDelete={(id: number | string) => deleteMutation.mutate(Number(id))}
           deleteTitle="¿Eliminar talent?"
-          deleteDescription="Esta acción no se puede deshacer. Se eliminará permanentemente el talent"
+          deleteDescription="El talent se moverá a la papelera de reciclaje. Podrás restaurarlo o eliminarlo permanentemente antes de los 30 días."
           isLoading={deleteMutation.isPending}
+          isSoftDelete={true}
         />
       ),
     },

@@ -1,0 +1,222 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - heading "SPRINTASK" [level=1] [ref=e6]
+      - generic [ref=e7]:
+        - generic [ref=e8]:
+          - link "Dashboard" [ref=e9] [cursor=pointer]:
+            - /url: /admin
+            - img [ref=e11]
+            - text: Dashboard
+          - link "Clientes" [ref=e16] [cursor=pointer]:
+            - /url: /admin/clientes
+            - img [ref=e18]
+            - text: Clientes
+          - link "Proyectos" [ref=e23] [cursor=pointer]:
+            - /url: /admin/proyectos
+            - img [ref=e25]
+            - text: Proyectos
+          - link "Actividades" [ref=e27] [cursor=pointer]:
+            - /url: /admin/actividades
+            - img [ref=e29]
+            - text: Actividades
+        - generic [ref=e32]:
+          - generic [ref=e33]:
+            - img [ref=e34]
+            - text: TeamWork
+          - link "Talents" [ref=e36] [cursor=pointer]:
+            - /url: /admin/talents
+            - img [ref=e38]
+            - text: Talents
+          - link "Perfiles" [ref=e41] [cursor=pointer]:
+            - /url: /admin/perfiles
+            - img [ref=e43]
+            - text: Perfiles
+          - link "Seniority" [ref=e46] [cursor=pointer]:
+            - /url: /admin/seniorities
+            - img [ref=e48]
+            - text: Seniority
+          - link "Asignaciones" [ref=e51] [cursor=pointer]:
+            - /url: /admin/asignaciones
+            - img [ref=e53]
+            - text: Asignaciones
+        - generic [ref=e58]:
+          - link "Divisas" [ref=e59] [cursor=pointer]:
+            - /url: /admin/divisas
+            - img [ref=e61]
+            - text: Divisas
+          - link "Costo por Hora" [ref=e66] [cursor=pointer]:
+            - /url: /admin/costo-por-hora
+            - img [ref=e68]
+            - text: Costo por Hora
+          - link "Eliminados" [ref=e70] [cursor=pointer]:
+            - /url: /admin/eliminados
+            - img [ref=e72]
+            - text: Eliminados
+      - button "Cerrar sesión" [ref=e76] [cursor=pointer]:
+        - img [ref=e77]
+        - text: Cerrar sesión
+    - generic [ref=e80]:
+      - banner [ref=e81]:
+        - button "Contraer menú" [ref=e83] [cursor=pointer]:
+          - img [ref=e84]
+        - generic [ref=e87]:
+          - button "Cambiar a modo oscuro" [ref=e88] [cursor=pointer]:
+            - img [ref=e89]
+          - button "Abrir menú de usuario" [ref=e95] [cursor=pointer]:
+            - generic [ref=e97]: A
+            - generic [ref=e98]:
+              - paragraph [ref=e99]: Administrador
+              - paragraph [ref=e100]: administrador
+      - main [ref=e101]:
+        - generic [ref=e103]:
+          - generic [ref=e106]:
+            - heading "Papelera de Reciclaje" [level=1] [ref=e107]
+            - paragraph [ref=e108]: Elementos eliminados que pueden ser restaurados dentro de los 30 días
+          - generic [ref=e111]:
+            - img [ref=e112]
+            - textbox "Buscar por nombre o tipo..." [ref=e115]
+          - table [ref=e118]:
+            - rowgroup [ref=e119]:
+              - row "Elemento Eliminado Por Fecha Eliminación Fecha Borrado Acciones" [ref=e120]:
+                - columnheader "Elemento" [ref=e121]
+                - columnheader "Eliminado Por" [ref=e122]
+                - columnheader "Fecha Eliminación" [ref=e123]
+                - columnheader "Fecha Borrado" [ref=e124]
+                - columnheader "Acciones" [ref=e125]
+            - rowgroup [ref=e126]:
+              - row "#21 talent — 10/3/2026 9/4/2026 Restaurar Eliminar" [ref=e127]:
+                - cell "#21 talent" [ref=e128]:
+                  - generic [ref=e129]:
+                    - img [ref=e131]
+                    - generic [ref=e134]:
+                      - paragraph [ref=e135]: "#21"
+                      - text: talent
+                - cell "—" [ref=e136]
+                - cell "10/3/2026" [ref=e137]:
+                  - generic [ref=e138]: 10/3/2026
+                - cell "9/4/2026" [ref=e139]:
+                  - generic [ref=e140]: 9/4/2026
+                - cell "Restaurar Eliminar" [ref=e141]:
+                  - generic [ref=e142]:
+                    - button "Restaurar" [ref=e143] [cursor=pointer]:
+                      - img [ref=e144]
+                    - button "Eliminar" [ref=e147] [cursor=pointer]:
+                      - img [ref=e148]
+              - row "#13 cliente — 10/3/2026 9/4/2026 Restaurar Eliminar" [ref=e151]:
+                - cell "#13 cliente" [ref=e152]:
+                  - generic [ref=e153]:
+                    - img [ref=e155]
+                    - generic [ref=e158]:
+                      - paragraph [ref=e159]: "#13"
+                      - text: cliente
+                - cell "—" [ref=e160]
+                - cell "10/3/2026" [ref=e161]:
+                  - generic [ref=e162]: 10/3/2026
+                - cell "9/4/2026" [ref=e163]:
+                  - generic [ref=e164]: 9/4/2026
+                - cell "Restaurar Eliminar" [ref=e165]:
+                  - generic [ref=e166]:
+                    - button "Restaurar" [ref=e167] [cursor=pointer]:
+                      - img [ref=e168]
+                    - button "Eliminar" [ref=e171] [cursor=pointer]:
+                      - img [ref=e172]
+              - row "#27 asignacion — 10/3/2026 9/4/2026 Restaurar Eliminar" [ref=e175]:
+                - cell "#27 asignacion" [ref=e176]:
+                  - generic [ref=e177]:
+                    - img [ref=e179]
+                    - generic [ref=e182]:
+                      - paragraph [ref=e183]: "#27"
+                      - text: asignacion
+                - cell "—" [ref=e184]
+                - cell "10/3/2026" [ref=e185]:
+                  - generic [ref=e186]: 10/3/2026
+                - cell "9/4/2026" [ref=e187]:
+                  - generic [ref=e188]: 9/4/2026
+                - cell "Restaurar Eliminar" [ref=e189]:
+                  - generic [ref=e190]:
+                    - button "Restaurar" [ref=e191] [cursor=pointer]:
+                      - img [ref=e192]
+                    - button "Eliminar" [ref=e195] [cursor=pointer]:
+                      - img [ref=e196]
+              - row "#22 asignacion — 10/3/2026 9/4/2026 Restaurar Eliminar" [ref=e199]:
+                - cell "#22 asignacion" [ref=e200]:
+                  - generic [ref=e201]:
+                    - img [ref=e203]
+                    - generic [ref=e206]:
+                      - paragraph [ref=e207]: "#22"
+                      - text: asignacion
+                - cell "—" [ref=e208]
+                - cell "10/3/2026" [ref=e209]:
+                  - generic [ref=e210]: 10/3/2026
+                - cell "9/4/2026" [ref=e211]:
+                  - generic [ref=e212]: 9/4/2026
+                - cell "Restaurar Eliminar" [ref=e213]:
+                  - generic [ref=e214]:
+                    - button "Restaurar" [ref=e215] [cursor=pointer]:
+                      - img [ref=e216]
+                    - button "Eliminar" [ref=e219] [cursor=pointer]:
+                      - img [ref=e220]
+              - row "#25 asignacion — 10/3/2026 9/4/2026 Restaurar Eliminar" [ref=e223]:
+                - cell "#25 asignacion" [ref=e224]:
+                  - generic [ref=e225]:
+                    - img [ref=e227]
+                    - generic [ref=e230]:
+                      - paragraph [ref=e231]: "#25"
+                      - text: asignacion
+                - cell "—" [ref=e232]
+                - cell "10/3/2026" [ref=e233]:
+                  - generic [ref=e234]: 10/3/2026
+                - cell "9/4/2026" [ref=e235]:
+                  - generic [ref=e236]: 9/4/2026
+                - cell "Restaurar Eliminar" [ref=e237]:
+                  - generic [ref=e238]:
+                    - button "Restaurar" [ref=e239] [cursor=pointer]:
+                      - img [ref=e240]
+                    - button "Eliminar" [ref=e243] [cursor=pointer]:
+                      - img [ref=e244]
+              - row "#21 asignacion — 10/3/2026 9/4/2026 Restaurar Eliminar" [ref=e247]:
+                - cell "#21 asignacion" [ref=e248]:
+                  - generic [ref=e249]:
+                    - img [ref=e251]
+                    - generic [ref=e254]:
+                      - paragraph [ref=e255]: "#21"
+                      - text: asignacion
+                - cell "—" [ref=e256]
+                - cell "10/3/2026" [ref=e257]:
+                  - generic [ref=e258]: 10/3/2026
+                - cell "9/4/2026" [ref=e259]:
+                  - generic [ref=e260]: 9/4/2026
+                - cell "Restaurar Eliminar" [ref=e261]:
+                  - generic [ref=e262]:
+                    - button "Restaurar" [ref=e263] [cursor=pointer]:
+                      - img [ref=e264]
+                    - button "Eliminar" [ref=e267] [cursor=pointer]:
+                      - img [ref=e268]
+              - row "#7 cliente — 10/3/2026 9/4/2026 Restaurar Eliminar" [ref=e271]:
+                - cell "#7 cliente" [ref=e272]:
+                  - generic [ref=e273]:
+                    - img [ref=e275]
+                    - generic [ref=e278]:
+                      - paragraph [ref=e279]: "#7"
+                      - text: cliente
+                - cell "—" [ref=e280]
+                - cell "10/3/2026" [ref=e281]:
+                  - generic [ref=e282]: 10/3/2026
+                - cell "9/4/2026" [ref=e283]:
+                  - generic [ref=e284]: 9/4/2026
+                - cell "Restaurar Eliminar" [ref=e285]:
+                  - generic [ref=e286]:
+                    - button "Restaurar" [ref=e287] [cursor=pointer]:
+                      - img [ref=e288]
+                    - button "Eliminar" [ref=e291] [cursor=pointer]:
+                      - img [ref=e292]
+  - region "Notifications alt+T":
+    - list:
+      - listitem [ref=e295]:
+        - img [ref=e297]
+        - generic [ref=e300]: Talent eliminado exitosamente
+```
