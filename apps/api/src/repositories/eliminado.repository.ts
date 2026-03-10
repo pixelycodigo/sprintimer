@@ -52,12 +52,37 @@ export class EliminadoRepository {
 
   async restore(id: number): Promise<Eliminado | null> {
     const eliminado = await this.findById(id);
-    
-    if (eliminado) {
-      await db<Eliminado>(this.tableName)
-        .where('id', id)
-        .del();
+
+    if (!eliminado) {
+      return null;
     }
+
+    // Determinar la tabla y actualizar activo = true
+    const { item_id, item_tipo } = eliminado;
+    
+    // Tablas que tienen campo activo
+    const tablasConActivo = [
+      'clientes',
+      'talents',
+      'proyectos',
+      'actividades',
+      'perfiles',
+      'seniorities',
+      'divisas',
+      'costos_por_hora',
+    ];
+
+    if (tablasConActivo.includes(item_tipo)) {
+      // Actualizar activo = true en la tabla original
+      await db(item_tipo)
+        .where('id', item_id)
+        .update({ activo: true, updated_at: new Date() });
+    }
+
+    // Eliminar el registro de la tabla eliminados
+    await db<Eliminado>(this.tableName)
+      .where('id', id)
+      .del();
 
     return eliminado;
   }

@@ -1,5 +1,48 @@
 import { z } from 'zod';
 
+// Mensajes de error de contraseña reutilizables
+const passwordMessages = {
+  required: 'La contraseña es requerida',
+  minLength: 'La contraseña debe tener al menos 8 caracteres',
+  uppercase: 'debe contener al menos una letra mayúscula',
+  lowercase: 'debe contener al menos una letra minúscula',
+  number: 'debe contener al menos un número',
+  confirm: 'Las contraseñas no coinciden',
+};
+
+// Función para validar contraseña con mensaje completo
+const passwordSchema = z.string().superRefine((val, ctx) => {
+  if (!val || val.length === 0) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: passwordMessages.required,
+    });
+    return;
+  }
+  
+  const errors: string[] = [];
+  
+  if (val.length < 8) {
+    errors.push(passwordMessages.minLength);
+  }
+  if (!/[A-Z]/.test(val)) {
+    errors.push(passwordMessages.uppercase);
+  }
+  if (!/[a-z]/.test(val)) {
+    errors.push(passwordMessages.lowercase);
+  }
+  if (!/[0-9]/.test(val)) {
+    errors.push(passwordMessages.number);
+  }
+  
+  if (errors.length > 0) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: `La contraseña ${errors.join(', ')}.`,
+    });
+  }
+});
+
 export const createUsuarioSchema = z.object({
   nombre: z
     .string()
@@ -14,21 +57,16 @@ export const createUsuarioSchema = z.object({
     .string()
     .email('Email inválido')
     .max(255, 'El email es muy largo'),
-  password: z
-    .string()
-    .min(8, 'La contraseña debe tener al menos 8 caracteres')
-    .regex(/[A-Z]/, 'La contraseña debe contener al menos una mayúscula')
-    .regex(/[a-z]/, 'La contraseña debe contener al menos una minúscula')
-    .regex(/[0-9]/, 'La contraseña debe contener al menos un número'),
+  password: passwordSchema,
   password_confirm: z
     .string()
-    .min(8, 'La confirmación debe tener al menos 8 caracteres'),
+    .min(1, 'La confirmación de contraseña es requerida'),
   rol_id: z
     .number()
     .int('El rol debe ser un número entero')
     .positive('El rol debe ser mayor a 0'),
 }).refine((data) => data.password === data.password_confirm, {
-  message: 'Las contraseñas no coinciden',
+  message: passwordMessages.confirm,
   path: ['password_confirm'],
 });
 
@@ -43,32 +81,21 @@ export const updateUsuarioSchema = z.object({
     .email('Email inválido')
     .max(255, 'El email es muy largo')
     .optional(),
-  password: z
-    .string()
-    .min(8, 'La contraseña debe tener al menos 8 caracteres')
-    .regex(/[A-Z]/, 'La contraseña debe contener al menos una mayúscula')
-    .regex(/[a-z]/, 'La contraseña debe contener al menos una minúscula')
-    .regex(/[0-9]/, 'La contraseña debe contener al menos un número')
-    .optional(),
+  password: passwordSchema.optional(),
   password_confirm: z
     .string()
-    .min(8, 'La confirmación debe tener al menos 8 caracteres')
+    .min(1, 'La confirmación de contraseña es requerida')
     .optional(),
   activo: z
     .boolean()
     .optional(),
 }).refine((data) => !data.password || data.password === data.password_confirm, {
-  message: 'Las contraseñas no coinciden',
+  message: passwordMessages.confirm,
   path: ['password_confirm'],
 });
 
 export const changePasswordSchema = z.object({
-  password: z
-    .string()
-    .min(8, 'La contraseña debe tener al menos 8 caracteres')
-    .regex(/[A-Z]/, 'La contraseña debe contener al menos una mayúscula')
-    .regex(/[a-z]/, 'La contraseña debe contener al menos una minúscula')
-    .regex(/[0-9]/, 'La contraseña debe contener al menos un número'),
+  password: passwordSchema,
 });
 
 export type CreateUsuarioData = z.infer<typeof createUsuarioSchema>;

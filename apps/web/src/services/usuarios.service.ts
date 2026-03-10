@@ -1,4 +1,5 @@
 import api from './api';
+import { queryKeys } from '../utils/queryKeys';
 import type { Usuario, CreateUsuarioInput as CreateUsuarioData, UpdateUsuarioInput as UpdateUsuarioData } from '@shared';
 
 export interface ChangePasswordData {
@@ -6,6 +7,13 @@ export interface ChangePasswordData {
 }
 
 export const usuariosService = {
+  // Query keys
+  queryKeys: {
+    all: queryKeys.usuarios.all,
+    list: queryKeys.usuarios.list,
+    byId: queryKeys.usuarios.byId,
+  },
+
   async findAll(): Promise<Usuario[]> {
     const response = await api.get<{ data: Usuario[] }>('/super-admin/usuarios');
     return response.data.data;

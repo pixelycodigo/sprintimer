@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { verifyToken, TokenPayload } from '../utils/token.js';
 import { AppError } from './error.middleware.js';
+import logger from '../config/logger.js';
 
 // Extender Request para incluir el usuario
 declare global {
@@ -17,22 +18,43 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      logger.warn(`${req.method} ${req.originalUrl} - Token no proporcionado`, {
+        method: req.method,
+        url: req.originalUrl,
+        ip: req.ip,
+      });
       throw new AppError('Token de autenticación no proporcionado', 401);
     }
 
     const token = authHeader.substring(7); // Remover 'Bearer '
 
     // Verificar token
-    const payload = verifyToken(token) as TokenPayload;
+    const payload = verifyToken(token);
+    
+    if (!payload) {
+      logger.warn(`${req.method} ${req.originalUrl} - Token inválido o expirado`, {
+        tokenLength: token.length,
+      });
+      throw new AppError('Token inválido o expirado', 401);
+    }
 
     // Adjuntar usuario al request
-    req.user = payload;
+    req.user = payload as TokenPayload;
+
+    logger.debug(`${req.method} ${req.originalUrl} - Usuario autenticado: ${payload.email}`, {
+      userId: payload.id,
+      email: payload.email,
+      rol: payload.rol,
+    });
 
     next();
   } catch (error) {
     if (error instanceof AppError) {
       next(error);
     } else {
+      logger.warn(`${req.method} ${req.originalUrl} - Error en autenticación`, {
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
       next(new AppError('Token inválido o expirado', 401));
     }
   }

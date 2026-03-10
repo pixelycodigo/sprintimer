@@ -19,14 +19,14 @@ export default function AdminClientes() {
   const [searchTerm, setSearchTerm] = useState('');
 
   const { data: clientes, isLoading } = useQuery({
-    queryKey: ['clientes'],
+    queryKey: clientesService.queryKeys.list(),
     queryFn: clientesService.findAll,
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => clientesService.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['clientes'] });
+      queryClient.invalidateQueries({ queryKey: clientesService.queryKeys.all() });
       toast.success('Cliente eliminado exitosamente');
     },
     onError: (error: Error) => {

@@ -1,7 +1,15 @@
 import api from './api';
+import { queryKeys } from '../utils/queryKeys';
 import type { TalentWithRelations as Talent, CreateTalentInput, UpdateTalentInput } from '@shared';
 
 export const talentsService = {
+  // Query keys
+  queryKeys: {
+    all: queryKeys.talents.all,
+    list: queryKeys.talents.list,
+    byId: queryKeys.talents.byId,
+  },
+
   async findAll(): Promise<Talent[]> {
     const response = await api.get<{ data: Talent[] }>('/admin/talents');
     return response.data.data;

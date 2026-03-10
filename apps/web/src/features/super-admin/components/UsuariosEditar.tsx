@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Shield, Mail, User, Eye, EyeOff } from 'lucide-react';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { usuariosService } from '../../../services/usuarios.service';
 import { Button } from '@ui/Button';
@@ -21,6 +21,7 @@ interface UpdateUsuarioForm extends UpdateUsuarioInput {
 export default function SuperAdminUsuariosEditar() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();  // Agregar queryClient
   const [showPassword, setShowPassword] = useState(false);
 
   const [formData, setFormData] = useState<UpdateUsuarioForm>({
@@ -33,7 +34,7 @@ export default function SuperAdminUsuariosEditar() {
 
   // Fetch usuario
   const { data: usuario, isLoading: isLoadingUsuario } = useQuery({
-    queryKey: ['usuario', id],
+    queryKey: usuariosService.queryKeys.byId(Number(id)),
     queryFn: () => usuariosService.findById(Number(id)),
     enabled: !!id,
   });
@@ -42,6 +43,9 @@ export default function SuperAdminUsuariosEditar() {
   const updateMutation = useMutation({
     mutationFn: (data: UpdateUsuarioForm) => usuariosService.update(Number(id), data),
     onSuccess: () => {
+      // Invalidar caché de usuarios para que se actualice la tabla
+      queryClient.invalidateQueries({ queryKey: usuariosService.queryKeys.all() });
+      queryClient.invalidateQueries({ queryKey: usuariosService.queryKeys.byId(Number(id)) });
       toast.success('Usuario actualizado exitosamente');
       navigate('/super-admin/usuarios');
     },
@@ -62,7 +66,7 @@ export default function SuperAdminUsuariosEditar() {
       setFormData({
         nombre: usuario.nombre,
         email: usuario.email,
-        activo: usuario.activo,
+        activo: Boolean(usuario.activo),  // Convertir a booleano
         password: '',
         password_confirm: '',
       });
@@ -71,7 +75,21 @@ export default function SuperAdminUsuariosEditar() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    updateMutation.mutate(formData);
+    
+    // Solo incluir password si el usuario lo completó
+    const submitData: UpdateUsuarioForm = {
+      nombre: formData.nombre,
+      email: formData.email,
+      activo: Boolean(formData.activo),
+    };
+    
+    // Solo agregar password si fue modificado
+    if (formData.password && formData.password.length > 0) {
+      submitData.password = formData.password;
+      submitData.password_confirm = formData.password_confirm;
+    }
+    
+    updateMutation.mutate(submitData);
   };
 
   if (isLoadingUsuario) {

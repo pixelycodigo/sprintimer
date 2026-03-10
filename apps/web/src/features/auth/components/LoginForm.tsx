@@ -42,9 +42,9 @@ export function LoginForm({
 
     try {
       const response = await authService.login(formData);
-      const { user, token } = response;
+      const { user, token, refreshToken } = response;
 
-      login(user, token);
+      login(user, token, refreshToken);
       toast.success('¡Bienvenido de nuevo!');
 
       if (onLoginSuccess) {

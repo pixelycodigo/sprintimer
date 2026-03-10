@@ -13,7 +13,13 @@ export class DivisaRepository {
   }
 
   async findAll(): Promise<Divisa[]> {
+    // Retornar todas las divisas EXCEPTO las que están en la tabla 'eliminados'
     const divisas = await db<Divisa>(this.tableName)
+      .whereNotIn('id', function() {
+        this.select('item_id')
+          .from('eliminados')
+          .where('item_tipo', 'divisa');
+      })
       .orderBy('nombre', 'asc');
 
     return divisas;

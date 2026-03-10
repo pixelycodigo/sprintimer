@@ -273,7 +273,7 @@ Todos con rol `talent` y contraseña: `Talent123!`
 
 | Archivo | Propósito | Ubicación |
 |---------|-----------|-----------|
-| `seed_data.sql` | Script SQL de seed | `/database/seed_data.sql` |
+| `seed-data-2026-03-07.sql` | Script SQL de seed versionado | `/docs/plans/seed-data-2026-03-07.sql` |
 | `001_create_roles.ts` | Migración de roles | `/apps/api/database/migrations/` |
 | `002_create_usuarios.ts` | Migración de usuarios | `/apps/api/database/migrations/` |
 | `modelo_base_datos_auto.md` | Documentación de BD | `/docs/plans/` |
@@ -353,7 +353,7 @@ La tabla `sprints` permanece vacía:
 ### Comando para ejecutar el seed:
 
 ```bash
-mysql --socket=/Applications/MAMP/tmp/mysql/mysql.sock -u root -proot sprintask < database/seed_data.sql
+mysql --socket=/Applications/MAMP/tmp/mysql/mysql.sock -u root -proot sprintask < docs/plans/seed-data-2026-03-07.sql
 ```
 
 ### Verificación de datos:

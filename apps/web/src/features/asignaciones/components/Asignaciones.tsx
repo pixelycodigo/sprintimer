@@ -85,8 +85,9 @@ export default function AdminAsignaciones() {
           onEdit={(id) => navigate(`/admin/asignaciones/${id}`)}
           onConfirmDelete={(id: number | string) => deleteMutation.mutate(Number(id))}
           deleteTitle="¿Eliminar asignación?"
-          deleteDescription="Esta acción no se puede deshacer. Se eliminará permanentemente la asignación"
+          deleteDescription="La asignación se moverá a la papelera de reciclaje. Podrás restaurarla o eliminarla permanentemente antes de los 30 días."
           isLoading={deleteMutation.isPending}
+          isSoftDelete={true}
         />
       ),
     },

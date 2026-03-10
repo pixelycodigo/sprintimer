@@ -19,15 +19,17 @@ export default function AdminTalents() {
   const [searchTerm, setSearchTerm] = useState('');
 
   const { data: talents, isLoading } = useQuery({
-    queryKey: ['talents'],
+    queryKey: talentsService.queryKeys.list(),
     queryFn: talentsService.findAll,
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => talentsService.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['talents'] });
+      queryClient.invalidateQueries({ queryKey: talentsService.queryKeys.all() });
       toast.success('Talent eliminado exitosamente');
+      // Redirigir a la bandeja de Eliminados
+      navigate('/admin/eliminados');
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al eliminar talent');

@@ -213,42 +213,42 @@ INSERT INTO actividades (proyecto_id, sprint_id, nombre, descripcion, horas_esti
 -- ================================================================
 -- Cada talent asignado a una actividad principal
 
-INSERT INTO actividades_integrantes (actividad_id, talent_id, fecha_asignacion) VALUES
+INSERT INTO actividades_integrantes (actividad_id, talent_id, fecha_asignacion, activo) VALUES
 -- UX/UI Designers (actividades 1)
-(1, 1, NOW()),
-(1, 2, NOW()),
+(1, 1, NOW(), 1),
+(1, 2, NOW(), 1),
 
 -- Frontend Developers (actividad 2)
-(2, 3, NOW()),
-(2, 4, NOW()),
-(2, 5, NOW()),
+(2, 3, NOW(), 1),
+(2, 4, NOW(), 1),
+(2, 5, NOW(), 1),
 
 -- Backend Developers (actividad 6)
-(6, 6, NOW()),
-(6, 7, NOW()),
-(6, 8, NOW()),
+(6, 6, NOW(), 1),
+(6, 7, NOW(), 1),
+(6, 8, NOW(), 1),
 
 -- Full Stack Developers (actividades 7, 8)
-(7, 9, NOW()),
-(7, 10, NOW()),
-(8, 11, NOW()),
-(8, 12, NOW()),
+(7, 9, NOW(), 1),
+(7, 10, NOW(), 1),
+(8, 11, NOW(), 1),
+(8, 12, NOW(), 1),
 
 -- Mobile Developers (actividades 3, 4)
-(3, 13, NOW()),
-(4, 14, NOW()),
+(3, 13, NOW(), 1),
+(4, 14, NOW(), 1),
 
 -- DevOps Engineers (actividad 5)
-(5, 15, NOW()),
-(5, 16, NOW()),
+(5, 15, NOW(), 1),
+(5, 16, NOW(), 1),
 
 -- QA Engineers (actividades varias)
-(2, 17, NOW()),
-(6, 18, NOW()),
+(2, 17, NOW(), 1),
+(6, 18, NOW(), 1),
 
 -- UX/UI Lead (actividades 19, 20)
-(19, 19, NOW()),
-(20, 20, NOW());
+(19, 19, NOW(), 1),
+(20, 20, NOW(), 1);
 
 -- ================================================================
 -- 10. COSTOS_POR_HORA (40: 2 por talent - 1 fijo + 1 variable)

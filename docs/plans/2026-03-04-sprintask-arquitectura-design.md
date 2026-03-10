@@ -612,7 +612,6 @@ npm run typecheck        # TypeScript check
 |---------|-----------|---------------|
 | `modelo_base_datos_auto.md` | Documentación principal con diagrama ASCII | Automática (db:schema) |
 | `modelo_base_datos_info.json` | Datos estructurados para herramientas | Automática (db:schema) |
-| `modelo_base_datos_schema.sql` | Backup SQL completo | Automática (db:schema) |
 
 ### Comando de Exportación
 

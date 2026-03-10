@@ -20,6 +20,7 @@ export class ActividadRepository {
   }
 
   async findAll(): Promise<ActividadWithDetails[]> {
+    // Retornar todas las actividades EXCEPTO las que están en la tabla 'eliminados'
     const actividades = await db<ActividadWithDetails>(this.tableName)
       .leftJoin('proyectos', 'actividades.proyecto_id', 'proyectos.id')
       .leftJoin('sprints', 'actividades.sprint_id', 'sprints.id')
@@ -28,6 +29,11 @@ export class ActividadRepository {
         'proyectos.nombre as proyecto_nombre',
         'sprints.nombre as sprint_nombre'
       )
+      .whereNotIn('actividades.id', function() {
+        this.select('item_id')
+          .from('eliminados')
+          .where('item_tipo', 'actividad');
+      })
       .orderBy('actividades.created_at', 'desc');
 
     return actividades;

@@ -13,7 +13,13 @@ export class ProyectoRepository {
   }
 
   async findAll(): Promise<Proyecto[]> {
+    // Retornar todos los proyectos EXCEPTO los que están en la tabla 'eliminados'
     const proyectos = await db<Proyecto>(this.tableName)
+      .whereNotIn('id', function() {
+        this.select('item_id')
+          .from('eliminados')
+          .where('item_tipo', 'proyecto');
+      })
       .orderBy('created_at', 'desc');
 
     return proyectos;

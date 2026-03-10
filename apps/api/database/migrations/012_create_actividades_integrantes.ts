@@ -6,6 +6,7 @@ export async function up(knex: Knex): Promise<void> {
     table.integer('actividad_id').unsigned().notNullable();
     table.integer('talent_id').unsigned().notNullable();
     table.timestamp('fecha_asignacion').defaultTo(knex.fn.now());
+    table.boolean('activo').defaultTo(true);
 
     table.foreign('actividad_id').references('id').inTable('actividades').onDelete('CASCADE');
     table.foreign('talent_id').references('id').inTable('talents').onDelete('CASCADE');

@@ -1,8 +1,10 @@
 import { talentRepository } from '../repositories/talent.repository.js';
 import { usuarioRepository } from '../repositories/usuario.repository.js';
 import { hashPassword } from '../utils/hash.js';
+import { AppError } from '../middleware/error.middleware.js';
 import { TalentCreate, TalentUpdate, TalentWithDetails } from '../models/Talent.js';
 import { db } from '../config/database.js';
+import { eliminadoService } from './eliminado.service.js';
 
 export class TalentService {
   async findAll(): Promise<TalentWithDetails[]> {
@@ -53,7 +55,7 @@ export class TalentService {
     });
 
     // Crear talent (sin password, eso ya está en usuarios)
-    const id = await talentRepository.create({
+    const talentData = {
       perfil_id: data.perfil_id,
       seniority_id: data.seniority_id,
       nombre_completo: data.nombre_completo,
@@ -62,12 +64,14 @@ export class TalentService {
       costo_hora_fijo: data.costo_hora_fijo ?? null,
       costo_hora_variable_min: data.costo_hora_variable_min ?? null,
       costo_hora_variable_max: data.costo_hora_variable_max ?? null,
-      activo: data.activo,
-    } as TalentCreate);
+      activo: data.activo !== undefined ? data.activo : true,
+    };
+    
+    const id = await talentRepository.create(talentData as any);
     const talent = await talentRepository.findById(id);
 
     if (!talent) {
-      throw new Error('Error al crear el talent');
+      throw new AppError('Error al crear el talent', 500);
     }
 
     return talent;
@@ -141,18 +145,36 @@ export class TalentService {
     }
   }
 
-  async softDelete(id: number): Promise<void> {
+  async softDelete(id: number, eliminadoPor?: number): Promise<void> {
     const talent = await this.findById(id);
 
     if (!talent) {
-      throw new Error('Talent no encontrado');
+      throw new AppError('Talent no encontrado', 404);
     }
 
     const updated = await talentRepository.softDelete(id);
 
     if (!updated) {
-      throw new Error('Error al eliminar el talent');
+      throw new AppError('Error al eliminar el talent', 500);
     }
+
+    // Registrar en la tabla eliminados
+    const fechaBorradoPermanente = new Date();
+    fechaBorradoPermanente.setDate(fechaBorradoPermanente.getDate() + 30); // 30 días
+
+    await eliminadoService.create({
+      item_id: id,
+      item_tipo: 'talent',
+      eliminado_por: eliminadoPor || 1,
+      fecha_borrado_permanente: fechaBorradoPermanente,
+      datos: {
+        nombre_completo: talent.nombre_completo,
+        apellido: talent.apellido,
+        email: talent.email,
+        perfil_nombre: talent.perfil_nombre,
+        seniority_nombre: talent.seniority_nombre,
+      },
+    });
   }
 
   async changePassword(id: number, password: string): Promise<void> {

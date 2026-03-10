@@ -1,7 +1,15 @@
 import api from './api';
+import { queryKeys } from '../utils/queryKeys';
 import type { Cliente, CreateClienteInput, UpdateClienteInput } from '@shared';
 
 export const clientesService = {
+  // Query keys
+  queryKeys: {
+    all: queryKeys.clientes.all,
+    list: queryKeys.clientes.list,
+    byId: queryKeys.clientes.byId,
+  },
+
   async findAll(): Promise<Cliente[]> {
     const response = await api.get<{ data: Cliente[] }>('/admin/clientes');
     return response.data.data;

@@ -20,6 +20,7 @@ export class TalentRepository {
   }
 
   async findAll(): Promise<TalentWithDetails[]> {
+    // Retornar todos los talents EXCEPTO los que están en la tabla 'eliminados'
     const talents = await db<TalentWithDetails>(this.tableName)
       .leftJoin('perfiles', 'talents.perfil_id', 'perfiles.id')
       .leftJoin('seniorities', 'talents.seniority_id', 'seniorities.id')
@@ -28,6 +29,11 @@ export class TalentRepository {
         'perfiles.nombre as perfil_nombre',
         'seniorities.nombre as seniority_nombre'
       )
+      .whereNotIn('talents.id', function() {
+        this.select('item_id')
+          .from('eliminados')
+          .where('item_tipo', 'talent');
+      })
       .orderBy('talents.created_at', 'desc');
 
     return talents;

@@ -1,7 +1,9 @@
 import { clienteRepository } from '../repositories/cliente.repository.js';
 import { usuarioRepository } from '../repositories/usuario.repository.js';
 import { hashPassword } from '../utils/hash.js';
+import { AppError } from '../middleware/error.middleware.js';
 import { Cliente, ClienteCreate, ClienteUpdate } from '../models/Cliente.js';
+import { eliminadoService } from './eliminado.service.js';
 
 export class ClienteService {
   async findAll(): Promise<Cliente[]> {
@@ -16,7 +18,7 @@ export class ClienteService {
     const cliente = await clienteRepository.findById(id);
 
     if (!cliente) {
-      throw new Error('Cliente no encontrado');
+      throw new AppError('Cliente no encontrado', 404);
     }
 
     return cliente;
@@ -25,12 +27,12 @@ export class ClienteService {
   async create(data: ClienteCreate): Promise<Cliente> {
     // Verificar si el email ya existe en clientes
     if (await clienteRepository.emailExists(data.email)) {
-      throw new Error('Ya existe un cliente con ese email');
+      throw new AppError('Ya existe un cliente con ese email', 400);
     }
 
     // Verificar si el email ya existe en usuarios
     if (await usuarioRepository.emailExists(data.email)) {
-      throw new Error('Ya existe un usuario con ese email');
+      throw new AppError('Ya existe un usuario con ese email', 400);
     }
 
     // Generar usuario a partir del email (parte antes del @)
@@ -51,12 +53,24 @@ export class ClienteService {
       activo: true,
     });
 
-    // Crear cliente
-    const id = await clienteRepository.create(data);
+    // Crear cliente (solo los campos que corresponden a la tabla clientes)
+    const clienteData = {
+      nombre_cliente: data.nombre_cliente,
+      cargo: data.cargo || null,
+      empresa: data.empresa,
+      email: data.email,
+      celular: data.celular || null,
+      telefono: data.telefono || null,
+      anexo: data.anexo || null,
+      pais: data.pais || null,
+      activo: data.activo !== undefined ? data.activo : true,
+    };
+    
+    const id = await clienteRepository.create(clienteData as any);
     const cliente = await clienteRepository.findById(id);
 
     if (!cliente) {
-      throw new Error('Error al crear el cliente');
+      throw new AppError('Error al crear el cliente', 500);
     }
 
     return cliente;
@@ -111,18 +125,35 @@ export class ClienteService {
     }
   }
 
-  async softDelete(id: number): Promise<void> {
+  async softDelete(id: number, eliminadoPor?: number): Promise<void> {
     const cliente = await this.findById(id);
 
     if (!cliente) {
-      throw new Error('Cliente no encontrado');
+      throw new AppError('Cliente no encontrado', 404);
     }
 
     const updated = await clienteRepository.softDelete(id);
 
     if (!updated) {
-      throw new Error('Error al eliminar el cliente');
+      throw new AppError('Error al eliminar el cliente', 500);
     }
+
+    // Registrar en la tabla eliminados
+    const fechaBorradoPermanente = new Date();
+    fechaBorradoPermanente.setDate(fechaBorradoPermanente.getDate() + 30); // 30 días
+
+    await eliminadoService.create({
+      item_id: id,
+      item_tipo: 'cliente',
+      eliminado_por: eliminadoPor || 1,
+      fecha_borrado_permanente: fechaBorradoPermanente,
+      datos: {
+        nombre_cliente: cliente.nombre_cliente,
+        empresa: cliente.empresa,
+        email: cliente.email,
+        cargo: cliente.cargo,
+      },
+    });
   }
 
   async search(term: string): Promise<Cliente[]> {

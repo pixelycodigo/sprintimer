@@ -23,6 +23,7 @@ export class CostoPorHoraRepository {
   }
 
   async findAll(): Promise<CostoPorHoraWithDetails[]> {
+    // Retornar todos los costos por hora EXCEPTO los que están en la tabla 'eliminados'
     const costos = await db<CostoPorHoraWithDetails>(this.tableName)
       .leftJoin('divisas', 'costos_por_hora.divisa_id', 'divisas.id')
       .leftJoin('perfiles', 'costos_por_hora.perfil_id', 'perfiles.id')
@@ -34,6 +35,11 @@ export class CostoPorHoraRepository {
         'perfiles.nombre as perfil_nombre',
         'seniorities.nombre as seniority_nombre'
       )
+      .whereNotIn('costos_por_hora.id', function() {
+        this.select('item_id')
+          .from('eliminados')
+          .where('item_tipo', 'costo_por_hora');
+      })
       .orderBy('costos_por_hora.created_at', 'desc');
 
     return costos;

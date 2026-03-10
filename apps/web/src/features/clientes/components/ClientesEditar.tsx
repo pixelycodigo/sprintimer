@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link, useParams } from 'react-router-dom';
-import { ArrowLeft, Building2, Mail, Phone, MapPin } from 'lucide-react';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { ArrowLeft, Building2, Mail, Phone, MapPin, Eye, EyeOff } from 'lucide-react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { clientesService } from '../../../services/clientes.service';
 import { Button } from '@ui/Button';
@@ -12,11 +12,19 @@ import { Spinner } from '@ui/Spinner';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/Card';
 import type { UpdateClienteInput } from '@shared';
 
+interface UpdateClienteForm extends UpdateClienteInput {
+  password?: string;
+  password_confirm?: string;
+}
+
 export default function AdminClientesEditar() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
-  const [formData, setFormData] = useState<UpdateClienteInput>({
+  const [formData, setFormData] = useState<UpdateClienteForm>({
     nombre_cliente: '',
     cargo: '',
     empresa: '',
@@ -26,11 +34,13 @@ export default function AdminClientesEditar() {
     anexo: '',
     pais: '',
     activo: true,
+    password: '',
+    password_confirm: '',
   });
 
   // Fetch cliente
   const { data: cliente, isLoading: isLoadingCliente } = useQuery({
-    queryKey: ['cliente', id],
+    queryKey: clientesService.queryKeys.byId(Number(id)),
     queryFn: () => clientesService.findById(Number(id)),
     enabled: !!id,
   });
@@ -39,6 +49,8 @@ export default function AdminClientesEditar() {
   const updateMutation = useMutation({
     mutationFn: (data: UpdateClienteInput) => clientesService.update(Number(id), data),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: clientesService.queryKeys.all() });
+      queryClient.invalidateQueries({ queryKey: clientesService.queryKeys.byId(Number(id)) });
       toast.success('Cliente actualizado exitosamente');
       navigate('/admin/clientes');
     },
@@ -58,14 +70,70 @@ export default function AdminClientesEditar() {
         telefono: cliente.telefono || '',
         anexo: cliente.anexo || '',
         pais: cliente.pais || '',
-        activo: cliente.activo,
+        activo: Boolean(cliente.activo),  // Convertir a booleano
+        password: '',  // No cargar password existente
+        password_confirm: '',
       });
     }
   }, [cliente]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    updateMutation.mutate(formData);
+    
+    // Solo incluir password si el usuario lo completó
+    const submitData: any = {
+      nombre_cliente: formData.nombre_cliente,
+      cargo: formData.cargo,
+      empresa: formData.empresa,
+      email: formData.email,
+      celular: formData.celular,
+      telefono: formData.telefono,
+      anexo: formData.anexo,
+      pais: formData.pais,
+      activo: formData.activo,
+    };
+    
+    // Solo agregar password si fue modificado
+    if (formData.password && formData.password.length > 0) {
+      // Validar requisitos de contraseña
+      const errors: string[] = [];
+      
+      if (formData.password.length < 8) {
+        errors.push('La contraseña debe tener al menos 8 caracteres');
+      }
+      if (!/[A-Z]/.test(formData.password)) {
+        errors.push('La contraseña debe contener al menos una letra mayúscula (A-Z)');
+      }
+      if (!/[a-z]/.test(formData.password)) {
+        errors.push('La contraseña debe contener al menos una letra minúscula (a-z)');
+      }
+      if (!/[0-9]/.test(formData.password)) {
+        errors.push('La contraseña debe contener al menos un número (0-9)');
+      }
+      if (formData.password !== formData.password_confirm) {
+        errors.push('Las contraseñas no coinciden');
+      }
+      
+      if (errors.length > 0) {
+        toast.error(
+          <div className="space-y-2">
+            <p className="font-semibold">❌ Error en la contraseña:</p>
+            <ul className="list-disc list-inside text-sm space-y-1">
+              {errors.map((msg: string, i: number) => (
+                <li key={i}>{msg}</li>
+              ))}
+            </ul>
+          </div>,
+          { duration: 8000 }
+        );
+        return;
+      }
+      
+      submitData.password = formData.password;
+      submitData.password_confirm = formData.password_confirm;
+    }
+    
+    updateMutation.mutate(submitData);
   };
 
   if (isLoadingCliente) {
@@ -221,6 +289,72 @@ export default function AdminClientesEditar() {
               <Label htmlFor="activo" className="cursor-pointer">
                 Cliente activo
               </Label>
+            </div>
+
+            {/* Contraseña */}
+            <div className="space-y-4 pt-4 border-t border-slate-200 dark:border-zinc-800">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-zinc-100 flex items-center gap-2">
+                <Eye className="w-5 h-5" />
+                Cambiar Contraseña
+              </h3>
+              <Muted>Deja estos campos vacíos si no deseas cambiar la contraseña</Muted>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="password">Nueva Contraseña</Label>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? 'text' : 'password'}
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      className="pr-10 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500"
+                      placeholder="••••••••"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 dark:text-zinc-500 hover:text-slate-600 dark:hover:text-zinc-300"
+                      aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-5 h-5" aria-hidden="true" />
+                      ) : (
+                        <Eye className="w-5 h-5" aria-hidden="true" />
+                      )}
+                    </button>
+                  </div>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-zinc-400">
+                    Mínimo 8 caracteres, 1 mayúscula, 1 minúscula, 1 número
+                  </p>
+                </div>
+
+                <div>
+                  <Label htmlFor="password_confirm">Confirmar Contraseña</Label>
+                  <div className="relative">
+                    <Input
+                      id="password_confirm"
+                      type={showConfirmPassword ? 'text' : 'password'}
+                      value={formData.password_confirm}
+                      onChange={(e) => setFormData({ ...formData, password_confirm: e.target.value })}
+                      className="pr-10 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500"
+                      placeholder="••••••••"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 dark:text-zinc-500 hover:text-slate-600 dark:hover:text-zinc-300"
+                      aria-label={showConfirmPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff className="w-5 h-5" aria-hidden="true" />
+                      ) : (
+                        <Eye className="w-5 h-5" aria-hidden="true" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Actions */}

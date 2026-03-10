@@ -13,7 +13,13 @@ export class PerfilRepository {
   }
 
   async findAll(): Promise<Perfil[]> {
+    // Retornar todos los perfiles EXCEPTO los que están en la tabla 'eliminados'
     const perfiles = await db<Perfil>(this.tableName)
+      .whereNotIn('id', function() {
+        this.select('item_id')
+          .from('eliminados')
+          .where('item_tipo', 'perfil');
+      })
       .orderBy('nombre', 'asc');
 
     return perfiles;

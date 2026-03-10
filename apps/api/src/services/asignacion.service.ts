@@ -1,5 +1,6 @@
 import { asignacionRepository } from '../repositories/asignacion.repository.js';
-import { AsignacionCreate, AsignacionWithDetails } from '../models/Asignacion.js';
+import { AsignacionCreate, AsignacionUpdate, AsignacionWithDetails } from '../models/Asignacion.js';
+import { eliminadoService } from './eliminado.service.js';
 
 export class AsignacionService {
   async findAll(): Promise<AsignacionWithDetails[]> {
@@ -35,18 +36,52 @@ export class AsignacionService {
     return asignacion;
   }
 
-  async delete(id: number): Promise<void> {
+  async update(id: number, data: AsignacionUpdate): Promise<AsignacionWithDetails> {
     const asignacion = await this.findById(id);
 
     if (!asignacion) {
       throw new Error('Asignación no encontrada');
     }
 
-    const deleted = await asignacionRepository.delete(id);
+    const updated = await asignacionRepository.update(id, data);
 
-    if (!deleted) {
+    if (!updated) {
+      throw new Error('Error al actualizar la asignación');
+    }
+
+    return asignacionRepository.findById(id) as Promise<AsignacionWithDetails>;
+  }
+
+  async softDelete(id: number, eliminadoPor?: number): Promise<void> {
+    const asignacion = await this.findById(id);
+
+    if (!asignacion) {
+      throw new Error('Asignación no encontrada');
+    }
+
+    const updated = await asignacionRepository.softDelete(id);
+
+    if (!updated) {
       throw new Error('Error al eliminar la asignación');
     }
+
+    // Registrar en la tabla eliminados
+    const fechaBorradoPermanente = new Date();
+    fechaBorradoPermanente.setDate(fechaBorradoPermanente.getDate() + 30);
+
+    await eliminadoService.create({
+      item_id: id,
+      item_tipo: 'asignacion',
+      eliminado_por: eliminadoPor || 1,
+      fecha_borrado_permanente: fechaBorradoPermanente,
+      datos: {
+        actividad_id: asignacion.actividad_id,
+        talent_id: asignacion.talent_id,
+        actividad_nombre: asignacion.actividad_nombre,
+        talent_nombre: asignacion.talent_nombre,
+        fecha_asignacion: asignacion.fecha_asignacion,
+      },
+    });
   }
 
   async deleteByActividadAndTalent(actividadId: number, talentId: number): Promise<void> {

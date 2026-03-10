@@ -1,248 +1,202 @@
 # 📁 Estructura del Proyecto - SprinTask SaaS
 
-**Fecha de última actualización:** 9 de Marzo, 2026
-**Estado:** ✅ Autenticación Unificada - ✅ TypeCheck 100% aprobado - ✅ 100% Componentes Reutilizables
+**Fecha:** 10 de Marzo, 2026  
+**Estado:** ✅ Refresh Token + Soft Delete (9 entidades) + TypeCheck 100%
 
 ---
 
-## 🌳 Árbol Completo del Proyecto
+## 🌳 Árbol del Proyecto
 
 ```
 sprintask/
 ├── apps/
-│   ├── api/                          # Backend Node.js + Express ✅
+│   ├── api/                          # Backend (Node.js + Express + Knex)
 │   │   ├── src/
-│   │   │   ├── controllers/          # 12 controladores ✅
-│   │   │   ├── services/             # 12 servicios ✅
-│   │   │   ├── repositories/         # 12 repositorios ✅
-│   │   │   ├── models/               # 12 modelos TypeScript ✅
-│   │   │   ├── middleware/           # 5 middlewares ✅
-│   │   │   ├── routes/               # 12 rutas API ✅
-│   │   │   ├── config/               # Configuración ✅
-│   │   │   ├── utils/                # Utilidades ✅
-│   │   │   ├── validators/           # 12 validadores Zod ✅
-│   │   │   └── server.ts
-│   │   ├── database/
-│   │   │   ├── migrations/         # Vacío (migraciones ya ejecutadas) ✅
-│   │   │   └── seeds/              # Vacío (seeds ya ejecutados) ✅
-│   │   ├── package.json
-│   │   ├── tsconfig.json
-│   │   ├── .env.example
-│   │   └── .env
+│   │   │   ├── controllers/          # 13 controladores
+│   │   │   ├── services/             # 13 servicios
+│   │   │   ├── repositories/         # 13 repositorios
+│   │   │   ├── models/               # 13 modelos TypeScript
+│   │   │   ├── middleware/           # Auth, error, logging
+│   │   │   ├── routes/               # 13 rutas API
+│   │   │   ├── validators/           # 13 validadores Zod
+│   │   │   ├── config/               # DB, CORS, logger
+│   │   │   └── utils/                # Hash, token
+│   │   └── database/migrations/      # 14 migraciones
 │   │
-│   └── web/                          # Frontend React + Vite ✅
+│   └── web/                          # Frontend (React + Vite + TS)
 │       ├── src/
-│       │   ├── features/             # Componentes por feature ✅
-│       │   │   ├── auth/             # Autenticación ✅
-│       │   │   │   ├── components/   # Forms reutilizables ✅
-│       │   │   │   └── pages/        # Wrappers con AuthPageLayout ✅
-│       │   │   ├── dashboard/        # Dashboards ✅
-│       │   │   │   ├── components/
-│       │   │   │   │   ├── StatCard.tsx                  # ✅
-│       │   │   │   │   ├── DashboardStats.tsx            # ✅
-│       │   │   │   │   ├── DashboardSection.tsx          # ✅
-│       │   │   │   │   ├── AdminDashboard.tsx            # ✅
-│       │   │   │   │   ├── ClienteDashboard.tsx          # ✅
-│       │   │   │   │   ├── TalentDashboard.tsx           # ✅
-│       │   │   │   │   └── SuperAdminDashboard.tsx       # ✅
-│       │   │   │   └── index.ts
-│       │   │   ├── clientes/         # Cliente CRUD ✅
-│       │   │   │   ├── components/
-│       │   │   │   │   ├── Clientes.tsx                  # ✅ DataTable, FilterPage
-│       │   │   │   │   ├── ClientesCrear.tsx             # ✅ HeaderPage, Checkbox
-│       │   │   │   │   └── ClientesEditar.tsx            # ✅ HeaderPage, Checkbox
-│       │   │   │   └── index.ts
-│       │   │   ├── talents/          # Talent CRUD ✅
-│       │   │   ├── proyectos/        # Proyecto CRUD ✅
-│       │   │   ├── actividades/      # Actividad CRUD ✅
-│       │   │   ├── perfiles/         # Perfil CRUD ✅
-│       │   │   ├── seniorities/      # Seniority CRUD ✅
-│       │   │   ├── divisas/          # Divisa CRUD ✅
-│       │   │   ├── costo-por-hora/   # Costo por hora CRUD ✅
-│       │   │   ├── eliminados/       # Eliminados ✅
-│       │   │   ├── asignaciones/     # Asignar talents a actividades ✅
-│       │   │   └── super-admin/      # Super admin features ✅
-│       │   ├── layouts/              # Layouts por rol ✅
-│       │   │   ├── AdminLayout.tsx   # ✅ UserMenuProfile, SidebarToggle
-│       │   │   ├── SuperAdminLayout.tsx # ✅
-│       │   │   ├── TalentLayout.tsx  # ✅
-│       │   │   └── ClienteLayout.tsx # ✅
-│       │   ├── hooks/                # Hooks personalizados
-│       │   ├── services/             # Servicios API ✅
-│       │   ├── stores/               # Zustand stores ✅
-│       │   ├── utils/                # Utilidades ✅
-│       │   ├── constants/            # Constantes ✅
-│       │   ├── contexts/             # Contextos React
-│       │   ├── App.tsx               # ✅ Actualizado para usar features/
-│       │   ├── main.tsx              # ✅ Theme persistence
-│       │   └── index.css
-│       ├── index.html
-│       ├── package.json
-│       ├── tsconfig.json
-│       ├── vite.config.ts
-│       ├── tailwind.config.js
-│       └── .env.example
+│       │   ├── features/             # Organización por feature
+│       │   │   ├── auth/             # Login, registro
+│       │   │   ├── dashboard/        # 4 dashboards (por rol)
+│       │   │   ├── clientes/         # CRUD clientes
+│       │   │   ├── talents/          # CRUD talents
+│       │   │   ├── proyectos/        # CRUD proyectos
+│       │   │   ├── actividades/      # CRUD actividades
+│       │   │   ├── asignaciones/     # CRUD asignaciones
+│       │   │   ├── perfiles/         # CRUD perfiles
+│       │   │   ├── seniorities/      # CRUD seniorities
+│       │   │   ├── divisas/          # CRUD divisas
+│       │   │   ├── costo-por-hora/   # CRUD costos
+│       │   │   └── eliminados/       # Papelera (restore/delete)
+│       │   ├── layouts/              # 4 layouts (por rol)
+│       │   ├── services/             # API calls + query keys
+│       │   ├── stores/               # Zustand (auth, theme, sidebar)
+│       │   └── utils/                # Query keys, helpers
+│       └── public/
 │
 ├── packages/
-│   ├── ui/                           # Biblioteca UI compartida ✅ 50+ componentes
+│   ├── ui/                           # 50+ componentes compartidos
 │   │   ├── src/
-│   │   │   ├── ActionButtonTable/    # ✅ 12 variantes de botones
-│   │   │   ├── AlertDialog/          # ✅ Radix UI Alert Dialog
-│   │   │   ├── AuthLayout/           # Layout para autenticación ✅
-│   │   │   ├── AuthPageLayout/       # ✅ Layout centrado para auth
-│   │   │   ├── Avatar/               # Radix UI Avatar ✅
-│   │   │   ├── Badge/                # ✅ Variante inactive agregada
-│   │   │   ├── Button/               # 6 variantes, 4 tamaños ✅
-│   │   │   ├── Calendar/             # react-day-picker ✅
-│   │   │   ├── Card/                 # Card container ✅
-│   │   │   ├── Chart/                # Recharts wrappers ✅
-│   │   │   ├── Checkbox/             # Radix UI Checkbox ✅
-│   │   │   ├── Combobox/             # Combobox con búsqueda ✅
-│   │   │   ├── Command/              # cmdk ✅
-│   │   │   ├── Container/            # 5 tamaños ✅
-│   │   │   ├── DataTable/            # ✅ Tabla con paginación
-│   │   │   ├── DatePicker/           # DatePicker con popover ✅
-│   │   │   ├── Dialog/               # Radix UI Dialog ✅
-│   │   │   ├── DropdownMenu/         # Radix UI DropdownMenu ✅
-│   │   │   ├── Empty/                # ✅ Estado vacío
-│   │   │   ├── FilterPage/           # ✅ Filtros reutilizables
-│   │   │   ├── Footer/               # Layout semántico ✅
-│   │   │   ├── Header/               # Layout semántico ✅
-│   │   │   ├── HeaderPage/           # ✅ Encabezado de página
-│   │   │   ├── Input/                # Input con iconos ✅
-│   │   │   ├── Label/                # Radix UI Label ✅
-│   │   │   ├── Main/                 # ✅ Padding p-6 agregado
-│   │   │   ├── PageLayout/           # Layout con sidebar ✅
-│   │   │   ├── Pagination/           # ✅ Componentes para DataTable
-│   │   │   ├── Popover/              # Radix UI Popover ✅
-│   │   │   ├── ProgressBar/          # Radix UI Progress ✅
-│   │   │   ├── QuickActions/         # ✅ Accesos rápidos
-│   │   │   ├── SearchInput/          # Input de búsqueda ✅
-│   │   │   ├── Section/              # Layout semántico ✅
-│   │   │   ├── Select/               # Radix UI Select ✅
-│   │   │   ├── Sidebar/              # ✅ Sidebar con fixed positioning
-│   │   │   ├── SidebarToggle/        # ✅ Toggle reutilizable
-│   │   │   ├── Skeleton/             # Loading skeleton ✅
-│   │   │   ├── Spinner/              # 3 tamaños, 3 variantes ✅
-│   │   │   ├── Switch/               # Radix UI Switch ✅
-│   │   │   ├── Table/                # TanStack Table ✅
-│   │   │   ├── Textarea/             # Textarea ✅
-│   │   │   ├── ThemeToggle/          # ✅ Usa theme store
-│   │   │   ├── Toggle/               # Radix UI Toggle ✅
-│   │   │   ├── Typography/           # H1-H4, Text, List, etc. ✅
-│   │   │   ├── UserMenu/             # ✅ Menú de usuario
-│   │   │   └── utils/
-│   │   │       └── cn.ts             # tailwind-merge + clsx ✅
-│   │   ├── package.json
-│   │   ├── tsconfig.json
-│   │   └── src/index.ts              # Export de todos los componentes
+│   │   │   ├── DataTable/            # Tablas con paginación
+│   │   │   ├── AlertDialog/          # Confirmaciones
+│   │   │   ├── Badge/                # Estados
+│   │   │   ├── Button/               # 6 variantes
+│   │   │   ├── Input/                # Con iconos
+│   │   │   ├── Select/               # Radix UI
+│   │   │   ├── Chart/                # Recharts wrappers
+│   │   │   └── ...                   # 40+ componentes más
+│   │   └── src/index.ts              # Export principal
 │   │
-│   └── shared/                       # Código compartido ✅
-│       ├── src/
-│       │   ├── types/
-│       │   │   ├── roles.ts          # Rol enum, ROLES_LABELS, ROLES_COLORS ✅
-│       │   │   └── entities.ts       # 14 interfaces + Create/Update + WithRelations ✅
-│       │   └── index.ts              # Export + utilidades ✅
-│       ├── package.json
-│       └── tsconfig.json
+│   └── shared/                       # Código compartido
+│       ├── src/types/                # Interfaces + Create/Update
+│       └── src/index.ts
 │
 ├── database/
-│   └── create_database.sql           # Script de creación ✅
+│   ├── create_database.sql           # Crear BD
+│   └── seed-data-2026-03-07.sql      # 224 registros de prueba
 │
 ├── docs/
 │   ├── plans/
-│   │   ├── 2026-03-04-sprintask-arquitectura-design.md
-│   │   ├── estructura_proyecto.md    # Este archivo
-│   │   └── modelo_base_datos_auto.md # ✅ Auto-generado
-│   ├── COMPONENTES-UI.md
-│   ├── RESUMEN-DE-AVANCE.md          # ✅ Actualizado
-│   └── MIGRACION-PACKAGES.md
+│   │   ├── ARQUITECTURA-RESUMEN.md   # Arquitectura optimizada
+│   │   ├── logicaComportamiento.md   # HU + soft delete
+│   │   ├── modelo_base_datos_auto.md # Modelo BD completo
+│   │   └── seed-data-2026-03-07.sql  # Seed versionado
+│   ├── RESUMEN-DE-AVANCE.md          # Historial diario
+│   └── COMPONENTES-UI.md             # Catálogo UI
 │
-├── e2e/                              # Vacío (listo para nuevos tests) ✅
-├── skills/                           # Agent skills ✅
-├── package.json                      # Workspace root ✅
-├── tsconfig.base.json                # Configuración base ✅
-└── README.md                         # Documentación principal ✅
+└── README.md                         # Documentación principal
 ```
 
 ---
 
-## 📊 Métricas del Proyecto
+## 📊 Métricas
 
 | Categoría | Cantidad | Ubicación | Estado |
 |-----------|----------|-----------|--------|
 | **Componentes UI** | 50+ | `packages/ui/src/` | ✅ 100% reutilizables |
-| **Tipos compartidos** | 14+ | `packages/shared/src/types/` | ✅ |
-| **Features** | 12 | `apps/web/src/features/` | ✅ |
-| **Layouts** | 5 | `apps/web/src/layouts/` | ✅ |
-| **Páginas CRUD** | 20 | `apps/web/src/features/` | ✅ 100% actualizadas |
-| **Endpoints API** | 74 | `apps/api/src/routes/` | ✅ |
-| **Controladores** | 12 | `apps/api/src/controllers/` | ✅ |
-| **Servicios (API)** | 12 | `apps/api/src/services/` | ✅ |
-| **Servicios (Web)** | 16 | `apps/web/src/services/` | ✅ |
-| **Repositorios** | 12 | `apps/api/src/repositories/` | ✅ |
-| **Modelos** | 12 | `apps/api/src/models/` | ✅ |
+| **Features** | 12 | `apps/web/src/features/` | ✅ Todos con CRUD completo |
+| **Layouts** | 4 | `apps/web/src/layouts/` | ✅ Por rol |
+| **Endpoints API** | 74+ | `apps/api/src/routes/` | ✅ Todos con soft delete |
+| **Migraciones** | 14 | `apps/api/database/migrations/` | ✅ Ejecutadas |
+| **Tipos Compartidos** | 14+ | `packages/shared/src/types/` | ✅ |
 
 ---
 
-## 🗂️ Componentes UI (50+ total)
+## 🗂️ Componentes UI Principales
 
-### Componentes con Radix UI (12)
-| Componente | Radix Primitive |
-|------------|-----------------|
-| Avatar | @radix-ui/react-avatar |
-| Checkbox | @radix-ui/react-checkbox |
-| Dialog | @radix-ui/react-dialog |
-| **AlertDialog** | @radix-ui/react-alert-dialog |
-| DropdownMenu | @radix-ui/react-dropdown-menu |
-| Label | @radix-ui/react-label |
-| Popover | @radix-ui/react-popover |
-| ProgressBar | @radix-ui/react-progress |
-| Select | @radix-ui/react-select |
-| Switch | @radix-ui/react-switch |
-| Toggle | @radix-ui/react-toggle |
-| Command | cmdk (basado en Radix) |
+### Más Utilizados
 
-### Componentes con TanStack (1)
-| Componente | Librería |
-|------------|----------|
-| Table / DataTable | @tanstack/react-table |
+| Componente | Uso | Ejemplo |
+|------------|-----|---------|
+| **DataTable** | Todas las tablas CRUD | Clientes, Talents, Proyectos |
+| **AlertDialog** | Confirmaciones | Eliminar, restaurar |
+| **Badge** | Estados | Activo/inactivo, roles |
+| **StatusBadge** | Estados booleanos | Activo/inactivo |
+| **EntityCell** | Celdas con icono | Primera columna de tablas |
+| **HeaderPage** | Títulos de página | Todos los CRUD |
+| **FilterPage** | Búsqueda + filtros | Todas las listas |
 
-### Componentes con Otras Librerías (3)
-| Componente | Librería |
-|------------|----------|
-| Calendar | react-day-picker |
-| DatePicker | react-day-picker + popover |
-| Chart | recharts wrappers |
+### Por Categoría
 
-### Componentes Propios (34+)
+| Categoría | Cantidad | Ejemplos |
+|-----------|----------|----------|
+| **Layout** | 10 | Header, Sidebar, Main, PageLayout |
+| **Formulario** | 9 | Input, Select, Dialog, Combobox |
+| **Datos** | 3 | DataTable, Calendar, Chart |
+| **Feedback** | 5 | Badge, Spinner, Skeleton, AlertDialog |
+| **Navegación** | 3 | Pagination, SidebarToggle |
 
-#### Layout (9)
-- AuthLayout, AuthPageLayout, Footer, Header, HeaderPage, Main, PageLayout, Section, Container, Sidebar
-
-#### Navegación (3)
-- Pagination, SidebarToggle, FilterPage
-
-#### Datos (14)
-- Table, DataTable, Empty, ActionButtonTable (12 variantes)
-
-#### Formularios (9)
-- Input, Label, Checkbox, Switch, Select, Textarea, Combobox, SearchInput, FilterPage
-
-#### Feedback (5)
-- Badge, Spinner, Skeleton, ProgressBar, AlertDialog
-
-#### Acciones (4)
-- Button, QuickActions, UserMenuProfile, ThemeToggle
-
-#### Tipografía (1)
-- Typography (H1-H4, Text, List, Blockquote, Code)
-
-#### Utilidades (1)
-- utils/cn.ts - tailwind-merge + clsx
+**Ver catálogo completo:** `docs/COMPONENTES-UI.md`
 
 ---
 
-**Documento creado:** 7 de Marzo, 2026
-**Última actualización:** 7 de Marzo, 2026
-**Estado:** ✅ 100% Componentes UI Reutilizables - TypeCheck 100% aprobado
+## 📦 Packages
+
+### packages/ui
+
+**Propósito:** Componentes UI reutilizables compartidos entre frontend y posibles futuros proyectos.
+
+**Características:**
+- ✅ 50+ componentes
+- ✅ Radix UI para accesibilidad
+- ✅ TailwindCSS para estilos
+- ✅ TypeScript para type safety
+- ✅ Dark mode automático
+
+**Uso en frontend:**
+```typescript
+import { Button, Badge, DataTable } from '@ui';
+```
+
+### packages/shared
+
+**Propósito:** Tipos y utilidades compartidas.
+
+**Contenido:**
+- ✅ Interfaces de entidades (Cliente, Talent, Proyecto, etc.)
+- ✅ Tipos Create/Update para cada entidad
+- ✅ Tipos WithRelations para datos anidados
+- ✅ Utilidades comunes
+
+**Uso:**
+```typescript
+import type { Cliente, CreateClienteInput } from '@shared';
+```
+
+---
+
+## 🔗 Path Aliases
+
+### Frontend (apps/web)
+
+```json
+{
+  "@/*": ["./src/*"],
+  "@ui/*": ["../../packages/ui/src/*"],
+  "@ui": ["../../packages/ui/src/index.ts"],
+  "@shared/*": ["../../packages/shared/src/*"],
+  "@shared": ["../../packages/shared/src/index.ts"]
+}
+```
+
+### Ejemplos de Uso
+
+```typescript
+// Components
+import { Button, Badge } from '@ui';
+import { DataTable } from '@ui/DataTable';
+
+// Types
+import type { Cliente } from '@shared';
+import { ROLES } from '@shared/types/roles';
+
+// Utils
+import { queryKeys } from '@/utils/queryKeys';
+```
+
+---
+
+## 📝 Documentos de Referencia
+
+| Documento | Propósito | Ubicación |
+|-----------|-----------|-----------|
+| **Arquitectura Técnica** | Stack, rutas API, flujos | `ARQUITECTURA-RESUMEN.md` |
+| **Arquitectura Detallada** | Documentación completa | `2026-03-04-sprintask-arquitectura-design.md` |
+| **Lógica de Comportamiento** | HU + soft delete | `logicaComportamiento.md` |
+| **Modelo de BD** | Estructura completa | `modelo_base_datos_auto.md` |
+| **Resumen de Avance** | Historial diario | `../RESUMEN-DE-AVANCE.md` |
+
+---
+
+**Última actualización:** 10 de Marzo, 2026  
+**Versión:** 3.0

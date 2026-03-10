@@ -21,6 +21,11 @@ export interface AuthResponse {
   refreshToken: string;
 }
 
+export interface RefreshTokenResponse {
+  token: string;
+  refreshToken: string;
+}
+
 export const authService = {
   async login(data: LoginData): Promise<AuthResponse> {
     const response = await api.post<{ data: AuthResponse }>('/auth/login', data);
@@ -34,6 +39,11 @@ export const authService = {
 
   async logout(): Promise<void> {
     await api.post('/auth/logout');
+  },
+
+  async refreshToken(refreshToken: string): Promise<RefreshTokenResponse> {
+    const response = await api.post<{ data: RefreshTokenResponse }>('/auth/refresh-token', { refreshToken });
+    return response.data.data;
   },
 
   async getMe(): Promise<User> {

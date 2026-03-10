@@ -16,7 +16,14 @@
     "migrate:fresh": "knex migrate:fresh --knexfile database/knexfile.ts",
     "seed": "knex seed:run --knexfile database/knexfile.ts",
     "db:setup": "npm run migrate && npm run seed",
-    "db:schema": "node scripts/export-db-schema.js"
+    "db:schema": "node scripts/export-db-schema.js",
+    "logs": "tsx scripts/view-logs.ts",
+    "logs:error": "tsx scripts/view-logs.ts error",
+    "logs:http": "tsx scripts/view-logs.ts http",
+    "logs:tail": "tsx scripts/view-logs.ts tail",
+    "logs:search": "tsx scripts/view-logs.ts search",
+    "logs:list": "tsx scripts/view-logs.ts list",
+    "logs:help": "tsx scripts/view-logs.ts help"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -29,6 +36,7 @@
     "knex": "^3.1.0",
     "morgan": "^1.10.0",
     "mysql2": "^3.9.2",
+    "winston": "^3.19.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {

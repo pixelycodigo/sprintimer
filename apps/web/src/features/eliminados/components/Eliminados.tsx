@@ -26,8 +26,33 @@ export default function AdminEliminados() {
 
   const restoreMutation = useMutation({
     mutationFn: (id: number) => eliminadosService.restore(id),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
+      // Invalidar caché de eliminados
       queryClient.invalidateQueries({ queryKey: ['eliminados'] });
+      
+      // Invalidar la caché de la entidad específica que fue restaurada
+      // Los query keys siguen el patrón: ['entidad'] o ['entidad', 'list']
+      const eliminado = queryClient.getQueryData<any[]>(['eliminados'])
+        ?.find(e => e.id === variables);
+      
+      if (eliminado) {
+        const entityMap: Record<string, string[]> = {
+          'clientes': ['clientes'],
+          'talents': ['talents'],
+          'proyectos': ['proyectos'],
+          'actividades': ['actividades'],
+          'perfiles': ['perfiles'],
+          'seniorities': ['seniorities'],
+          'divisas': ['divisas'],
+          'costos_por_hora': ['costo-por-hora'],
+        };
+        
+        const queryKey = entityMap[eliminado.item_tipo];
+        if (queryKey) {
+          queryClient.invalidateQueries({ queryKey });
+        }
+      }
+      
       toast.success('Elemento restaurado exitosamente');
     },
     onError: (error: Error) => {

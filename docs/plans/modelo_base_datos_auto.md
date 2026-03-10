@@ -1,8 +1,8 @@
 # 🗄️ Modelo de Base de Datos - SprinTask SaaS
 
-**Generado:** 9/3/2026, 21:30:00
+**Generado:** 10 de Marzo, 2026
 **Base de Datos:** `sprintask`
-**Versión:** 2.0 - Arquitectura de Autenticación Unificada
+**Versión:** 3.0 - Arquitectura de Autenticación Unificada + Soft Delete Completo (9 entidades) + Columna activo en asignaciones
 
 ---
 
@@ -10,9 +10,14 @@
 
 | Métrica | Cantidad |
 |---------|----------|
-| **Tablas** | 15 |
-| **Columnas Totales** | 115 |
+| **Tablas** | 17 |
+| **Columnas Totales** | 130 |
 | **Claves Foráneas** | 24 |
+
+**Últimos Cambios:**
+- ✅ Agregada columna `activo` a `actividades_integrantes` (10 de Marzo, 2026)
+- ✅ Todas las 9 entidades principales tienen campo `activo` para soft delete
+- ✅ Tabla `eliminados` actualizada con todos los tipos de entidades
 
 ---
 
@@ -207,6 +212,7 @@
 | 2 | `actividad_id` | int unsigned |  | undefined |  | ✓ |  |  |
 | 3 | `talent_id` | int unsigned |  | undefined |  | ✓ |  |  |
 | 4 | `fecha_asignacion` | timestamp | ✓ | CURRENT_TIMESTAMP |  |  |  |  |
+| 5 | `activo` | tinyint(1) | ✓ | 1 |  |  |  |  |
 
 #### Claves Foráneas
 
@@ -222,6 +228,8 @@
 | unique_asignacion | `actividad_id` | ✓ |
 | unique_asignacion | `talent_id` | ✓ |
 | actividades_integrantes_talent_id_foreign | `talent_id` |  |
+
+**NOTA:** Columna `activo` agregada el 10 de Marzo, 2026 para habilitar soft delete en asignaciones.
 
 ---
 
@@ -316,7 +324,7 @@
 |---|---------|------|----------|---------|----|----|-----|----|
 | 1 | `id` | int unsigned |  | undefined | ✓ |  |  | ✓ |
 | 2 | `item_id` | int unsigned |  | undefined |  |  |  |  |
-| 3 | `item_tipo` | enum('cliente','proyecto','actividad','talent','perfil','seniority','divisa','costo_por_hora','sprint','tarea') |  | undefined |  |  |  |  |
+| 3 | `item_tipo` | enum('cliente','proyecto','actividad','talent','perfil','seniority','divisa','costo_por_hora','asignacion','sprint','tarea') |  | undefined |  |  |  |  |
 | 4 | `eliminado_por` | int unsigned |  | undefined |  | ✓ |  |  |
 | 5 | `fecha_eliminacion` | timestamp | ✓ | CURRENT_TIMESTAMP |  |  |  |  |
 | 6 | `fecha_borrado_permanente` | date |  | undefined |  |  |  |  |
@@ -327,13 +335,14 @@
 | Columna | Tabla Referenciada | Columna | ON UPDATE | ON DELETE |
 |---------|-------------------|---------|-----------|----------|
 | `eliminado_por` | usuarios | `id` | NO ACTION | NO ACTION |
-| `eliminado_por` | usuarios | `id` | NO ACTION | NO ACTION |
 
 #### Índices
 
 | Nombre | Columna | Unique |
 |--------|---------|--------|
 | eliminados_eliminado_por_foreign | `eliminado_por` |  |
+
+**NOTA:** Tipo `asignacion` agregado el 10 de Marzo, 2026.
 
 ---
 
@@ -343,8 +352,41 @@
 
 | # | Columna | Tipo | Nullable | Default | PK | FK | UNI | AI |
 |---|---------|------|----------|---------|----|----|-----|----|
-| 1 | `index` | int unsigned |  | undefined | ✓ |  |  | ✓ |
+| 1 | `index` | int unsigned |  | undefined | ✓ |  |  |  |
 | 2 | `is_locked` | int | ✓ | undefined |  |  |  |  |
+
+**NOTA:** Tabla del sistema de migraciones de Knex.js. Controla locks para evitar ejecución concurrente de migraciones.
+
+---
+
+### migrations
+
+#### Columnas
+
+| # | Columna | Tipo | Nullable | Default | PK | FK | UNI | AI |
+|---|---------|------|----------|---------|----|----|-----|----|
+| 1 | `id` | int unsigned |  | undefined | ✓ |  |  | ✓ |
+| 2 | `name` | varchar(255) | ✓ | undefined |  |  |  |  |
+| 3 | `batch` | int | ✓ | undefined |  |  |  |  |
+| 4 | `migration_time` | timestamp | ✓ | undefined |  |  |  |  |
+
+**NOTA:** Tabla del sistema de migraciones de Knex.js. Registra el histórico de migraciones ejecutadas.
+
+**Migraciones Registradas (14):**
+1. `001_create_roles.ts`
+2. `002_create_usuarios.ts`
+3. `003_create_clientes.ts`
+4. `004_create_divisas.ts`
+5. `005_create_perfiles.ts`
+6. `006_create_seniorities.ts`
+7. `007_create_costos_por_hora.ts`
+8. `008_create_proyectos.ts`
+9. `009_create_sprints.ts`
+10. `010_create_actividades.ts`
+11. `011_create_talents.ts`
+12. `012_create_actividades_integrantes.ts`
+13. `013_create_tareas.ts`
+14. `014_create_eliminados.ts`
 
 ---
 
@@ -580,4 +622,19 @@
 | usuarios_creado_por_foreign | `creado_por` |  |
 
 ---
+
+## 📝 Historial de Cambios
+
+| Fecha | Versión | Cambio | Tablas Afectadas |
+|-------|---------|--------|------------------|
+| 10/Mar/2026 | 3.0 | Columna `activo` en asignaciones | `actividades_integrantes` |
+| 10/Mar/2026 | 3.0 | Soft delete completo (9 entidades) | `eliminados` (item_tipo: 'asignacion') |
+| 10/Mar/2026 | 3.0 | Documentación de tablas de migración | `migrations`, `migrations_lock` |
+| 9/Mar/2026 | 2.0 | Arquitectura de autenticación unificada | `usuarios`, `clientes`, `talents` |
+
+---
+
+**Documento generado automáticamente**  
+**Última actualización:** 10 de Marzo, 2026  
+**Responsable:** Equipo de Desarrollo
 

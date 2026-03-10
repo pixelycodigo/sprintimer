@@ -3,7 +3,13 @@ import { Eliminado, EliminadoCreate } from '../models/Eliminado.js';
 
 export class EliminadoService {
   async findAll(): Promise<Eliminado[]> {
-    return eliminadoRepository.findAll();
+    const eliminados = await eliminadoRepository.findAll();
+    
+    // Calcular días restantes para cada eliminado
+    return eliminados.map(eliminado => ({
+      ...eliminado,
+      dias_restantes: this.calcularDiasRestantes(eliminado.fecha_borrado_permanente),
+    }));
   }
 
   async findById(id: number): Promise<Eliminado | null> {
@@ -13,11 +19,28 @@ export class EliminadoService {
       throw new Error('Elemento eliminado no encontrado');
     }
 
-    return eliminado;
+    return {
+      ...eliminado,
+      dias_restantes: this.calcularDiasRestantes(eliminado.fecha_borrado_permanente),
+    };
   }
 
   async findByTipo(itemTipo: string): Promise<Eliminado[]> {
-    return eliminadoRepository.findByTipo(itemTipo);
+    const eliminados = await eliminadoRepository.findByTipo(itemTipo);
+    
+    // Calcular días restantes para cada eliminado
+    return eliminados.map(eliminado => ({
+      ...eliminado,
+      dias_restantes: this.calcularDiasRestantes(eliminado.fecha_borrado_permanente),
+    }));
+  }
+
+  private calcularDiasRestantes(fechaBorrado: Date | string): number {
+    const hoy = new Date();
+    const fechaBorradoPermanente = new Date(fechaBorrado);
+    const diferenciaTiempo = fechaBorradoPermanente.getTime() - hoy.getTime();
+    const diasRestantes = Math.ceil(diferenciaTiempo / (1000 * 3600 * 24));
+    return Math.max(0, diasRestantes);
   }
 
   async create(data: EliminadoCreate): Promise<Eliminado> {
@@ -28,7 +51,10 @@ export class EliminadoService {
       throw new Error('Error al registrar el elemento eliminado');
     }
 
-    return eliminado;
+    return {
+      ...eliminado,
+      dias_restantes: this.calcularDiasRestantes(eliminado.fecha_borrado_permanente),
+    };
   }
 
   async delete(id: number): Promise<void> {

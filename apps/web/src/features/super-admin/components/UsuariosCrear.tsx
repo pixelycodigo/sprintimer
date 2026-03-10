@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { usuariosService } from '../../../services/usuarios.service';
 import { Button } from '@ui/Button';
@@ -21,6 +21,7 @@ interface CreateUsuarioForm {
 
 export default function SuperAdminUsuariosCrear() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState<CreateUsuarioForm>({
@@ -42,15 +43,50 @@ export default function SuperAdminUsuariosCrear() {
         rol_id: data.rol_id,
       }),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: usuariosService.queryKeys.all() });
       toast.success('Usuario creado exitosamente');
       navigate('/super-admin/usuarios');
     },
     onError: (error: any) => {
-      // Mostrar mensaje específico del error
+      // Mostrar mensaje específico del error de validación
       if (error.response?.data?.issues) {
         const issues = error.response.data.issues;
-        const messages = issues.map((issue: any) => issue.message).join('\n');
-        toast.error(messages);
+        
+        // Agrupar errores por campo para mostrar mensaje claro
+        const passwordErrors = issues
+          .filter((issue: any) => issue.field === 'password')
+          .map((issue: any) => issue.message);
+        
+        const confirmErrors = issues
+          .filter((issue: any) => issue.field === 'password_confirm')
+          .map((issue: any) => issue.message);
+        
+        const otherErrors = issues
+          .filter((issue: any) => !['password', 'password_confirm'].includes(issue.field))
+          .map((issue: any) => issue.message);
+        
+        // Mostrar errores de contraseña primero (los más importantes)
+        if (passwordErrors.length > 0) {
+          toast.error(
+            <div className="space-y-2">
+              <p className="font-semibold">❌ Error en la contraseña:</p>
+              <ul className="list-disc list-inside text-sm space-y-1">
+                {passwordErrors.map((msg: string, i: number) => (
+                  <li key={i}>{msg}</li>
+                ))}
+              </ul>
+            </div>,
+            { duration: 8000 }
+          );
+        }
+        
+        if (confirmErrors.length > 0) {
+          toast.error(confirmErrors.join('\n'), { duration: 5000 });
+        }
+        
+        if (otherErrors.length > 0) {
+          toast.error(otherErrors.join('\n'), { duration: 5000 });
+        }
       } else {
         toast.error(error.message || 'Error al crear usuario');
       }
@@ -59,12 +95,62 @@ export default function SuperAdminUsuariosCrear() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (formData.password.length < 8) {
-      toast.error('La contraseña debe tener al menos 8 caracteres');
+    
+    // Validar campos requeridos antes de enviar
+    const errors: string[] = [];
+    
+    if (!formData.nombre || formData.nombre.trim() === '') {
+      errors.push('El nombre completo es requerido');
+    }
+    if (!formData.usuario || formData.usuario.trim() === '') {
+      errors.push('El usuario es requerido');
+    } else if (!/^[a-zA-Z0-9_]+$/.test(formData.usuario)) {
+      errors.push('El usuario solo puede contener letras, números y guiones bajos');
+    }
+    if (!formData.email || formData.email.trim() === '') {
+      errors.push('El email es requerido');
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      errors.push('El email no es válido');
+    }
+    if (!formData.password || formData.password.length === 0) {
+      errors.push('La contraseña es requerida');
+    } else {
+      // Validar requisitos de contraseña
+      if (formData.password.length < 8) {
+        errors.push('La contraseña debe tener al menos 8 caracteres');
+      }
+      if (!/[A-Z]/.test(formData.password)) {
+        errors.push('La contraseña debe contener al menos una letra mayúscula (A-Z)');
+      }
+      if (!/[a-z]/.test(formData.password)) {
+        errors.push('La contraseña debe contener al menos una letra minúscula (a-z)');
+      }
+      if (!/[0-9]/.test(formData.password)) {
+        errors.push('La contraseña debe contener al menos un número (0-9)');
+      }
+    }
+    if (!formData.password_confirm || formData.password_confirm.length === 0) {
+      errors.push('La confirmación de contraseña es requerida');
+    } else if (formData.password !== formData.password_confirm) {
+      errors.push('Las contraseñas no coinciden');
+    }
+    
+    // Si hay errores, mostrar en toast y no enviar
+    if (errors.length > 0) {
+      toast.error(
+        <div className="space-y-2">
+          <p className="font-semibold">❌ Campos requeridos:</p>
+          <ul className="list-disc list-inside text-sm space-y-1">
+            {errors.map((msg: string, i: number) => (
+              <li key={i}>{msg}</li>
+            ))}
+          </ul>
+        </div>,
+        { duration: 10000 }
+      );
       return;
     }
-
+    
     createMutation.mutate({
       nombre: formData.nombre,
       usuario: formData.usuario,

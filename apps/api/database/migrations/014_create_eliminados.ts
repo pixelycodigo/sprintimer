@@ -13,6 +13,7 @@ export async function up(knex: Knex): Promise<void> {
       'seniority',
       'divisa',
       'costo_por_hora',
+      'asignacion',
       'sprint',
       'tarea'
     ]).notNullable();

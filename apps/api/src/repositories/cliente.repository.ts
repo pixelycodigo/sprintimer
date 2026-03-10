@@ -13,7 +13,14 @@ export class ClienteRepository {
   }
 
   async findAll(): Promise<Cliente[]> {
+    // Retornar todos los clientes EXCEPTO los que están en la tabla 'eliminados'
+    // Un cliente puede estar activo o inactivo, pero si está en 'eliminados' no debe mostrarse
     const clientes = await db<Cliente>(this.tableName)
+      .whereNotIn('id', function() {
+        this.select('item_id')
+          .from('eliminados')
+          .where('item_tipo', 'cliente');
+      })
       .orderBy('created_at', 'desc');
 
     return clientes;
@@ -27,8 +34,21 @@ export class ClienteRepository {
     return clientes;
   }
 
-  async create(data: ClienteCreate): Promise<number> {
-    const [id] = await db<Cliente>(this.tableName).insert(data);
+  async create(data: any): Promise<number> {
+    // Filtrar campos que no existen en la tabla clientes
+    const cleanData = {
+      nombre_cliente: data.nombre_cliente,
+      cargo: data.cargo ?? null,
+      empresa: data.empresa,
+      email: data.email,
+      celular: data.celular ?? null,
+      telefono: data.telefono ?? null,
+      anexo: data.anexo ?? null,
+      pais: data.pais ?? null,
+      activo: data.activo !== undefined ? data.activo : true,
+    };
+    
+    const [id] = await db<Cliente>(this.tableName).insert(cleanData);
     return id;
   }
 

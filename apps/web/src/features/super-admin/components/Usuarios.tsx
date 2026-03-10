@@ -19,14 +19,14 @@ export default function SuperAdminUsuarios() {
   const [searchTerm, setSearchTerm] = useState('');
 
   const { data: usuarios, isLoading } = useQuery({
-    queryKey: ['usuarios'],
+    queryKey: usuariosService.queryKeys.list(),
     queryFn: usuariosService.findAll,
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => usuariosService.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['usuarios'] });
+      queryClient.invalidateQueries({ queryKey: usuariosService.queryKeys.all() });
       toast.success('Usuario eliminado exitosamente');
     },
     onError: (error: Error) => {

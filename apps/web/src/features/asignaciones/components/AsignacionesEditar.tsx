@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Users } from 'lucide-react';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { asignacionesService } from '../../../services/asignaciones.service';
 import { actividadesService } from '../../../services/actividades.service';
@@ -17,7 +17,8 @@ import type { UpdateAsignacionInput } from '@shared';
 export default function AdminAsignacionesEditar() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  
+  const queryClient = useQueryClient();
+
   const [formData, setFormData] = useState<UpdateAsignacionInput>({
     actividad_id: undefined,
     talent_id: undefined,
@@ -46,6 +47,7 @@ export default function AdminAsignacionesEditar() {
   const updateMutation = useMutation({
     mutationFn: (data: UpdateAsignacionInput) => asignacionesService.update(Number(id), data),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['asignaciones'] });
       toast.success('Asignación actualizada exitosamente');
       navigate('/admin/asignaciones');
     },

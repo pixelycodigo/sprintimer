@@ -1,5 +1,5 @@
 import { db } from '../config/database.js';
-import { Asignacion, AsignacionCreate, AsignacionWithDetails } from '../models/Asignacion.js';
+import { Asignacion, AsignacionCreate, AsignacionUpdate, AsignacionWithDetails } from '../models/Asignacion.js';
 
 export class AsignacionRepository {
   private tableName = 'actividades_integrantes';
@@ -25,6 +25,7 @@ export class AsignacionRepository {
   }
 
   async findAll(): Promise<AsignacionWithDetails[]> {
+    // Retornar todas las asignaciones EXCEPTO las que están en la tabla 'eliminados'
     const asignaciones = await db<AsignacionWithDetails>(this.tableName)
       .leftJoin('actividades', 'actividades_integrantes.actividad_id', 'actividades.id')
       .leftJoin('talents', 'actividades_integrantes.talent_id', 'talents.id')
@@ -38,6 +39,11 @@ export class AsignacionRepository {
         'perfiles.nombre as perfil_nombre',
         'seniorities.nombre as seniority_nombre'
       )
+      .whereNotIn('actividades_integrantes.id', function() {
+        this.select('item_id')
+          .from('eliminados')
+          .where('item_tipo', 'asignacion');
+      })
       .orderBy('actividades_integrantes.fecha_asignacion', 'desc');
 
     return asignaciones;
@@ -68,16 +74,38 @@ export class AsignacionRepository {
   }
 
   async create(data: AsignacionCreate): Promise<number> {
-    const [id] = await db<Asignacion>(this.tableName).insert(data);
+    const [id] = await db<Asignacion>(this.tableName).insert({
+      ...data,
+      activo: data.activo !== undefined ? data.activo : true,
+    });
     return id;
   }
 
-  async delete(id: number): Promise<boolean> {
-    const deleted = await db<Asignacion>(this.tableName)
-      .where('id', id)
-      .del();
+  async update(id: number, data: AsignacionUpdate): Promise<boolean> {
+    const updateData: any = {};
 
-    return deleted > 0;
+    Object.keys(data).forEach((key) => {
+      const value = (data as any)[key];
+      if (value !== undefined && value !== null && value !== '') {
+        updateData[key] = value;
+      }
+    });
+
+    const updated = await db<Asignacion>(this.tableName)
+      .where('id', id)
+      .update(updateData);
+
+    return updated > 0;
+  }
+
+  async softDelete(id: number): Promise<boolean> {
+    const updated = await db<Asignacion>(this.tableName)
+      .where('id', id)
+      .update({
+        activo: false,
+      });
+
+    return updated > 0;
   }
 
   async deleteByActividadAndTalent(actividadId: number, talentId: number): Promise<boolean> {
@@ -100,7 +128,7 @@ export class AsignacionRepository {
       .whereIn('talent_id', talentIds)
       .del();
 
-    return deleted > 0;
+    return deleted !== undefined && deleted >= 0;
   }
 }
 

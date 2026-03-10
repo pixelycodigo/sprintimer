@@ -1,14 +1,430 @@
 # 📊 Resumen de Avance - SprinTask SaaS
 
-**Fecha de última actualización:** 9 de Marzo, 2026 (20:00)
-**Estado del Proyecto:** ✅ Build Optimizado - ✅ Charts con Variables CSS - ✅ Badges Reutilizables - ✅ DataTable Mejorada - ✅ Corrección de Bugs
-**Próximo Hito:** Tests E2E + Limpieza de TypeScript Warnings
+**Fecha de última actualización:** 10 de Marzo, 2026 (Tareas pendientes actualizadas)
+**Estado del Proyecto:** ✅ Refresh Token Automático - ✅ Soft Delete Funcional (9/9 entidades) - ✅ Lógica de Comportamiento Documentada y Optimizada - ✅ Logging Completo - ✅ Validación UX Mejorada - ✅ Query Keys Centralizados - ✅ Tests Automatizados - ✅ Migración de Base de Datos Ejecutada
+**Próximo Hito:** Tests E2E + Documentación de API + Deuda Técnica de Gráficos
 
 ---
 
 ## 🎯 Resumen Ejecutivo
 
-**Aplicación corriendo correctamente en localhost** - Frontend y backend configurados para desarrollo local.
+**Aplicación corriendo correctamente en localhost** - Sistema de autenticación mejorado con refresh token automático, soft delete implementado en 9 entidades (última: Asignaciones), lógica de comportamiento documentada (72% más concisa), logging implementado, validaciones de contraseña mejoradas y base de datos migrada exitosamente.
+
+---
+
+## 🆕 NUEVO - 10 de Marzo, 2026 (Asignaciones)
+
+### 🗂️ Asignaciones con Soft Delete Completo (10 de Marzo, nuevo)
+
+**Problema:** La página de Asignaciones no tenía soft delete, no se podía editar, y no seguía el patrón de las demás entidades.
+
+**Solución Implementada:**
+- ✅ Agregado campo `activo` en modelo y base de datos
+- ✅ `findAll()` usa `whereNotIn` con tabla `eliminados`
+- ✅ Endpoint PUT `/:id` para editar asignaciones
+- ✅ `softDelete()` registra en tabla `eliminados` por 30 días
+- ✅ Frontend con invalidación de caché al editar/eliminar
+- ✅ Diálogo de eliminación actualizado (papelera de reciclaje)
+
+**Archivos Modificados:**
+| Archivo | Cambio |
+|---------|--------|
+| `apps/api/src/models/Asignacion.ts` | Agregado `activo`, `proyecto_nombre` |
+| `apps/api/src/repositories/asignacion.repository.ts` | `findAll()` con `whereNotIn`, `update()`, `softDelete()` |
+| `apps/api/src/services/asignacion.service.ts` | `update()`, `softDelete()` con eliminados |
+| `apps/api/src/controllers/asignacion.controller.ts` | `update()`, `delete()` usa softDelete |
+| `apps/api/src/routes/asignaciones.routes.ts` | PUT `/:id` agregado |
+| `apps/web/src/features/asignaciones/components/Asignaciones.tsx` | `isSoftDelete={true}`, diálogo actualizado |
+| `apps/web/src/features/asignaciones/components/AsignacionesEditar.tsx` | `invalidateQueries()` al actualizar |
+
+**Script de Migración Creado:**
+- ✅ `apps/api/scripts/add-activo-to-asignaciones.ts`
+- ✅ Verifica si la columna ya existe
+- ✅ Agrega columna `activo` con DEFAULT TRUE
+- ✅ Muestra estructura de la tabla después de migrar
+- ✅ **Ejecutado exitosamente:** Columna agregada a la base de datos
+
+**Cómo Ejecutar (si es necesario en el futuro):**
+```bash
+cd apps/api
+npx tsx scripts/add-activo-to-asignaciones.ts
+```
+
+**Historia de Usuario:** HU-014 agregada a `docs/plans/logicaComportamiento.md`
+
+**Entidades con Soft Delete Completo:** 9/9
+- ✅ Clientes, Talents, Proyectos, Actividades
+- ✅ Perfiles, Seniorities, Divisas, Costo por Hora
+- ✅ **Asignaciones** (nuevo)
+
+---
+
+### 📋 Lógica de Comportamiento Documentada y Optimizada (10 de Marzo, optimizado)
+
+**Documento:** `docs/plans/logicaComportamiento.md`
+
+**Optimización Realizada:**
+- ✅ Reducido de 1,263 líneas → ~350 líneas (-72%)
+- ✅ Eliminadas historias redundantes (HU-007 a HU-013 consolidadas)
+- ✅ Patrones de implementación consolidados en una sección técnica
+- ✅ Tablas resumen para consulta rápida
+
+**Propósito:** Documentar el comportamiento esperado de las entidades respecto a su estado (activo/inactivo) y eliminación (soft delete).
+
+**Estados de una Entidad:**
+
+| Estado | Campo `activo` | Tabla `eliminados` | ¿Visible en lista? | ¿Puede restaurarse? |
+|--------|----------------|-------------------|-------------------|---------------------|
+| **Activo** | `true` | ❌ No | ✅ Sí | N/A |
+| **Inactivo** | `false` | ❌ No | ✅ Sí | N/A |
+| **Eliminado** | `false` | ✅ Sí | ❌ No | ✅ Sí (30 días) |
+
+**Ciclo de Vida:**
+
+```
+CREAR (activo/inactivo)
+   ↓
+EDITAR (cambiar estado)
+   ↓
+ELIMINAR (soft delete) → eliminados tabla
+   ↓
+   ├─→ RESTAURAR → vuelve a lista (activo: true)
+   └─→ ELIMINAR PERM. → borrado definitivo
+```
+
+**Comportamiento por Acción:**
+
+| Acción | Comportamiento | Estado |
+|--------|----------------|--------|
+| **Crear activo** | Se crea con `activo: true`, se muestra en lista | ✅ |
+| **Crear inactivo** | Se crea con `activo: false`, se muestra en lista | ✅ |
+| **Editar (cambiar estado)** | Actualiza `activo: true/false`, se refleja en lista | ✅ |
+| **Eliminar** | `activo: false` + registro en `eliminados`, desaparece de lista | ✅ |
+| **Restaurar** | `activo: true` + elimina de `eliminados`, aparece en lista | ✅ |
+| **Eliminar perm.** | DELETE físico de ambas tablas, sin retorno | ✅ |
+
+**Query Patrón (todos los repositorios):**
+
+```typescript
+async findAll(): Promise<Entidad[]> {
+  // Retornar todos EXCEPTO los que están en 'eliminados'
+  return db<Entidad>(this.tableName)
+    .whereNotIn('id', function() {
+      this.select('item_id')
+        .from('eliminados')
+        .where('item_tipo', 'entidad');
+    })
+    .orderBy('created_at', 'desc');
+}
+```
+
+**Entidades Aplicables:**
+- ✅ Clientes, Talents, Proyectos, Actividades
+- ✅ Perfiles, Seniorities, Divisas, Costo por Hora
+
+**Historias de Usuario:**
+- **HU-001 a HU-006:** Clientes (comportamiento base, completas)
+- **HU-007 a HU-013:** Otras 7 entidades (referenciadas, comportamiento común)
+
+**Archivos:**
+- ✅ `docs/plans/logicaComportamiento.md` - Optimizado (350 líneas, -72%)
+
+---
+
+### 🔐 Refresh Token Automático (10 de Marzo, actualizado)
+
+**Problema:** Los usuarios tenían que iniciar sesión nuevamente cada 15 minutos cuando expiraba el token.
+
+**Solución Implementada:**
+- ✅ Sistema de refresh token con duración de 7 días
+- ✅ Interceptor en frontend que detecta 401 y renueva token automáticamente
+- ✅ Cola de peticiones para evitar múltiples refresh simultáneos
+- ✅ Persistencia de tokens en localStorage
+- ✅ Fallback a login si el refresh token también expiró
+
+**Flujo de Funcionamiento:**
+```
+1. Login → token (15min) + refreshToken (7 días)
+2. Token expira → API retorna 401
+3. Interceptor usa refreshToken para pedir nuevo token
+4. Backend retorna nuevos tokens
+5. Petición original se reintenta automáticamente
+6. Usuario continúa sin interrupciones
+```
+
+**Archivos Modificados:**
+| Archivo | Cambio | Estado |
+|---------|--------|--------|
+| `apps/web/src/stores/auth.store.ts` | Agregado `refreshToken` + `updateTokens()` | ✅ |
+| `apps/web/src/services/auth.service.ts` | Método `refreshToken()` agregado | ✅ |
+| `apps/web/src/services/api.ts` | Interceptor con cola de peticiones | ✅ |
+| `apps/web/src/features/auth/components/LoginForm.tsx` | Guarda refreshToken | ✅ |
+| `apps/api/src/utils/token.ts` | Ya existía `generateRefreshToken()` | ✅ |
+| `apps/api/src/controllers/auth.controller.ts` | Ya existía `refreshToken` endpoint | ✅ |
+| `apps/api/src/services/auth.service.ts` | Ya existía lógica de refresh | ✅ |
+
+**Configuración de Tokens:**
+| Token | Duración | Uso |
+|-------|----------|-----|
+| **Access Token** | 15 minutos | Peticiones a la API |
+| **Refresh Token** | 7 días | Renovar access token |
+
+**Variables de Entorno (opcional):**
+```env
+JWT_EXPIRES_IN=15m          # Token de acceso
+JWT_REFRESH_EXPIRES_IN=7d   # Refresh token
+```
+
+**Resultado:**
+- ✅ Usuarios pueden trabajar por **hasta 7 días** sin loguearse nuevamente
+- ✅ Renovación automática y transparente para el usuario
+- ✅ Múltiples peticiones simultáneas manejadas correctamente
+- ✅ Sesión persistente incluso al cerrar el navegador
+
+---
+
+### 🗑️ Soft Delete Corregido y Comportamiento de Entidades (10 de Marzo, actualizado)
+
+**Problema Inicial:** Al eliminar clientes/talents, aparecían como "eliminados exitosamente" pero no desaparecían de la lista.
+
+**Problema Detectado Posteriormente:**
+- `findAll()` filtraba solo por `activo: true` → no mostraba inactivos
+- Usuario no podía ver entidades inactivas en la lista
+
+**Solución Final Implementada:**
+- ✅ `findAll()` usa `whereNotIn` con tabla `eliminados`
+- ✅ Muestra activos e inactivos, excepto eliminados
+- ✅ Restauración desde eliminados pone `activo: true` automáticamente
+- ✅ **9 entidades con soft delete completo** (última: Asignaciones)
+
+**Repositorios Actualizados (9 total):**
+| Repositorio | Query Implementado |
+|-------------|-------------------|
+| `cliente.repository.ts` | `.whereNotIn('id', eliminados.where('item_tipo', 'cliente'))` |
+| `talent.repository.ts` | `.whereNotIn('id', eliminados.where('item_tipo', 'talent'))` |
+| `proyecto.repository.ts` | `.whereNotIn('id', eliminados.where('item_tipo', 'proyecto'))` |
+| `actividad.repository.ts` | `.whereNotIn('id', eliminados.where('item_tipo', 'actividad'))` |
+| `perfil.repository.ts` | `.whereNotIn('id', eliminados.where('item_tipo', 'perfil'))` |
+| `seniority.repository.ts` | `.whereNotIn('id', eliminados.where('item_tipo', 'seniority'))` |
+| `divisa.repository.ts` | `.whereNotIn('id', eliminados.where('item_tipo', 'divisa'))` |
+| `costoPorHora.repository.ts` | `.whereNotIn('id', eliminados.where('item_tipo', 'costo_por_hora'))` |
+| `asignacion.repository.ts` | `.whereNotIn('id', eliminados.where('item_tipo', 'asignacion'))` |
+
+**Archivos Modificados:**
+- ✅ `apps/api/src/repositories/*.repository.ts` (9 archivos con `whereNotIn`)
+- ✅ `apps/api/src/repositories/eliminado.repository.ts` (restore con `activo: true`)
+- ✅ `apps/web/src/features/eliminados/components/Eliminados.tsx` (invalida caché específica)
+
+**Más detalles:** Ver `docs/plans/logicaComportamiento.md` para historias de usuario completas y casos de prueba.
+
+---
+
+### 🔧 Sistema de Logging Completo (10 de Marzo, 00:30)
+
+**Problema:** Errores 500 sin información detallada para diagnóstico.
+
+**Solución Implementada:**
+- ✅ Winston configurado con 3 archivos de log (error.log, http.log, combined.log)
+- ✅ Logs estructurados en JSON con contexto completo
+- ✅ 5 niveles de log: error, warn, info, http, debug
+- ✅ Scripts para consultar logs fácilmente
+- ✅ Documentación completa
+
+**Archivos Creados:**
+| Archivo | Propósito |
+|---------|-----------|
+| `apps/api/src/config/logger.ts` | Configuración de Winston |
+| `apps/api/scripts/view-logs.ts` | Script para consultar logs |
+| `apps/api/docs/LOGS.md` | Documentación de logs |
+| `docs/IMPLEMENTACION-LOGGING.md` | Resumen de implementación |
+| `docs/IMPLEMENTACION-LOGGING-PARTE2.md` | Parte 2 - Todos los controladores |
+
+**Comandos Disponibles:**
+```bash
+cd apps/api
+npm run logs              # Ver logs recientes
+npm run logs:error        # Ver solo errores
+npm run logs:http         # Ver requests HTTP
+npm run logs:tail         # Seguir en tiempo real
+npm run logs:search "txt" # Buscar texto
+```
+
+**Controladores Actualizados (16 total):**
+- ✅ auth.controller.ts
+- ✅ cliente.controller.ts
+- ✅ talent.controller.ts
+- ✅ proyecto.controller.ts
+- ✅ actividad.controller.ts
+- ✅ perfil.controller.ts
+- ✅ seniority.controller.ts
+- ✅ divisa.controller.ts
+- ✅ costoPorHora.controller.ts
+- ✅ asignacion.controller.ts
+- ✅ eliminado.controller.ts
+- ✅ usuarios.controller.ts
+- ✅ dashboard.controller.ts
+- ✅ cliente-dashboard.controller.ts
+- ✅ talent-dashboard.controller.ts
+- ✅ super-admin-dashboard.controller.ts
+
+---
+
+### 🔐 Validación de Contraseñas Mejorada (10 de Marzo, 01:00)
+
+**Problema:** Mensajes de error de contraseña poco claros.
+
+**Solución Implementada:**
+- ✅ Mensajes de error descriptivos y combinados
+- ✅ Validación en frontend ANTES de enviar al backend
+- ✅ Toast con lista de errores específica
+- ✅ Requisitos claros: 8+ chars, mayúscula, minúscula, número
+
+**Validadores Actualizados:**
+| Archivo | Cambio |
+|---------|--------|
+| `apps/api/src/validators/usuarios.validator.ts` | superRefine para mensajes combinados |
+| `apps/api/src/validators/cliente.validator.ts` | Misma validación mejorada |
+| `apps/api/src/validators/talent.validator.ts` | Misma validación mejorada |
+
+**Componentes Frontend Actualizados:**
+| Componente | Validación Agregada |
+|------------|---------------------|
+| `UsuariosCrear.tsx` | Lista de errores de contraseña |
+| `ClientesCrear.tsx` | Lista de errores de contraseña |
+| `TalentsCrear.tsx` | Lista de errores de contraseña |
+
+**Ejemplo de Error UX:**
+```
+❌ Error en la contraseña:
+  • debe tener al menos 8 caracteres
+  • debe contener al menos una letra mayúscula (A-Z)
+  • debe contener al menos una letra minúscula (a-z)
+  • debe contener al menos un número (0-9)
+```
+
+---
+
+### 🏷️ Query Keys Centralizados (10 de Marzo, 01:30)
+
+**Problema:** Query keys como strings sueltos, difícil mantenimiento.
+
+**Solución Implementada:**
+- ✅ Factory de query keys en `utils/queryKeys.ts`
+- ✅ Estructura jerárquica por rol/entidad
+- ✅ Type-safe con TypeScript
+- ✅ Fácil de invalidar caché
+
+**Estructura:**
+```typescript
+queryKeys.usuarios.all()    // ['super-admin', 'usuarios']
+queryKeys.usuarios.list()   // ['super-admin', 'usuarios', 'list']
+queryKeys.usuarios.byId(26) // ['super-admin', 'usuarios', 'byId', 26]
+queryKeys.clientes.all()    // ['admin', 'clientes']
+queryKeys.talents.all()     // ['admin', 'talents']
+```
+
+**Archivos Creados/Modificados:**
+- ✅ `apps/web/src/utils/queryKeys.ts` (nuevo)
+- ✅ `apps/web/src/services/*.service.ts` (exportan queryKeys)
+- ✅ Todos los componentes de CRUD actualizados
+
+---
+
+### 🧪 Tests Automatizados Creados (10 de Marzo, 02:00)
+
+**Script de Test Creado:**
+- ✅ `apps/api/scripts/test-clientes-talents.ts`
+
+**Tests Implementados (6/6 aprobados):**
+```
+✅ crearCliente: PASÓ
+✅ editarCliente: PASÓ
+✅ emailDuplicado: PASÓ (valida error 400)
+✅ crearTalent: PASÓ
+✅ editarTalent: PASÓ
+✅ contraseñaInvalida: PASÓ (valida error 400)
+```
+
+**Cómo Ejecutar:**
+```bash
+cd apps/api
+npx tsx scripts/test-clientes-talents.ts
+```
+
+---
+
+### 🐛 Corrección de Bugs Críticos (10 de Marzo, 02:30)
+
+#### **Bug 1: Error 500 al crear cliente/talent**
+
+**Problema:** Las tablas `clientes` y `talents` tenían columnas obsoletas (`password`, `password_confirm`, `password_hash`, `usuario_id`).
+
+**Solución:**
+- ✅ Script `fix-talents-table.ts` para limpiar tabla
+- ✅ Eliminada columna `password_hash` de `talents`
+- ✅ Eliminada columna `usuario_id` de `talents`
+- ✅ Servicios filtran campos antes de insertar
+
+**Archivos Modificados:**
+- `apps/api/src/services/cliente.service.ts` - Filtra campos
+- `apps/api/src/services/talent.service.ts` - Filtra campos
+- `apps/api/src/repositories/cliente.repository.ts` - Filtra en create()
+- `apps/api/src/middleware/auth.middleware.ts` - Maneja null en verifyToken
+
+#### **Bug 2: Error 401 al crear cliente**
+
+**Problema:** Token expirado o interceptor muy agresivo.
+
+**Solución:**
+- ✅ Interceptor solo cierra sesión si es error de autenticación real
+- ✅ Errores de validación (400) no cierran sesión
+
+**Archivo Modificado:**
+- `apps/web/src/services/api.ts` - Interceptor mejorado
+
+#### **Bug 3: Editar cliente no actualiza tabla**
+
+**Problema:** No se invalidaba la caché de TanStack Query.
+
+**Solución:**
+- ✅ Agregado `queryClient.invalidateQueries()` en onSuccess
+- ✅ Aplica para crear y editar en clientes, talents, usuarios
+
+**Archivos Modificados:**
+- `ClientesCrear.tsx`, `ClientesEditar.tsx`
+- `TalentsCrear.tsx`, `TalentsEditar.tsx`
+- `UsuariosCrear.tsx`, `UsuariosEditar.tsx`
+
+#### **Bug 4: Editar cliente sin campo cambiar contraseña**
+
+**Problema:** La página de editar cliente no tenía campos de contraseña como sí tenía editar talent.
+
+**Solución:**
+- ✅ Agregada sección "Cambiar Contraseña" en ClientesEditar
+- ✅ Campos opcionales (vacíos = no cambiar)
+- ✅ Toggle mostrar/ocultar contraseña
+- ✅ Validación de requisitos
+
+**Archivo Modificado:**
+- `apps/web/src/features/clientes/components/ClientesEditar.tsx`
+
+---
+
+### 📁 Base de Datos Corregida
+
+**Configuración Actualizada:**
+- ✅ Puerto MySQL: `8889` (MAMP) en lugar de `3306`
+- ✅ Archivos `.env` actualizados
+
+**Limpieza Realizada:**
+- ✅ Tabla `talents` sin columnas `password_hash` y `usuario_id`
+- ✅ Arquitectura de autenticación unificada consistente
+
+**Scripts Creados:**
+- ✅ `apps/api/scripts/fix-talents-table.ts`
+
+---
+
 
 ### 🎨 Chart UI con Variables CSS (NUEVO - 9 de Marzo, 18:00)
 
@@ -255,12 +671,27 @@ Todos los usuarios se autentican contra la tabla `usuarios` usando `email` + `pa
 
 ### 📝 Tareas Pendientes - Autenticación
 
-| # | Tarea | Descripción | Prioridad |
-|---|-------|-------------|-----------|
-| 1 | **Generar nuevo seed** | Actualizar script SQL con la arquitectura actualizada (sin `usuario_id` ni `password_hash` en `talents`) | 🔴 Alta |
-| 2 | **Actualizar diagrama ERD** | Si usas herramientas visuales (dbdiagram.io, Draw.io, etc.), actualizar para reflejar que NO hay FK entre `usuarios` y `clientes`/`talents` | 🟡 Media |
-| 3 | **Documentar API endpoints** | Crear documentación de endpoints de autenticación (`/api/auth/login`, `/api/auth/registro`, etc.) con ejemplos de request/response | 🟡 Media |
-| 4 | **Agregar tests de login/registro** | Tests unitarios y de integración para el flujo de autenticación (crear usuario, login, redirección por rol) | 🟢 Baja |
+| # | Tarea | Descripción | Prioridad | Estado |
+|---|-------|-------------|-----------|--------|
+| 1 | ~~**Generar nuevo seed**~~ | Actualizar script SQL con la arquitectura actualizada | 🔴 Alta | ✅ **COMPLETADO** |
+| 2 | ~~**Actualizar diagrama ERD**~~ | Actualizar para reflejar que NO hay FK entre `usuarios` y `clientes`/`talents` | 🟡 Media | ✅ **COMPLETADO** (modelo_base_datos_auto.md) |
+| 3 | **Documentar API endpoints** | Crear documentación de endpoints con ejemplos request/response | 🟡 Media | ⏳ Pendiente |
+| 4 | **Agregar tests de login/registro** | Tests unitarios y de integración para el flujo de autenticación | 🟢 Baja | ⏳ Pendiente |
+
+---
+
+### 📋 Tareas Pendientes - General (Actualizado 10 de Marzo)
+
+| # | Tarea | Descripción | Prioridad | Estado |
+|---|-------|-------------|-----------|--------|
+| 1 | ~~**Soft Delete en Asignaciones**~~ | Implementar soft delete completo en asignaciones | 🔴 Alta | ✅ **COMPLETADO** |
+| 2 | ~~**Columna activo en asignaciones**~~ | Agregar columna `activo` a `actividades_integrantes` | 🔴 Alta | ✅ **COMPLETADO** (migración ejecutada) |
+| 3 | ~~**Lógica de comportamiento**~~ | Documentar HU + soft delete para todas las entidades | 🟡 Media | ✅ **COMPLETADO** (logicaComportamiento.md) |
+| 4 | **Tests E2E** | Configurar Playwright y crear tests para flujos principales | 🔴 Alta | ⏳ Pendiente |
+| 5 | **Documentación de API** | Crear documentación OpenAPI/Swagger de todos los endpoints | 🟡 Media | ⏳ Pendiente |
+| 6 | **Deuda técnica - Gráficos** | Implementar solución para cambio de tema en gráficos | 🟡 Media | ⏳ Pendiente (ver deuda-tecnica-charts-theme.md) |
+| 7 | **Tests unitarios** | Agregar tests para componentes UI y servicios | 🟢 Baja | ⏳ Pendiente |
+| 8 | **Exportar datos** | Agregar exportación a CSV/PDF en tablas | 🟢 Baja | ⏳ Pendiente |
 
 ---
 
@@ -643,7 +1074,7 @@ El build funciona correctamente, pero existen warnings de TypeScript por limpiar
 | **Servicios (Web)** | 16 | `apps/web/src/services/` | ✅ |
 | **Repositorios** | 12 | `apps/api/src/repositories/` | ✅ |
 | **Modelos** | 12 | `apps/api/src/models/` | ✅ Actualizados |
-| **Datos Simulados** | 224 registros | `database/seed_data.sql` | ✅ Completado |
+| **Datos Simulados** | 224 registros | `docs/plans/seed-data-2026-03-07.sql` | ✅ Completado |
 | **Migraciones** | 14 | `apps/api/database/migrations/` | ✅ Actualizadas |
 | **Datos en BD** | 58 registros | MySQL local | ✅ Verificados |
 | **Variables CSS** | 14 colores + axis + border | `apps/web/src/index.css` | ✅ Nuevo |
@@ -751,26 +1182,67 @@ mysql --socket=/Applications/MAMP/tmp/mysql/mysql.sock -u root -proot sprintask 
 
 ---
 
-## 🔗 Próximos Pasos
+## 🔗 Próximos Pasos (Actualizado 10 de Marzo)
 
-### Tests E2E (Pendiente Principal)
-1. Configurar Playwright
-2. Crear tests para auth (login, registro, recuperar contraseña)
-3. Crear tests para CRUDs de admin
-4. Crear tests para dashboards
+### 🔴 Prioridad Alta
 
-### Datos de Prueba (✅ COMPLETADO)
-- ✅ Script SQL de seed creado y documentado
-- ✅ 224 registros insertados
-- ✅ 28 usuarios con credenciales (4 clientes + 20 talents + 2 admin + 2 superadmin)
-- ✅ Datos realistas y coherentes con reglas de negocio
+#### Tests E2E
+1. Configurar Playwright en el proyecto
+2. Crear tests para autenticación:
+   - Login exitoso
+   - Login fallido (credenciales inválidas)
+   - Registro de usuario
+   - Recuperación de contraseña
+3. Crear tests para CRUDs de administrador:
+   - ABM de clientes
+   - ABM de talents
+   - ABM de proyectos
+   - ABM de actividades
+4. Crear tests para dashboards:
+   - Carga de datos
+   - Filtrado por fecha
+   - Exportación de datos
 
-### Mejoras Opcionales
-1. Agregar tests unitarios para componentes UI
-2. Implementar refresh token
-3. Agregar exportación a CSV/PDF
-4. Implementar notificaciones push
-5. Completar registro en tabla `eliminados` para soft delete
+### 🟡 Prioridad Media
+
+#### Documentación de API
+- [ ] Configurar Swagger/OpenAPI
+- [ ] Documentar endpoints de autenticación
+- [ ] Documentar endpoints de cada entidad
+- [ ] Agregar ejemplos de request/response
+- [ ] Publicar documentación en /api-docs
+
+#### Deuda Técnica - Gráficos
+- [ ] Implementar solución para cambio de tema en gráficos de barras y pie
+- [ ] Ver soluciones en `docs/plans/deuda-tecnica-charts-theme.md`
+- [ ] Opción recomendada: MutationObserver para detectar cambios de tema
+
+### 🟢 Prioridad Baja
+
+#### Mejoras Opcionales
+- [ ] Agregar tests unitarios para componentes UI
+- [ ] Agregar exportación a CSV/PDF en todas las tablas
+- [ ] Implementar notificaciones push
+- [ ] Optimizar imágenes del proyecto
+- [ ] Agregar lazy loading a rutas pesadas
+
+---
+
+## ✅ Logros Completados - 10 de Marzo
+
+### Completado Hoy
+- ✅ Soft delete en asignaciones (última entidad pendiente)
+- ✅ Columna `activo` en `actividades_integrantes`
+- ✅ Migración ejecutada exitosamente
+- ✅ HU-014 agregada a logicaComportamiento.md
+- ✅ 9/9 entidades con soft delete completo
+
+### Completado Esta Semana
+- ✅ Refresh token automático (7 días)
+- ✅ Lógica de comportamiento documentada (350 líneas, -72%)
+- ✅ Archivos SQL obsoletos eliminados (5 archivos)
+- ✅ Documentación optimizada (ARQUITECTURA-RESUMEN.md)
+- ✅ estructura_proyecto.md actualizado
 
 ---
 
@@ -783,7 +1255,6 @@ mysql --socket=/Applications/MAMP/tmp/mysql/mysql.sock -u root -proot sprintask 
 | `docs/RESUMEN-DE-AVANCE.md` | Este archivo - resumen diario | ✅ Auto |
 | `docs/plans/modelo_base_datos_auto.md` | **Modelo de BD principal** | ✅ Automática |
 | `docs/plans/modelo_base_datos_info.json` | Datos BD para herramientas | ✅ Automática |
-| `docs/plans/modelo_base_datos_schema.sql` | Backup SQL de la BD | ✅ Automática |
 | `docs/plans/2026-03-07-seed-datos-simulados.md` | **Documentación de seed de datos** | ✅ Manual |
 | `docs/plans/seed-data-2026-03-07.sql` | **Script SQL versionado** (224 registros) | ✅ Manual |
 | `docs/plans/deuda-tecnica-charts-theme.md` | **Deuda técnica - Gráficos** | ✅ Nuevo |

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link, useParams } from 'react-router-dom';
 import { ArrowLeft, User, GraduationCap, DollarSign } from 'lucide-react';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { talentsService } from '../../../services/talents.service';
 import { perfilesService } from '../../../services/perfiles.service';
@@ -19,6 +19,7 @@ import type { UpdateTalentInput } from '@shared';
 export default function AdminTalentsEditar() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [showPassword, setShowPassword] = useState(false);
 
   const [formData, setFormData] = useState<UpdateTalentInput>({
@@ -38,7 +39,7 @@ export default function AdminTalentsEditar() {
 
   // Fetch talent
   const { data: talent, isLoading: isLoadingTalent } = useQuery({
-    queryKey: ['talent', id],
+    queryKey: talentsService.queryKeys.byId(Number(id)),
     queryFn: () => talentsService.findById(Number(id)),
     enabled: !!id,
   });
@@ -59,6 +60,8 @@ export default function AdminTalentsEditar() {
   const updateMutation = useMutation({
     mutationFn: (data: UpdateTalentInput) => talentsService.update(Number(id), data),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: talentsService.queryKeys.all() });
+      queryClient.invalidateQueries({ queryKey: talentsService.queryKeys.byId(Number(id)) });
       toast.success('Talent actualizado exitosamente');
       navigate('/admin/talents');
     },
@@ -85,17 +88,55 @@ export default function AdminTalentsEditar() {
         email: talent.email,
         password: '',
         password_confirm: '',
-        costo_hora_fijo: talent.costo_hora_fijo || undefined,
-        costo_hora_variable_min: talent.costo_hora_variable_min || undefined,
-        costo_hora_variable_max: talent.costo_hora_variable_max || undefined,
-        activo: talent.activo,
+        costo_hora_fijo: talent.costo_hora_fijo ?? undefined,
+        costo_hora_variable_min: talent.costo_hora_variable_min ?? undefined,
+        costo_hora_variable_max: talent.costo_hora_variable_max ?? undefined,
+        activo: Boolean(talent.activo),  // Convertir a booleano
       });
     }
   }, [talent]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    updateMutation.mutate(formData);
+
+    // Validar campos requeridos
+    if (!formData.perfil_id || formData.perfil_id === 0) {
+      toast.error('El perfil es requerido');
+      return;
+    }
+    if (!formData.seniority_id || formData.seniority_id === 0) {
+      toast.error('El seniority es requerido');
+      return;
+    }
+
+    // Solo incluir password si el usuario lo completó
+    const submitData: any = {
+      nombre_completo: formData.nombre_completo,
+      apellido: formData.apellido,
+      email: formData.email,
+      perfil_id: Number(formData.perfil_id),
+      seniority_id: Number(formData.seniority_id),
+      activo: formData.activo,
+    };
+
+    // Convertir campos numéricos (solo si tienen valor)
+    if (formData.costo_hora_fijo !== undefined && formData.costo_hora_fijo !== null) {
+      submitData.costo_hora_fijo = Number(formData.costo_hora_fijo);
+    }
+    if (formData.costo_hora_variable_min !== undefined && formData.costo_hora_variable_min !== null) {
+      submitData.costo_hora_variable_min = Number(formData.costo_hora_variable_min);
+    }
+    if (formData.costo_hora_variable_max !== undefined && formData.costo_hora_variable_max !== null) {
+      submitData.costo_hora_variable_max = Number(formData.costo_hora_variable_max);
+    }
+
+    // Solo agregar password si fue modificado
+    if (formData.password && formData.password.length > 0) {
+      submitData.password = formData.password;
+      submitData.password_confirm = formData.password_confirm;
+    }
+
+    updateMutation.mutate(submitData);
   };
 
   if (isLoadingTalent) {

@@ -11,8 +11,9 @@ router.use(adminMiddleware);
 
 router.get('/', asignacionController.findAll);
 router.post('/', asignacionController.create);
+router.put('/:id', asignacionController.update);
 router.post('/bulk', asignacionController.createBulk);
-router.delete('/bulk', asignacionController.deleteBulk);
+router.post('/bulk', asignacionController.deleteBulk);
 router.get('/:id', asignacionController.findById);
 router.delete('/:id', asignacionController.delete);
 

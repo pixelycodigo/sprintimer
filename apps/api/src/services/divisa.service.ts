@@ -10,7 +10,7 @@ export class DivisaService {
     return divisaRepository.findAllActivos();
   }
 
-  async findById(id: number): Promise<Divisa | null> {
+  async findById(id: number): Promise<Divisa> {
     const divisa = await divisaRepository.findById(id);
 
     if (!divisa) {

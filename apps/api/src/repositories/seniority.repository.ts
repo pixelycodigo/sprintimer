@@ -13,7 +13,13 @@ export class SeniorityRepository {
   }
 
   async findAll(): Promise<Seniority[]> {
+    // Retornar todos los seniorities EXCEPTO los que están en la tabla 'eliminados'
     const seniorities = await db<Seniority>(this.tableName)
+      .whereNotIn('id', function() {
+        this.select('item_id')
+          .from('eliminados')
+          .where('item_tipo', 'seniority');
+      })
       .orderBy('nivel_orden', 'asc');
 
     return seniorities;
