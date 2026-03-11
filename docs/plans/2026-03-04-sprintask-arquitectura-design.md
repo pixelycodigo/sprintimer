@@ -509,17 +509,8 @@ Administrador:
 ## Apéndice A: Scripts de Inicialización
 
 ```bash
-# Crear base de datos
-mysql -u root < database/create_database.sql
-
 # Instalar dependencias del workspace
 npm install
-
-# Ejecutar migraciones
-cd apps/api && npm run migrate
-
-# Ejecutar seeds
-npm run seed
 
 # Iniciar desarrollo
 npm run dev
@@ -571,9 +562,6 @@ npm run test:e2e         # Tests E2E (pendiente)
 ```bash
 npm run dev              # Desarrollo con tsx
 npm run build            # Compilar
-npm run migrate          # Ejecutar migraciones
-npm run seed             # Ejecutar seeds
-npm run db:schema        # Exportar esquema de BD
 ```
 
 ### Frontend (apps/web)

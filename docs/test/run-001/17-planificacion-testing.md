@@ -279,6 +279,7 @@ curl http://localhost:5173
 # Verificar usuarios de prueba
 cd apps/api && npx tsx scripts/check-admin-users.ts
 ```
+```
 
 ---
 

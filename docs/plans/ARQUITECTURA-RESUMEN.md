@@ -258,13 +258,10 @@ sprintask/
 │   └── shared/           # Tipos compartidos
 │
 ├── database/
-│   └── create_database.sql
-│
 └── docs/
     ├── plans/
     │   ├── logicaComportamiento.md    # HU + soft delete
-    │   ├── modelo_base_datos_auto.md  # Modelo BD
-    │   └── seed-data-2026-03-07.sql   # Datos de prueba
+    │   └── modelo_base_datos_auto.md  # Modelo BD
     └── RESUMEN-DE-AVANCE.md           # Historial diario
 ```
 
@@ -287,8 +284,6 @@ npm run typecheck        # Verificar tipos
 ```bash
 npm run dev              # Desarrollo (tsx)
 npm run build            # Compilar
-npm run migrate          # Ejecutar migraciones
-npm run migrate:rollback # Revertir última migración
 ```
 
 ### Frontend (apps/web)
@@ -331,7 +326,6 @@ npm run typecheck        # TypeScript check
 | **Arquitectura Detallada** | Rutas API, componentes, flujos | `2026-03-04-sprintask-arquitectura-design.md` |
 | **Lógica de Comportamiento** | HU + soft delete (9 entidades) | `logicaComportamiento.md` |
 | **Modelo de BD** | Estructura completa + diagramas | `modelo_base_datos_auto.md` |
-| **Seed Data** | Datos de prueba (224 registros) | `seed-data-2026-03-07.sql` |
 | **Resumen de Avance** | Historial diario de cambios | `../RESUMEN-DE-AVANCE.md` |
 | **Estructura Proyecto** | Árbol de archivos | `estructura_proyecto.md` |
 

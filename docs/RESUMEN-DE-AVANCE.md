@@ -1,8 +1,8 @@
 # 📊 Resumen de Avance - SprinTask SaaS
 
-**Fecha:** 10 de Marzo, 2026  
-**Estado:** ✅ Testing E2E 78% Completado | ✅ 4/8 Módulos 100% | ✅ 143 Tests Automatizados  
-**Próximo Hito:** Corregir módulos restantes para llegar a 85%+
+**Fecha:** 11 de Marzo, 2026
+**Estado:** ✅ Limpieza de Scripts | ✅ Package.json Optimizado | ✅ 6 Scripts Esenciales
+**Próximo Hito:** Continuar desarrollo de features pendientes
 
 ---
 
@@ -12,10 +12,47 @@
 - ✅ **Backend:** http://localhost:3001
 - ✅ **Frontend:** http://localhost:5173
 - ✅ **MySQL:** MAMP (puerto 8889)
-- ✅ **16 migraciones** ejecutadas
 - ✅ **10 entidades** con soft delete completo
 - ✅ **100% componentes UI estandarizados**
 - ✅ **Testing E2E:** 111-113/143 tests aprobados (78%)
+
+---
+
+## 🧹 Limpieza Realizada (11 de Marzo, 2026)
+
+### Scripts Eliminados del `package.json`
+
+| Script | Razón de Eliminación |
+|--------|---------------------|
+| `migrate`, `migrate:rollback`, `migrate:fresh` | Knex no configurado correctamente |
+| `seed`, `db:setup` | No hay carpeta `seeds/` ni archivos de seed |
+| `db:schema` | Script placeholder sin funcionalidad real |
+| `logs`, `logs:error`, `logs:http`, `logs:tail`, `logs:search`, `logs:list`, `logs:help` | 7 scripts placeholder sin implementación |
+
+**Total eliminados:** 13 scripts innecesarios
+
+### Archivos/Carpetas Eliminados
+
+| Archivo/Carpeta | Contenido |
+|-----------------|-----------|
+| `apps/api/scripts/` | 22 scripts de BD (run-seed.ts, check-*.ts, test-*.ts, etc.) |
+| `database/` | create_database.sql |
+| `docs/plans/2026-03-07-seed-datos-simulados.md` | Documentación de seed obsoleta |
+
+### Scripts Mantenidos (Esenciales)
+
+```json
+{
+  "dev": "tsx watch src/server.ts",
+  "build": "tsc && tsc-alias",
+  "start": "node dist/server.js",
+  "typecheck": "tsc --noEmit",
+  "lint": "eslint src --ext .ts",
+  "test": "vitest"
+}
+```
+
+**Total:** 6 scripts esenciales
 
 ---
 
@@ -267,10 +304,21 @@ npx playwright test --grep "Clientes"  # Ejecutar módulo específico
 npx playwright show-report             # Ver reporte HTML
 ```
 
-### Usuarios de Prueba
+### Backend (apps/api)
 ```bash
-cd apps/api
-npx tsx scripts/create-test-users.ts   # Crear usuarios de prueba
+npm run dev              # Desarrollo con tsx
+npm run build            # Compilar
+npm run start            # Producción
+npm run typecheck        # TypeScript check
+npm run lint             # ESLint
+npm run test             # Vitest tests
+```
+
+### Frontend (apps/web)
+```bash
+npm run dev              # Vite dev server
+npm run build            # Build producción
+npm run typecheck        # TypeScript check
 ```
 
 ---
@@ -295,6 +343,7 @@ npx tsx scripts/create-test-users.ts   # Crear usuarios de prueba
 | **Backend** | 3001 | ✅ |
 | **MySQL** | 8889 | ✅ |
 | **Testing E2E** | ~78% | ✅ 111-113/143 tests |
+| **Scripts API** | 6 esenciales | ✅ package.json optimizado |
 
 **TypeCheck:** ✅ Sin errores
 
@@ -304,6 +353,9 @@ npx tsx scripts/create-test-users.ts   # Crear usuarios de prueba
 
 | Fecha | Cambio | Impacto |
 |-------|--------|---------|
+| 11/Mar/2026 - 12:00 | Limpieza de scripts y package.json | 13 scripts eliminados, 22 archivos removidos |
+| 11/Mar/2026 - 11:00 | Eliminación de scripts de BD | `apps/api/scripts/` y `database/` eliminados |
+| 11/Mar/2026 - 10:00 | Actualización de hashes admin | Passwords `Admin1234!` funcionando correctamente |
 | 10/Mar/2026 - 18:00 | Corrección Módulo 0.1 Autenticación | 12/16 → 16/16 (100%) |
 | 10/Mar/2026 - 19:00 | Corrección Módulo 0.2 Clientes | 17/22 → 22/22 (100%) |
 | 10/Mar/2026 - 20:00 | Implementación `selectRadix()` | +20 tests corregidos |
@@ -312,6 +364,6 @@ npx tsx scripts/create-test-users.ts   # Crear usuarios de prueba
 
 ---
 
-**Última actualización:** 10 de Marzo, 2026 - 21:30  
-**Versión:** 6.0 - Testing E2E 78% Completado  
-**Próximo Hito:** Corregir Super Admin + Errores 400 para llegar a 90%+
+**Última actualización:** 11 de Marzo, 2026 - 12:00
+**Versión:** 7.0 - Limpieza de Scripts Completada
+**Próximo Hito:** Continuar desarrollo de features pendientes

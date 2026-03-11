@@ -62,17 +62,13 @@ sprintask/
 │       └── src/index.ts
 │
 ├── database/
-│   ├── create_database.sql           # Crear BD
-│   └── seed-data-2026-03-07.sql      # 224 registros de prueba
-│
 ├── docs/
-│   ├── plans/
-│   │   ├── ARQUITECTURA-RESUMEN.md   # Arquitectura optimizada
-│   │   ├── logicaComportamiento.md   # HU + soft delete
-│   │   ├── modelo_base_datos_auto.md # Modelo BD completo
-│   │   └── seed-data-2026-03-07.sql  # Seed versionado
-│   ├── RESUMEN-DE-AVANCE.md          # Historial diario
-│   └── COMPONENTES-UI.md             # Catálogo UI
+    ├── plans/
+    │   ├── ARQUITECTURA-RESUMEN.md   # Arquitectura optimizada
+    │   ├── logicaComportamiento.md   # HU + soft delete
+    │   └── modelo_base_datos_auto.md # Modelo BD completo
+    ├── RESUMEN-DE-AVANCE.md          # Historial diario
+    └── COMPONENTES-UI.md             # Catálogo UI
 │
 └── README.md                         # Documentación principal
 ```
