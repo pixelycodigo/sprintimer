@@ -1,8 +1,8 @@
 # 📊 Resumen de Avance - SprinTask SaaS
 
 **Fecha:** 10 de Marzo, 2026  
-**Estado:** ✅ Testing E2E 62.2% Completado | ✅ 8/8 Módulos Creados | ✅ 143 Tests Automatizados  
-**Próximo Hito:** Corregir Super Admin + Selects Radix para llegar a 80%+
+**Estado:** ✅ Testing E2E 78% Completado | ✅ 4/8 Módulos 100% | ✅ 143 Tests Automatizados  
+**Próximo Hito:** Corregir módulos restantes para llegar a 85%+
 
 ---
 
@@ -15,211 +15,263 @@
 - ✅ **16 migraciones** ejecutadas
 - ✅ **10 entidades** con soft delete completo
 - ✅ **100% componentes UI estandarizados**
-- ✅ **Testing E2E:** 89/143 tests aprobados (62.2%)
+- ✅ **Testing E2E:** 111-113/143 tests aprobados (78%)
 
 ---
 
-## 🆕 10 de Marzo, 2026 - Testing E2E Completado
+## 📊 Estado Actual de Testing E2E
 
-### 🧪 Testing E2E con Playwright - 62.2% Completado
+### Resultados Globales
 
-**Resultados Finales:**
-- ✅ **143 tests creados** (~3,000 líneas de código)
-- ✅ **89 tests aprobados** (62.2%)
-- ✅ **8/8 módulos completados** (100%)
-- ✅ **Duración:** 26.2 minutos
+| Métrica | Valor | Estado |
+|---------|-------|--------|
+| **Tests Creados** | 143 | ✅ 100% |
+| **Tests Ejecutados** | 143 | ✅ 100% |
+| **Tests Aprobados** | 111-113 | ✅ ~78% |
+| **Tests Fallidos** | ~30 | ⚠️ ~21% |
+| **Tests Skippeados** | 1 | ℹ️ 0.7% |
+| **Módulos 100%** | 4/8 | ✅ 50% |
 
-**Resultados por Módulo:**
-| Módulo | Tests | Aprobados | % |
-|--------|-------|-----------|---|
-| **Talent Dashboard** | 12 | 12 | ✅ 100% |
-| **Entidades** | 18 | 14 | ✅ 78% |
-| **Clientes** | 22 | 17 | ✅ 77% |
-| **Autenticación** | 16 | 12 | ✅ 75% |
-| **Talents** | 20 | 13 | ✅ 65% |
-| **Proyectos** | 19 | 11 | ⚠️ 58% |
-| **Actividades** | 19 | 10 | ⚠️ 53% |
-| **Super Admin** | 16 | 0 | ❌ 0% |
+### Resultados por Módulo
 
-**Problemas Identificados:**
-1. ⚠️ **Super Admin Login** (16 tests) - No redirige correctamente
-2. ⚠️ **Selects de Radix UI** (15 tests) - Selectores no funcionan
-3. ⚠️ **Múltiples h1** (8 tests) - Conflicto de selectores
-4. ⚠️ **Actualización de tablas** (6 tests) - No se actualizan después de eliminar
-
-**Potencial de Mejora:**
-- Con correcciones: **~96% de aprobación** (138/143 tests)
-- Tiempo estimado: **4-6 horas**
-
-**Archivos Creados:**
-- `e2e/tests/test-01-auth.e2e.ts` - 16 tests
-- `e2e/tests/test-02-admin-clientes.e2e.ts` - 22 tests
-- `e2e/tests/test-03-admin-talents.e2e.ts` - 20 tests
-- `e2e/tests/test-04-admin-proyectos.e2e.ts` - 19 tests
-- `e2e/tests/test-05-admin-actividades.e2e.ts` - 19 tests
-- `e2e/tests/test-06-admin-entidades.e2e.ts` - 18 tests
-- `e2e/tests/test-07-superadmin-usuarios.e2e.ts` - 16 tests
-- `e2e/tests/test-08-talent-dashboard.e2e.ts` - 12 tests
-- `docs/test/run-001/15-reporte-final-completo.md` - Reporte completo
+| Módulo | Tests | Aprobados | Fallidos | Skip | % | Estado |
+|--------|-------|-----------|----------|------|---|--------|
+| **0.1: Autenticación** | 16 | 16 | 0 | 0 | ✅ 100% | ✅ COMPLETO |
+| **0.2: Clientes** | 22 | 22 | 0 | 0 | ✅ 100% | ✅ COMPLETO |
+| **0.3: Talents** | 20 | 15-19 | 1-5 | 1 | 🟡 75-95% | 🟡 Casi completo |
+| **0.4: Proyectos** | 19 | 16 | 3 | 0 | ✅ 84% | 🟡 Casi completo |
+| **0.5: Actividades** | 19 | 14 | 5 | 0 | 🟡 74% | 🟡 En progreso |
+| **0.6: Entidades** | 18 | 16 | 2 | 0 | ✅ 89% | 🟡 Casi completo |
+| **0.7: Super Admin** | 16 | 0 | 16 | 0 | ❌ 0% | 🔴 Crítico |
+| **0.8: Talent Dashboard** | 12 | 12 | 0 | 0 | ✅ 100% | ✅ COMPLETO |
 
 ---
 
-### 🔧 Configuración de BD para Testing
+## ✅ Módulos Completados (100%)
 
-**Contraseñas Actualizadas:**
-```sql
--- Super Admin (activo=1, password: Admin1234!)
-UPDATE usuarios 
-SET password_hash='$2b$10$ZzT9IWHk5akevSaNb6BnMeDbEPGLlkZ8Wv92Wyk70OQflU6WSq10C',
-    activo=1
-WHERE email='superadmin@sprintask.com';
+### Módulo 0.1: Autenticación (16/16 - 100%) ✅
 
--- Talents (20 usuarios, password: password)
-UPDATE usuarios 
-SET password_hash='$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'
-WHERE rol_id=4;
+**Tests:** Login, registro, recuperar contraseña, logout
+
+**Correcciones aplicadas:**
+- ✅ Campo `usuario` agregado en tests de registro
+- ✅ Patrones de toast actualizados (`/Cuenta creada\|Registro exitoso/i`)
+- ✅ Usuarios únicos con timestamp para evitar colisiones
+
+**Archivos:**
+- `e2e/tests/test-01-auth.e2e.ts`
+
+---
+
+### Módulo 0.2: Clientes (22/22 - 100%) ✅
+
+**Tests:** CRUD completo + papelera de reciclaje
+
+**Correcciones aplicadas:**
+- ✅ Navegación: `locator('a[href="/admin/clientes"]').first()` (2 links "Clientes")
+- ✅ Múltiples h1: `getByRole('heading', { name: '...' })`
+- ✅ Password débil: `/al menos 8 caracteres/i`
+- ✅ Eliminar: Verificar por nombre en lugar de contar filas
+
+**Archivos:**
+- `e2e/tests/test-02-admin-clientes.e2e.ts`
+
+---
+
+### Módulo 0.8: Talent Dashboard (12/12 - 100%) ✅
+
+**Tests:** Dashboard de talents, tareas asignadas
+
+**Sin correcciones necesarias** - Todos los tests pasan originalmente
+
+**Archivos:**
+- `e2e/tests/test-08-talent-dashboard.e2e.ts`
+
+---
+
+## 🔧 Funciones de Testing Implementadas
+
+### `selectRadix(page, optionText, comboboxIndex)` ✅
+
+Función para interactuar con selects de Radix UI (shadcn/ui):
+
+```typescript
+// Por texto
+await selectRadix(page, 'UX Designer', 0);  // Primer combobox, opción 'UX Designer'
+await selectRadix(page, 'Semi-Senior', 1); // Segundo combobox, opción 'Semi-Senior'
+
+// Por índice
+await selectRadixByIndex(page, 0, 0);  // Primer combobox, primera opción
+await selectRadixByIndex(page, 1, 2); // Segundo combobox, tercera opción
 ```
 
----
+**Ubicación:** `e2e/utils/test-helpers.ts`
 
-### 🗂️ Tareas (Talent) con Soft Delete Completo
-
-**Problema:** Las tareas no filtraban las eliminadas de la lista principal.
-
-**Solución:**
-- ✅ `getTareas()` ahora usa `whereNotIn` con tabla `eliminados`
-- ✅ Diálogo de eliminación actualizado (papelera 30 días)
-- ✅ Comportamiento consistente con demás entidades
-
-**Archivos Modificados:**
-- `apps/api/src/services/talent-dashboard.service.ts` - `getTareas()` con `whereNotIn`
-- `apps/web/src/features/talent/components/Tareas.tsx` - Diálogo y `isSoftDelete={true}`
-
-**Entidades con Soft Delete:** 10/10 completas
-- Admin: Clientes, Talents, Proyectos, Actividades, Perfiles, Seniorities, Divisas, Costo x Hora, Asignaciones
-- Talent: **Tareas** (última)
+**Selects corregidos en:**
+- ✅ Talents (perfil, seniority)
+- ✅ Proyectos (cliente)
+- ✅ Actividades (proyecto)
+- ✅ Costo por hora (tipo, divisa, perfil, seniority)
 
 ---
 
-### 🎨 HeaderPage Optimizado
+## 🔴 Errores Pendientes por Módulo
 
-**Problema:** Botón de retroceso con hover inconsistente entre páginas.
+### Módulo 0.3: Talents (15-19/20 - 75-95%)
 
-**Solución:**
-- ✅ `HeaderPage` ahora aplica estilos automáticamente al `backLink`
-- ✅ Código simplificado en todas las páginas (23 archivos)
-- ✅ Mantenimiento centralizado (cambios futuros solo en el componente)
+**1-5 tests fallidos - Edición de talents:**
 
-**Antes:**
-```tsx
-<Link className="inline-flex items-center justify-center p-2 ...">
-  <ArrowLeft />
-</Link>
-```
+| Test | Error | Estado |
+|------|-------|--------|
+| talents-editar-cambia-datos | Timeout en selectRadix | 🔴 Pendiente |
+| talents-editar-cambia-estado | Timeout en selectRadix | 🔴 Pendiente |
+| talents-editar-exitoso | Timeout en selectRadix | 🔴 Pendiente |
 
-**Ahora:**
-```tsx
-<Link to="/ruta"><ArrowLeft /></Link>
-```
-
-**Archivos Modificados:** 23 páginas de crear/editar en todo el proyecto
+**Causa:** Los selects en modo edición pueden tener diferente estructura
 
 ---
 
-### 📋 Documentación Actualizada
+### Módulo 0.4: Proyectos (16/19 - 84%)
 
-**Documento:** `docs/plans/logicaComportamiento.md`
+**3 tests fallidos - Edición/Eliminación:**
 
-**Cambios:**
-- ✅ Agregadas reglas de comportamiento estándar para todo el proyecto
-- ✅ Agregadas HU-015 (Tareas Talent) y HU-016 (Usuarios Super Admin)
-- ✅ Documentado como estándar para futuras entidades
-- ✅ Patrones de implementación backend y frontend
-
----
-
-## 📊 Estado de la Base de Datos
-
-### Migraciones (16)
-
-| Migración | Estado |
-|-----------|--------|
-| 001-014 | ✅ Tablas principales |
-| 015 | ✅ Columna `activo` en `actividades_integrantes` |
-| 016 | ✅ Enum `asignacion` agregado a `eliminados` |
-
-### Tablas con Soft Delete (10)
-
-| Tabla | Soft Delete | item_tipo |
-|-------|-------------|-----------|
-| `clientes` | ✅ | `'cliente'` |
-| `talents` | ✅ | `'talent'` |
-| `proyectos` | ✅ | `'proyecto'` |
-| `actividades` | ✅ | `'actividad'` |
-| `perfiles` | ✅ | `'perfil'` |
-| `seniorities` | ✅ | `'seniority'` |
-| `divisas` | ✅ | `'divisa'` |
-| `costos_por_hora` | ✅ | `'costo_por_hora'` |
-| `actividades_integrantes` | ✅ | `'asignacion'` |
-| `tareas` | ✅ | `'tarea'` |
+| Test | Error | Causa |
+|------|-------|-------|
+| proyectos-editar-cambia-datos | Error 400 en backend | Validación faltante |
+| proyectos-editar-exitoso | Error 400 en backend | Validación faltante |
+| proyectos-eliminar-confirma | Tabla no se actualiza | Caché de TanStack Query |
 
 ---
 
-## 📦 Componentes UI (50+)
+### Módulo 0.5: Actividades (14/19 - 74%)
 
-### Componentes Más Utilizados
+**5 tests fallidos - Edición/Eliminación:**
 
-| Componente | Uso | Ejemplo |
-|------------|-----|---------|
-| **DataTable** | Todas las tablas CRUD | 100% estandarizado |
-| **HeaderPage** | Todos los encabezados | 23 páginas |
-| **AlertDialog** | Confirmaciones | Eliminar, restaurar |
-| **Checkbox** | Campo `activo` | 10/10 entidades |
-| **Badge** | Estados y datos | Todas las tablas |
+| Test | Error | Causa |
+|------|-------|-------|
+| actividades-editar-cambia-datos | Error 400 en backend | Validación faltante |
+| actividades-editar-cambia-estado | Error 400 en backend | Validación faltante |
+| actividades-editar-exitoso | Error 400 en backend | Validación faltante |
+| actividades-eliminar-confirma | Tabla no se actualiza | Caché de TanStack Query |
+| actividades-eliminar-toast | Toast message mismatch | Patrón incorrecto |
+
+---
+
+### Módulo 0.6: Entidades (16/18 - 89%)
+
+**2 tests fallidos - Divisas:**
+
+| Test | Error | Causa |
+|------|-------|-------|
+| divisas-crear-exitoso | Error de validación | Campos requeridos |
+| divisas-eliminar-confirma | Toast message mismatch | Patrón incorrecto |
+
+---
+
+### Módulo 0.7: Super Admin (0/16 - 0%) 🔴 CRÍTICO
+
+**16 tests fallidos - Login no redirige:**
+
+| Test | Error | Causa |
+|------|-------|-------|
+| Todos los tests | Timeout 15s en redirección | Login no redirige a `/super-admin` |
+
+**Solución requerida:**
+1. Verificar ruta `/super-admin/usuarios` en `apps/web/src/App.tsx`
+2. Debuggear autenticación con `test.superadmin.e2e@sprintask-test.com` / `TestAdmin123!`
+3. Verificar middleware de autenticación en backend
+
+---
+
+## 📝 Próximos Pasos
+
+### Prioridad 1: Super Admin Login 🔴
+**Impacto:** +11% (16 tests)  
+**Tiempo:** 30-60 min  
+**Archivos:** `test-07-superadmin-usuarios.e2e.ts`, `apps/web/src/App.tsx`
+
+**Acciones:**
+1. Verificar ruta en frontend
+2. Debuggear con credenciales de prueba
+3. Verificar middleware de autenticación
+
+---
+
+### Prioridad 2: Error 400 en Edición 🟡
+**Impacto:** +5% (5 tests)  
+**Tiempo:** 30-60 min  
+**Archivos:** `test-04-proyectos.e2e.ts`, `test-05-actividades.e2e.ts`
+
+**Acciones:**
+1. Investigar validación faltante en backend
+2. Verificar campos requeridos en edición
+3. Agregar campos faltantes en tests
+
+---
+
+### Prioridad 3: Actualización de Tablas 🟡
+**Impacto:** +2% (2 tests)  
+**Tiempo:** 15 min  
+**Archivos:** `test-04-proyectos.e2e.ts`, `test-05-actividades.e2e.ts`
+
+**Acciones:**
+1. Agregar `page.reload()` después de eliminar
+2. O verificar por nombre en lugar de contar filas
+
+---
+
+### Prioridad 4: Talents Edición 🟡
+**Impacto:** +3% (3 tests)  
+**Tiempo:** 30 min  
+**Archivos:** `test-03-talents.e2e.ts`
+
+**Acciones:**
+1. Debuggear estructura de selects en modo edición
+2. Ajustar índices de combobox si es necesario
+
+---
+
+### Prioridad 5: Divisas Tests 🟢
+**Impacto:** +1% (2 tests)  
+**Tiempo:** 15 min  
+**Archivos:** `test-06-entidades.e2e.ts`
+
+**Acciones:**
+1. Verificar campos requeridos en creación de divisas
+2. Corregir patrones de toast
+
+---
+
+## 🎯 Proyección Final
+
+| Escenario | Tests Aprobados | Porcentaje | Tiempo Estimado |
+|-----------|-----------------|------------|-----------------|
+| **Actual** | 111-113/143 | **78%** | - |
+| **+ Super Admin** | 127-129/143 | **89%** | 30-60 min |
+| **+ Error 400 Edición** | 132-134/143 | **93%** | 30-60 min |
+| **+ Actualización Tablas** | 134-136/143 | **95%** | 15 min |
+| **+ Talents Edición** | 137-139/143 | **96-97%** | 30 min |
+| **+ Divisas** | 139-141/143 | **97-98%** | 15 min |
+| **ÓPTIMO** | **~141/143** | **~98%** | **2-3 horas** |
 
 ---
 
 ## 🚀 Scripts Disponibles
 
-### Root
-```bash
-npm run dev         # Frontend + Backend
-npm run build       # Build producción
-npm run typecheck   # Verificar tipos
-```
-
-### Backend
-```bash
-npm run dev         # Desarrollo (tsx)
-npm run migrate     # Migraciones
-npm run logs        # Ver logs
-```
-
 ### Testing E2E
 ```bash
 cd e2e
-npx playwright test              # Ejecutar todos los tests
-npx playwright test --reporter=list  # Ver resultados detallados
+npx playwright test                    # Ejecutar todos los tests
+npx playwright test --reporter=list    # Ver resultados detallados
 npx playwright test --grep "Clientes"  # Ejecutar módulo específico
-npx playwright show-report       # Ver reporte HTML
+npx playwright show-report             # Ver reporte HTML
 ```
 
----
-
-## 📋 Tareas Pendientes
-
-| # | Tarea | Prioridad | Impacto | Tiempo |
-|---|-------|-----------|---------|--------|
-| 1 | **Corregir Super Admin Login** | 🔴 Alta | +11% | 1-2h |
-| 2 | **Corregir Selects Radix UI** | 🔴 Alta | +10% | 1-2h |
-| 3 | **Corregir Múltiples h1** | 🟡 Media | +6% | 30-60min |
-| 4 | **Corregir Actualización de Tablas** | 🟡 Media | +4% | 30-60min |
-| 5 | **Documentación de API** | 🟡 Media | - | - |
-| 6 | **Deuda técnica - Gráficos** | 🟡 Media | - | - |
-| 7 | **Tests unitarios** | 🟢 Baja | - | - |
-| 8 | **Exportar datos (CSV/PDF)** | 🟢 Baja | - | - |
-
-**Potencial:** 96% de aprobación con 4-6 horas de trabajo
+### Usuarios de Prueba
+```bash
+cd apps/api
+npx tsx scripts/create-test-users.ts   # Crear usuarios de prueba
+```
 
 ---
 
@@ -227,12 +279,11 @@ npx playwright show-report       # Ver reporte HTML
 
 | Documento | Propósito | Ubicación |
 |-----------|-----------|-----------|
+| **Reporte de Testing** | Resultados E2E detallados | `docs/test/run-001/15-reporte-final-completo.md` |
+| **Instrucciones Testing** | Comandos y configuración | `docs/test/run-001/INSTRUCCIONES-REPORTE.md` |
 | **Arquitectura Técnica** | Stack, rutas, flujos | `docs/plans/ARQUITECTURA-RESUMEN.md` |
-| **Lógica de Comportamiento** | HU + soft delete (estándar) | `docs/plans/logicaComportamiento.md` |
+| **Lógica de Comportamiento** | HU + soft delete | `docs/plans/logicaComportamiento.md` |
 | **Modelo de BD** | Estructura completa | `docs/plans/modelo_base_datos_auto.md` |
-| **Estructura Proyecto** | Árbol de archivos | `docs/plans/estructura_proyecto.md` |
-| **Reporte Final de Testing** | Resultados E2E completos | `docs/test/run-001/15-reporte-final-completo.md` |
-| **Estado de Testing** | Estado en tiempo real | `docs/test/estado-testing.md` |
 
 ---
 
@@ -243,12 +294,24 @@ npx playwright show-report       # Ver reporte HTML
 | **Frontend** | 5173 | ✅ |
 | **Backend** | 3001 | ✅ |
 | **MySQL** | 8889 | ✅ |
-| **Testing E2E** | 62.2% | ✅ 89/143 tests |
+| **Testing E2E** | ~78% | ✅ 111-113/143 tests |
 
 **TypeCheck:** ✅ Sin errores
 
 ---
 
-**Última actualización:** 10 de Marzo, 2026  
-**Versión:** 4.0 - Testing E2E 62.2% Completado  
-**Próximo Hito:** Corregir Super Admin + Selects Radix para llegar a 80%+
+## 📝 Historial de Cambios
+
+| Fecha | Cambio | Impacto |
+|-------|--------|---------|
+| 10/Mar/2026 - 18:00 | Corrección Módulo 0.1 Autenticación | 12/16 → 16/16 (100%) |
+| 10/Mar/2026 - 19:00 | Corrección Módulo 0.2 Clientes | 17/22 → 22/22 (100%) |
+| 10/Mar/2026 - 20:00 | Implementación `selectRadix()` | +20 tests corregidos |
+| 10/Mar/2026 - 21:00 | Corrección masiva módulos 0.3-0.6 | 101 → 111-113 tests (78%) |
+| 10/Mar/2026 - 21:30 | Actualización de reporte final | Documento actualizado |
+
+---
+
+**Última actualización:** 10 de Marzo, 2026 - 21:30  
+**Versión:** 6.0 - Testing E2E 78% Completado  
+**Próximo Hito:** Corregir Super Admin + Errores 400 para llegar a 90%+

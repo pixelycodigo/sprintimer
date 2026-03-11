@@ -62,6 +62,15 @@ export const existingUsers = {
     email: 'admin@sprintask.com',
     password: 'Admin1234!',
   },
+  // Usuarios de prueba para tests de Super Admin (se eliminan/recrean)
+  testSuperAdmin: {
+    email: 'test.superadmin.e2e@sprintask-test.com',
+    password: 'TestAdmin123!',
+  },
+  testAdmin: {
+    email: 'test.admin.e2e@sprintask-test.com',
+    password: 'TestAdmin123!',
+  },
   // Talents existentes en la BD para testing
   // Nota: La contraseña real está hasheada en la BD
   // Usamos 'password' que es el default del seed

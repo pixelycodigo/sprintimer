@@ -1,8 +1,8 @@
 /**
  * Módulo 0.7: Super Admin - Usuarios
  * Tests para la gestión de usuarios administradores
- * 
- * NOTA: Usamos login de admin porque superadmin puede no existir en la BD de test
+ *
+ * Usa usuarios de prueba (test.superadmin.e2e) que pueden ser eliminados/creados sin afectar usuarios por defecto
  */
 
 import { test, expect } from '../fixtures/auth-fixtures';
@@ -10,11 +10,11 @@ import { passwords, existingUsers } from '../fixtures/test-data';
 import { expectSuccessToast, expectErrorToast } from '../utils/test-helpers';
 
 test.describe('Módulo 0.7: Super Admin - Usuarios', () => {
-  // Login manual como superadmin antes de cada test
+  // Login manual como test.superadmin antes de cada test
   test.beforeEach(async ({ page }) => {
     await page.goto('/login');
-    await page.fill('input[type="email"]', 'superadmin@sprintask.com');
-    await page.fill('input[type="password"]', 'Admin1234!');
+    await page.fill('input[type="email"]', existingUsers.testSuperAdmin.email);
+    await page.fill('input[type="password"]', existingUsers.testSuperAdmin.password);
     await page.click('button[type="submit"]');
     await page.waitForURL(/\/super-admin/, { timeout: 15000 });
   });

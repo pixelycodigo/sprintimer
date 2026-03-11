@@ -5,7 +5,7 @@
 
 import { test, expect } from '../fixtures/auth-fixtures';
 import { actividadData } from '../fixtures/test-data';
-import { expectSuccessToast, expectErrorToast } from '../utils/test-helpers';
+import { expectSuccessToast, expectErrorToast, selectRadix, selectRadixByIndex } from '../utils/test-helpers';
 
 test.describe('Módulo 0.5: Admin - Actividades', () => {
   // Login como admin antes de cada test
@@ -78,7 +78,7 @@ test.describe('Módulo 0.5: Admin - Actividades', () => {
       await page.goto('/admin/actividades/crear');
       
       // Seleccionar proyecto (primer option del select)
-      await page.click('select#proyecto_id option:nth-child(2)');
+      await selectRadixByIndex(page, 0, 0);
       
       await page.fill('#nombre', `Test Actividad ${timestamp}`);
       await page.fill('#descripcion', `Descripción de la actividad ${timestamp}`);
@@ -88,7 +88,7 @@ test.describe('Módulo 0.5: Admin - Actividades', () => {
       await page.click('button[type="submit"]');
       
       await page.waitForTimeout(2000);
-      await expectSuccessToast(page, /creado|exitoso/i);
+      await expectSuccessToast(page, /creado|creada|exitoso/i);
       await expect(page).toHaveURL(/\/admin\/actividades/);
     });
 
@@ -97,7 +97,7 @@ test.describe('Módulo 0.5: Admin - Actividades', () => {
       
       await page.goto('/admin/actividades/crear');
       
-      await page.click('select#proyecto_id option:nth-child(2)');
+      await selectRadixByIndex(page, 0, 0);
       await page.fill('#nombre', `Test Actividad Inactiva ${timestamp}`);
       await page.fill('#descripcion', `Descripción de la actividad ${timestamp}`);
       await page.fill('#horas_estimadas', '40');
@@ -106,7 +106,7 @@ test.describe('Módulo 0.5: Admin - Actividades', () => {
       await page.click('button[type="submit"]');
       
       await page.waitForTimeout(2000);
-      await expectSuccessToast(page, /creado|exitoso/i);
+      await expectSuccessToast(page, /creado|creada|exitoso/i);
     });
 
     test('actividades-crear-exitoso: Crea y redirige a lista', async ({ page }) => {
@@ -114,7 +114,7 @@ test.describe('Módulo 0.5: Admin - Actividades', () => {
       
       await page.goto('/admin/actividades/crear');
       
-      await page.click('select#proyecto_id option:nth-child(2)');
+      await selectRadixByIndex(page, 0, 0);
       await page.fill('#nombre', `Test Actividad Exito ${timestamp}`);
       await page.fill('#descripcion', `Descripción de la actividad ${timestamp}`);
       await page.fill('#horas_estimadas', '40');
@@ -123,7 +123,7 @@ test.describe('Módulo 0.5: Admin - Actividades', () => {
       await page.click('button[type="submit"]');
       
       await page.waitForTimeout(2000);
-      await expectSuccessToast(page, /creado|exitoso/i);
+      await expectSuccessToast(page, /creado|creada|exitoso/i);
       await expect(page).toHaveURL(/\/admin\/actividades/);
     });
   });
@@ -137,7 +137,7 @@ test.describe('Módulo 0.5: Admin - Actividades', () => {
       if (await editButton.isVisible()) {
         await editButton.click();
         await page.waitForURL(/\/admin\/actividades\/\d+/);
-        await expect(page.locator('h1')).toContainText(/Editar/i);
+        await expect(page.getByRole('heading', { name: 'Editar Actividad' })).toBeVisible();
       }
     });
 

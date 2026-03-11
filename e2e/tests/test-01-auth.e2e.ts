@@ -98,73 +98,70 @@ test.describe('Módulo 0.1: Autenticación', () => {
 
     test('registro-email-duplicado: No permite emails repetidos', async ({ page }) => {
       await page.goto('/registro');
-      
+
       // Intentar registrar con email de admin existente
       await page.fill('#email', existingUsers.admin.email);
       await page.fill('#password', passwords.fuerte);
       await page.fill('#password_confirm', passwords.fuerte);
-      await page.fill('#nombre', 'Test Usuario');
+      await page.fill('#nombre', 'Test Usuario Duplicado');
+      await page.fill('#usuario', 'test_usuario_duplicado');
       // Aceptar términos y condiciones
       await page.check('#terminos');
       await page.click('button[type="submit"]');
-      
+
       // Esperar mensaje de error por email duplicado
-      await expectErrorToast(page, /email.*existe|ya registrado/i);
+      await expectErrorToast(page, /email.*registrado|ya registrado/i);
     });
 
     test('registro-email-nuevo: Permite emails únicos', async ({ page }) => {
       const nuevoEmail = `test.nuevo.${Date.now()}@sprintask.com`;
-      
+
       await page.goto('/registro');
-      
+
       await page.fill('#email', nuevoEmail);
       await page.fill('#password', passwords.fuerte);
       await page.fill('#password_confirm', passwords.fuerte);
-      await page.fill('#nombre', 'Test Usuario');
+      await page.fill('#nombre', 'Test Usuario Nuevo');
+      await page.fill('#usuario', `test_usuario_${Date.now()}`);
       // Aceptar términos y condiciones
       await page.check('#terminos');
       await page.click('button[type="submit"]');
-      
-      // Debería crear cuenta exitosamente o mostrar error específico
-      await page.waitForTimeout(2000);
-      // Verificar si hay toast de éxito o error de validación
-      const toast = page.locator('[data-sonner-toast]');
-      await toast.waitFor({ state: 'visible', timeout: 5000 });
-      const toastText = await toast.textContent();
-      console.log('Toast message:', toastText);
-      // Aceptar tanto éxito como error de validación específico
-      await expectSuccessToast(page, /Registro exitoso|Cuenta creada/i);
+
+      // Debería crear cuenta exitosamente
+      await expectSuccessToast(page, /Cuenta creada|Registro exitoso/i);
     });
 
     test('registro-password-debil: Valida requisitos de password', async ({ page }) => {
       await page.goto('/registro');
-      
+
       await page.fill('#email', testEmails.cliente);
       await page.fill('#password', passwords.debil);
       await page.fill('#password_confirm', passwords.debil);
-      await page.fill('#nombre', 'Test Usuario');
+      await page.fill('#nombre', 'Test Usuario Password');
+      await page.fill('#usuario', 'test_usuario_password');
       // Aceptar términos y condiciones
       await page.check('#terminos');
       await page.click('button[type="submit"]');
-      
+
       // Esperar mensaje de error por password débil
-      await expectErrorToast(page, /contraseña.*débil|mínimo 8 caracteres/i);
+      await expectErrorToast(page, /contraseña.*8 caracteres|al menos 8 caracteres/i);
     });
 
     test('registro-password-fuerte: Acepta password válida', async ({ page }) => {
       const nuevoEmail = `test.fuerte.${Date.now()}@sprintask.com`;
-      
+
       await page.goto('/registro');
-      
+
       await page.fill('#email', nuevoEmail);
       await page.fill('#password', passwords.fuerte);
       await page.fill('#password_confirm', passwords.fuerte);
-      await page.fill('#nombre', 'Test Usuario');
+      await page.fill('#nombre', 'Test Usuario Fuerte');
+      await page.fill('#usuario', `test_usuario_fuerte_${Date.now()}`);
       // Aceptar términos y condiciones
       await page.check('#terminos');
       await page.click('button[type="submit"]');
-      
-      await expectSuccessToast(page, /Registro exitoso/i);
+
+      await expectSuccessToast(page, /Cuenta creada|Registro exitoso/i);
     });
 
     test('registro-redirect-login: Redirige a login después de registrar', async ({ page }) => {

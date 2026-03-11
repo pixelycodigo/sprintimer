@@ -138,3 +138,105 @@ export function generateTestEmail(prefix: string) {
   const timestamp = Date.now();
   return `${prefix}.${timestamp}@sprintask.com`;
 }
+
+/**
+ * Selecciona una opción en un Select de Radix UI (shadcn/ui) por índice
+ * 
+ * @param page - Página de Playwright
+ * @param comboboxIndex - Índice del combobox (0 = primero, 1 = segundo, etc.)
+ * @param optionIndex - Índice de la opción a seleccionar (0 = primera, 1 = segunda, etc.)
+ * 
+ * @example
+ * await selectRadixByIndex(page, 0, 0);  // Primer combobox, primera opción
+ * await selectRadixByIndex(page, 1, 1); // Segundo combobox, segunda opción
+ */
+export async function selectRadixByIndex(page: Page, comboboxIndex: number, optionIndex: number) {
+  // Click en el combobox por índice
+  const combobox = page.locator('[role="combobox"]').nth(comboboxIndex);
+  await combobox.click();
+  
+  // Esperar que haya opciones disponibles
+  await page.waitForSelector('[role="option"]', { timeout: 5000 });
+  await page.waitForTimeout(300);
+  
+  // Click en la opción por índice
+  const option = page.locator('[role="option"]').nth(optionIndex);
+  await option.click();
+  
+  // Esperar que se cierre
+  await page.waitForTimeout(300);
+}
+
+/**
+ * Selecciona una opción en un Select de Radix UI (shadcn/ui) por texto
+ * 
+ * @param page - Página de Playwright
+ * @param optionText - Texto de la opción a seleccionar
+ * @param comboboxIndex - Índice del combobox (0 = primero, 1 = segundo, etc.)
+ * 
+ * @example
+ * await selectRadix(page, 'UX Designer', 0);  // Primer combobox, opción 'UX Designer'
+ * await selectRadix(page, 'Semi-Senior', 1); // Segundo combobox, opción 'Semi-Senior'
+ */
+export async function selectRadix(page: Page, optionText: string, comboboxIndex: number = 0) {
+  // Click en el combobox por índice
+  const combobox = page.locator('[role="combobox"]').nth(comboboxIndex);
+  await combobox.click();
+  
+  // Esperar que haya opciones disponibles
+  await page.waitForSelector('[role="option"]', { timeout: 5000 });
+  await page.waitForTimeout(300);
+  
+  // Click en la opción por texto
+  const option = page.locator('[role="option"]').filter({ hasText: optionText }).first();
+  await option.click();
+  
+  // Esperar que se cierre
+  await page.waitForTimeout(300);
+}
+
+/**
+ * Selecciona una opción en un Select de Radix UI por índice
+/**
+ * Abre un Select de Radix UI y espera que esté abierto
+ * 
+ * @param page - Página de Playwright
+ * @param triggerText - Texto del trigger para identificar el select
+ */
+export async function openSelect(page: Page, triggerText: string) {
+  const trigger = page.locator(`[role="combobox"]`).filter({ hasText: triggerText }).first();
+  await trigger.click();
+  await page.waitForSelector('[data-state="open"]', { timeout: 5000 });
+  await page.waitForTimeout(300);
+}
+
+/**
+ * Navega por las opciones de un Select usando el teclado
+ * 
+ * @param page - Página de Playwright
+ * @param direction - 'down' o 'up'
+ * @param times - Cantidad de veces (default: 1)
+ */
+export async function navigateSelect(page: Page, direction: 'down' | 'up', times: number = 1) {
+  const key = direction === 'down' ? 'ArrowDown' : 'ArrowUp';
+  for (let i = 0; i < times; i++) {
+    await page.keyboard.press(key);
+    await page.waitForTimeout(100);
+  }
+}
+
+/**
+ * Selecciona la opción actualmente resaltada en un Select
+ */
+export async function selectHighlightedOption(page: Page) {
+  await page.keyboard.press('Enter');
+  await page.waitForTimeout(300);
+}
+
+/**
+ * Cierra un Select abierto presionando Escape
+ */
+export async function closeSelect(page: Page) {
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(300);
+}

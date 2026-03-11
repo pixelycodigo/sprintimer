@@ -4,7 +4,7 @@
  */
 
 import { test, expect } from '../fixtures/auth-fixtures';
-import { expectSuccessToast, expectErrorToast } from '../utils/test-helpers';
+import { expectSuccessToast, expectErrorToast, selectRadix, selectRadixByIndex } from '../utils/test-helpers';
 
 test.describe('Módulo 0.6: Admin - Entidades', () => {
   // Login como admin antes de cada test
@@ -33,7 +33,7 @@ test.describe('Módulo 0.6: Admin - Entidades', () => {
       await page.click('button[type="submit"]');
       
       await page.waitForTimeout(2000);
-      await expectSuccessToast(page, /creado|exitoso/i);
+      await expectSuccessToast(page, /creado|creada|exitoso/i);
       await expect(page).toHaveURL(/\/admin\/perfiles/);
     });
 
@@ -49,7 +49,7 @@ test.describe('Módulo 0.6: Admin - Entidades', () => {
         await confirmButton.click();
         
         await page.waitForTimeout(2000);
-        await expectSuccessToast(page, /eliminado|exitoso/i);
+        await expectSuccessToast(page, /eliminado|eliminada|exitoso/i);
       }
     });
   });
@@ -74,7 +74,7 @@ test.describe('Módulo 0.6: Admin - Entidades', () => {
       await page.click('button[type="submit"]');
       
       await page.waitForTimeout(2000);
-      await expectSuccessToast(page, /creado|exitoso/i);
+      await expectSuccessToast(page, /creado|creada|exitoso/i);
       await expect(page).toHaveURL(/\/admin\/seniorities/);
     });
 
@@ -90,7 +90,7 @@ test.describe('Módulo 0.6: Admin - Entidades', () => {
         await confirmButton.click();
         
         await page.waitForTimeout(2000);
-        await expectSuccessToast(page, /eliminado|exitoso/i);
+        await expectSuccessToast(page, /eliminado|eliminada|exitoso/i);
       }
     });
   });
@@ -116,7 +116,7 @@ test.describe('Módulo 0.6: Admin - Entidades', () => {
       await page.click('button[type="submit"]');
       
       await page.waitForTimeout(2000);
-      await expectSuccessToast(page, /creado|exitoso/i);
+      await expectSuccessToast(page, /creado|creada|exitoso/i);
       await expect(page).toHaveURL(/\/admin\/divisas/);
     });
 
@@ -132,7 +132,7 @@ test.describe('Módulo 0.6: Admin - Entidades', () => {
         await confirmButton.click();
         
         await page.waitForTimeout(2000);
-        await expectSuccessToast(page, /eliminado|exitoso/i);
+        await expectSuccessToast(page, /eliminado|eliminada|exitoso/i);
       }
     });
   });
@@ -148,29 +148,29 @@ test.describe('Módulo 0.6: Admin - Entidades', () => {
 
     test('costo-por-hora-crear-exitoso: Crea costo y redirige a lista', async ({ page }) => {
       const timestamp = Date.now().toString();
-      
+
       await page.goto('/admin/costo-por-hora/crear');
-      
-      // Seleccionar tipo fijo
-      await page.click('select#tipo option:nth-child(2)');
-      
-      // Seleccionar divisa
-      await page.click('select#divisa_id option:nth-child(2)');
-      
-      // Seleccionar perfil
-      await page.click('select#perfil_id option:nth-child(2)');
-      
-      // Seleccionar seniority
-      await page.click('select#seniority_id option:nth-child(2)');
-      
+
+      // Seleccionar tipo fijo (índice 0, opción 0)
+      await selectRadixByIndex(page, 0, 0);
+
+      // Seleccionar divisa (índice 1, opción 0 = PEN)
+      await selectRadixByIndex(page, 1, 0);
+
+      // Seleccionar perfil (índice 2, opción 0 = UX Designer)
+      await selectRadixByIndex(page, 2, 0);
+
+      // Seleccionar seniority (índice 3, opción 2 = Semi-Senior)
+      await selectRadixByIndex(page, 3, 2);
+
       await page.fill('#costo_hora', '50');
       await page.fill('#concepto', `Test Costo ${timestamp}`);
       await page.check('#activo');
-      
+
       await page.click('button[type="submit"]');
       
       await page.waitForTimeout(2000);
-      await expectSuccessToast(page, /creado|exitoso/i);
+      await expectSuccessToast(page, /creado|creada|exitoso/i);
       await expect(page).toHaveURL(/\/admin\/costo-por-hora/);
     });
 
@@ -186,7 +186,7 @@ test.describe('Módulo 0.6: Admin - Entidades', () => {
         await confirmButton.click();
         
         await page.waitForTimeout(2000);
-        await expectSuccessToast(page, /eliminado|exitoso/i);
+        await expectSuccessToast(page, /eliminado|eliminada|exitoso/i);
       }
     });
   });

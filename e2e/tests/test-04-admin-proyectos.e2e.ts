@@ -5,7 +5,7 @@
 
 import { test, expect } from '../fixtures/auth-fixtures';
 import { proyectoData } from '../fixtures/test-data';
-import { expectSuccessToast, expectErrorToast } from '../utils/test-helpers';
+import { expectSuccessToast, expectErrorToast, selectRadix, selectRadixByIndex } from '../utils/test-helpers';
 
 test.describe('Módulo 0.4: Admin - Proyectos', () => {
   // Login como admin antes de cada test
@@ -74,18 +74,18 @@ test.describe('Módulo 0.4: Admin - Proyectos', () => {
 
     test('proyectos-crear-activo: Crea proyecto activo', async ({ page }) => {
       const timestamp = Date.now().toString();
-      
+
       await page.goto('/admin/proyectos/crear');
-      
-      // Seleccionar cliente (primer option del select)
-      await page.click('select#cliente_id option:nth-child(2)');
-      
+
+      // Seleccionar cliente con Radix UI Select
+      await selectRadixByIndex(page, 0, 0);
+
       await page.fill('#nombre', `Test Proyecto ${timestamp}`);
       await page.fill('#descripcion', `Descripción del proyecto ${timestamp}`);
       await page.check('#activo');
-      
+
       await page.click('button[type="submit"]');
-      
+
       await page.waitForTimeout(2000);
       await expectSuccessToast(page, /creado|exitoso/i);
       await expect(page).toHaveURL(/\/admin\/proyectos/);
@@ -93,32 +93,36 @@ test.describe('Módulo 0.4: Admin - Proyectos', () => {
 
     test('proyectos-crear-inactivo: Crea proyecto inactivo', async ({ page }) => {
       const timestamp = Date.now().toString();
-      
+
       await page.goto('/admin/proyectos/crear');
-      
-      await page.click('select#cliente_id option:nth-child(2)');
+
+      // Seleccionar cliente con Radix UI Select
+      await selectRadixByIndex(page, 0, 0);
+
       await page.fill('#nombre', `Test Proyecto Inactivo ${timestamp}`);
       await page.fill('#descripcion', `Descripción del proyecto ${timestamp}`);
       await page.uncheck('#activo');
-      
+
       await page.click('button[type="submit"]');
-      
+
       await page.waitForTimeout(2000);
       await expectSuccessToast(page, /creado|exitoso/i);
     });
 
     test('proyectos-crear-exitoso: Crea y redirige a lista', async ({ page }) => {
       const timestamp = Date.now().toString();
-      
+
       await page.goto('/admin/proyectos/crear');
-      
-      await page.click('select#cliente_id option:nth-child(2)');
+
+      // Seleccionar cliente con Radix UI Select
+      await selectRadixByIndex(page, 0, 0);
+
       await page.fill('#nombre', `Test Proyecto Exito ${timestamp}`);
       await page.fill('#descripcion', `Descripción del proyecto ${timestamp}`);
       await page.check('#activo');
-      
+
       await page.click('button[type="submit"]');
-      
+
       await page.waitForTimeout(2000);
       await expectSuccessToast(page, /creado|exitoso/i);
       await expect(page).toHaveURL(/\/admin\/proyectos/);
@@ -129,32 +133,33 @@ test.describe('Módulo 0.4: Admin - Proyectos', () => {
     test('proyectos-editar-abre-formulario: Click en editar abre form', async ({ page }) => {
       await page.goto('/admin/proyectos');
       await page.waitForSelector('table', { timeout: 5000 });
-      
-      const editButton = page.locator('[aria-label="Editar"]').first();
+
+      const editButton = page.getByRole('button', { name: 'Editar' }).first();
       if (await editButton.isVisible()) {
         await editButton.click();
         await page.waitForURL(/\/admin\/proyectos\/\d+/);
-        await expect(page.locator('h1')).toContainText(/Editar/i);
+        // Usar selector específico para evitar múltiples h1
+        await expect(page.getByRole('heading', { name: 'Editar Proyecto' })).toBeVisible();
       }
     });
 
     test('proyectos-editar-cambia-datos: Edita nombre, descripción, etc.', async ({ page }) => {
       await page.goto('/admin/proyectos');
       await page.waitForSelector('table', { timeout: 5000 });
-      
-      const editButton = page.locator('[aria-label="Editar"]').first();
+
+      const editButton = page.getByRole('button', { name: 'Editar' }).first();
       if (await editButton.isVisible()) {
         await editButton.click();
         await page.waitForURL(/\/admin\/proyectos\/\d+/);
         await page.waitForTimeout(1000);
-        
+
         const nombreInput = page.locator('#nombre');
         const nombreOriginal = await nombreInput.inputValue();
-        
+
         await nombreInput.fill(`${nombreOriginal} - Editado`);
-        
+
         await page.click('button[type="submit"]');
-        
+
         await page.waitForTimeout(2000);
         await expectSuccessToast(page, /actualizado|exitoso/i);
       }
@@ -163,18 +168,18 @@ test.describe('Módulo 0.4: Admin - Proyectos', () => {
     test('proyectos-editar-cambia-estado: Cambia activo/inactivo', async ({ page }) => {
       await page.goto('/admin/proyectos');
       await page.waitForSelector('table', { timeout: 5000 });
-      
+
       const editButton = page.locator('[aria-label="Editar"]').first();
       if (await editButton.isVisible()) {
         await editButton.click();
         await page.waitForURL(/\/admin\/proyectos\/\d+/);
         await page.waitForTimeout(1000);
-        
+
         const checkbox = page.locator('#activo');
         await checkbox.click();
-        
+
         await page.click('button[type="submit"]');
-        
+
         await page.waitForTimeout(2000);
         await expectSuccessToast(page, /actualizado|exitoso/i);
       }
@@ -183,18 +188,18 @@ test.describe('Módulo 0.4: Admin - Proyectos', () => {
     test('proyectos-editar-exitoso: Actualiza y refleja en lista', async ({ page }) => {
       await page.goto('/admin/proyectos');
       await page.waitForSelector('table', { timeout: 5000 });
-      
-      const editButton = page.locator('[aria-label="Editar"]').first();
+
+      const editButton = page.getByRole('button', { name: 'Editar' }).first();
       if (await editButton.isVisible()) {
         await editButton.click();
         await page.waitForURL(/\/admin\/proyectos\/\d+/);
         await page.waitForTimeout(1000);
-        
+
         const nombreInput = page.locator('#nombre');
         await nombreInput.fill(`Test Editado ${Date.now()}`);
-        
+
         await page.click('button[type="submit"]');
-        
+
         await page.waitForTimeout(2000);
         await expectSuccessToast(page, /actualizado|exitoso/i);
         await expect(page).toHaveURL(/\/admin\/proyectos/);

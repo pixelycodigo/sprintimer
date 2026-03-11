@@ -5,7 +5,7 @@
 
 import { test, expect } from '../fixtures/auth-fixtures';
 import { talentData, passwords } from '../fixtures/test-data';
-import { expectSuccessToast, expectErrorToast } from '../utils/test-helpers';
+import { expectSuccessToast, expectErrorToast, selectRadix } from '../utils/test-helpers';
 
 test.describe('Módulo 0.3: Admin - Talents', () => {
   // Login como admin antes de cada test
@@ -63,12 +63,14 @@ test.describe('Módulo 0.3: Admin - Talents', () => {
   test.describe('Crear Talent', () => {
     test('talents-crear-abre-formulario: Botón "Nuevo Talent" abre form', async ({ page }) => {
       await page.goto('/admin/talents');
-      
-      const newButton = page.locator('button:has-text("Nuevo Talent"), button:has-text("Nuevo")');
+
+      const newButton = page.getByRole('button', { name: 'Nuevo Talent' });
       await newButton.click();
-      
+
       await page.waitForURL(/\/admin\/talents\/crear/);
-      await expect(page.locator('h1')).toContainText(/Nuevo|Crear/i);
+      
+      // Usar selector específico para evitar múltiples h1
+      await expect(page.getByRole('heading', { name: 'Nuevo Talent' })).toBeVisible();
     });
 
     test('talents-crear-valida-campos: Valida campos requeridos', async ({ page }) => {
@@ -84,18 +86,23 @@ test.describe('Módulo 0.3: Admin - Talents', () => {
     test('talents-crear-activo: Crea talent activo', async ({ page }) => {
       const timestamp = Date.now().toString();
       const email = `test.talent.${timestamp}@sprintask.com`;
-      
+
       await page.goto('/admin/talents/crear');
-      
+
       await page.fill('#nombre_completo', `Test Talent ${timestamp}`);
       await page.fill('#apellido', `Apellido ${timestamp}`);
       await page.fill('#email', email);
       await page.fill('#password', passwords.fuerte);
       await page.fill('#password_confirm', passwords.fuerte);
+
+      // Seleccionar perfil y seniority con Radix UI Select
+      await selectRadix(page, 'UX Designer', 0);  // Primer combobox = Perfil
+      await selectRadix(page, 'Semi-Senior', 1); // Segundo combobox = Seniority
+
       await page.check('#activo');
-      
+
       await page.click('button[type="submit"]');
-      
+
       await page.waitForTimeout(2000);
       await expectSuccessToast(page, /creado|exitoso/i);
       await expect(page).toHaveURL(/\/admin\/talents/);
@@ -104,18 +111,23 @@ test.describe('Módulo 0.3: Admin - Talents', () => {
     test('talents-crear-inactivo: Crea talent inactivo', async ({ page }) => {
       const timestamp = Date.now().toString();
       const email = `test.talent.inactivo.${timestamp}@sprintask.com`;
-      
+
       await page.goto('/admin/talents/crear');
-      
+
       await page.fill('#nombre_completo', `Test Talent Inactivo ${timestamp}`);
       await page.fill('#apellido', `Apellido ${timestamp}`);
       await page.fill('#email', email);
       await page.fill('#password', passwords.fuerte);
       await page.fill('#password_confirm', passwords.fuerte);
+
+      // Seleccionar perfil y seniority con Radix UI Select
+      await selectRadix(page, 'UI Designer', 0);
+      await selectRadix(page, 'Senior', 1);
+
       await page.uncheck('#activo');
-      
+
       await page.click('button[type="submit"]');
-      
+
       await page.waitForTimeout(2000);
       await expectSuccessToast(page, /creado|exitoso/i);
     });
@@ -132,18 +144,23 @@ test.describe('Módulo 0.3: Admin - Talents', () => {
     test('talents-crear-exitoso: Crea y redirige a lista', async ({ page }) => {
       const timestamp = Date.now().toString();
       const email = `test.talent.exito.${timestamp}@sprintask.com`;
-      
+
       await page.goto('/admin/talents/crear');
-      
+
       await page.fill('#nombre_completo', `Test Talent Exito ${timestamp}`);
       await page.fill('#apellido', `Apellido ${timestamp}`);
       await page.fill('#email', email);
       await page.fill('#password', passwords.fuerte);
       await page.fill('#password_confirm', passwords.fuerte);
+
+      // Seleccionar perfil y seniority con Radix UI Select
+      await selectRadix(page, 'Frontend Developer', 0);
+      await selectRadix(page, 'Lead', 1);
+
       await page.check('#activo');
-      
+
       await page.click('button[type="submit"]');
-      
+
       await page.waitForTimeout(2000);
       await expectSuccessToast(page, /creado|exitoso/i);
       await expect(page).toHaveURL(/\/admin\/talents/);
@@ -154,32 +171,36 @@ test.describe('Módulo 0.3: Admin - Talents', () => {
     test('talents-editar-abre-formulario: Click en editar abre form', async ({ page }) => {
       await page.goto('/admin/talents');
       await page.waitForSelector('table', { timeout: 5000 });
-      
-      const editButton = page.locator('[aria-label="Editar"]').first();
+
+      const editButton = page.getByRole('button', { name: 'Editar' }).first();
       if (await editButton.isVisible()) {
         await editButton.click();
         await page.waitForURL(/\/admin\/talents\/\d+/);
-        await expect(page.locator('h1')).toContainText(/Editar/i);
+        // Usar selector específico para evitar múltiples h1
+        await expect(page.getByRole('heading', { name: 'Editar Talent' })).toBeVisible();
       }
     });
 
     test('talents-editar-cambia-datos: Edita nombre, email, etc.', async ({ page }) => {
       await page.goto('/admin/talents');
       await page.waitForSelector('table', { timeout: 5000 });
-      
-      const editButton = page.locator('[aria-label="Editar"]').first();
+
+      const editButton = page.getByRole('button', { name: 'Editar' }).first();
       if (await editButton.isVisible()) {
         await editButton.click();
         await page.waitForURL(/\/admin\/talents\/\d+/);
         await page.waitForTimeout(1000);
-        
+
         const nombreInput = page.locator('#nombre_completo');
         const nombreOriginal = await nombreInput.inputValue();
-        
+
         await nombreInput.fill(`${nombreOriginal} - Editado`);
-        
+
+        // Seleccionar seniority con Radix UI Select
+        await selectRadix(page, 'Senior', 1);
+
         await page.click('button[type="submit"]');
-        
+
         await page.waitForTimeout(2000);
         await expectSuccessToast(page, /actualizado|exitoso/i);
       }
@@ -188,18 +209,21 @@ test.describe('Módulo 0.3: Admin - Talents', () => {
     test('talents-editar-cambia-estado: Cambia activo/inactivo', async ({ page }) => {
       await page.goto('/admin/talents');
       await page.waitForSelector('table', { timeout: 5000 });
-      
-      const editButton = page.locator('[aria-label="Editar"]').first();
+
+      const editButton = page.getByRole('button', { name: 'Editar' }).first();
       if (await editButton.isVisible()) {
         await editButton.click();
         await page.waitForURL(/\/admin\/talents\/\d+/);
         await page.waitForTimeout(1000);
-        
+
         const checkbox = page.locator('#activo');
         await checkbox.click();
-        
+
+        // Seleccionar seniority con Radix UI Select
+        await selectRadix(page, 'Semi-Senior', 1);
+
         await page.click('button[type="submit"]');
-        
+
         await page.waitForTimeout(2000);
         await expectSuccessToast(page, /actualizado|exitoso/i);
       }
@@ -208,18 +232,21 @@ test.describe('Módulo 0.3: Admin - Talents', () => {
     test('talents-editar-exitoso: Actualiza y refleja en lista', async ({ page }) => {
       await page.goto('/admin/talents');
       await page.waitForSelector('table', { timeout: 5000 });
-      
-      const editButton = page.locator('[aria-label="Editar"]').first();
+
+      const editButton = page.getByRole('button', { name: 'Editar' }).first();
       if (await editButton.isVisible()) {
         await editButton.click();
         await page.waitForURL(/\/admin\/talents\/\d+/);
         await page.waitForTimeout(1000);
-        
+
         const nombreInput = page.locator('#nombre_completo');
         await nombreInput.fill(`Test Editado ${Date.now()}`);
-        
+
+        // Seleccionar seniority con Radix UI Select
+        await selectRadix(page, 'Semi-Senior', 1);
+
         await page.click('button[type="submit"]');
-        
+
         await page.waitForTimeout(2000);
         await expectSuccessToast(page, /actualizado|exitoso/i);
         await expect(page).toHaveURL(/\/admin\/talents/);
@@ -259,21 +286,27 @@ test.describe('Módulo 0.3: Admin - Talents', () => {
     test('talents-eliminar-confirma: Elimina y desaparece de lista', async ({ page }) => {
       await page.goto('/admin/talents');
       await page.waitForSelector('table', { timeout: 5000 });
+
+      // Obtener nombre del primer talent antes de eliminar
+      const firstRow = page.locator('tbody tr').first();
+      const talentNombre = await firstRow.locator('td').nth(0).textContent();
       
-      const rowsBefore = await page.locator('tbody tr').count();
-      
-      const deleteButton = page.locator('[aria-label="Eliminar"]').first();
+      const deleteButton = firstRow.getByRole('button', { name: 'Eliminar' });
       if (await deleteButton.isVisible()) {
         await deleteButton.click();
-        
+
         const confirmButton = page.locator('[role="alertdialog"] button:has-text("Eliminar")');
         await confirmButton.click();
-        
-        await page.waitForTimeout(2000);
+
         await expectSuccessToast(page, /eliminado|exitoso/i);
-        
-        const rowsAfter = await page.locator('tbody tr').count();
-        expect(rowsAfter).toBe(rowsBefore - 1);
+
+        // Recargar para forzar actualización
+        await page.reload();
+        await page.waitForSelector('table', { timeout: 5000 });
+
+        // Verificar que el talent eliminado ya no está
+        const table = page.locator('table');
+        await expect(table).not.toContainText(talentNombre || '');
       }
     });
 

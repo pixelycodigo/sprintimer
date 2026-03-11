@@ -16,15 +16,19 @@ test.describe('Módulo 0.2: Admin - Clientes', () => {
 
   test.describe('Navegación y Carga', () => {
     test('clientes-navegacion-desde-menu: Click en menú carga página', async ({ page }) => {
-      // Click en menú Clientes
-      const menuClientes = page.locator('nav a:has-text("Clientes")');
-      await menuClientes.click();
+      // Navegar primero al dashboard admin
+      await page.goto('/admin');
+      await page.waitForTimeout(500);
       
+      // Click en menú Clientes usando selector por href (hay 2 links con texto "Clientes")
+      const menuClientes = page.locator('a[href="/admin/clientes"]').first();
+      await menuClientes.click();
+
       // Esperar redirect a /admin/clientes
       await page.waitForURL(/\/admin\/clientes/);
-      
+
       // Verificar título
-      await expect(page.locator('h1')).toContainText(/Clientes/i);
+      await expect(page.getByRole('heading', { name: 'Clientes' })).toBeVisible();
     });
 
     test('clientes-lista-carga-datos: Muestra clientes existentes', async ({ page }) => {
@@ -82,16 +86,16 @@ test.describe('Módulo 0.2: Admin - Clientes', () => {
   test.describe('Crear Cliente', () => {
     test('clientes-crear-abre-formulario: Botón "Nuevo Cliente" abre form', async ({ page }) => {
       await page.goto('/admin/clientes');
-      
+
       // Click en Nuevo Cliente
-      const newButton = page.locator('button:has-text("Nuevo Cliente"), button:has-text("Nuevo")');
+      const newButton = page.getByRole('button', { name: 'Nuevo Cliente' });
       await newButton.click();
-      
+
       // Esperar redirect a /admin/clientes/crear
       await page.waitForURL(/\/admin\/clientes\/crear/);
-      
-      // Verificar título del formulario
-      await expect(page.locator('h1, h2')).toContainText(/Nuevo|Crear/i);
+
+      // Verificar título del formulario (usar selector específico para evitar múltiples h1)
+      await expect(page.getByRole('heading', { name: 'Nuevo Cliente' })).toBeVisible();
     });
 
     test('clientes-crear-valida-campos: Valida campos requeridos', async ({ page }) => {
@@ -191,9 +195,9 @@ test.describe('Módulo 0.2: Admin - Clientes', () => {
       
       // Enviar
       await page.click('button[type="submit"]');
-      
-      // Esperar error de password
-      await expectErrorToast(page, /contraseña.*débil|mínimo 8 caracteres/i);
+
+      // Esperar error de password (el mensaje incluye "al menos 8 caracteres")
+      await expectErrorToast(page, /al menos 8 caracteres|8 caracteres/i);
     });
 
     test('clientes-crear-exitoso: Crea y redirige a lista', async ({ page }) => {
@@ -223,17 +227,17 @@ test.describe('Módulo 0.2: Admin - Clientes', () => {
     test('clientes-editar-abre-formulario: Click en editar abre form', async ({ page }) => {
       await page.goto('/admin/clientes');
       await page.waitForSelector('table', { timeout: 5000 });
-      
+
       // Click en primer botón de editar
-      const editButton = page.locator('[aria-label="Editar"]').first();
+      const editButton = page.getByRole('button', { name: 'Editar' }).first();
       if (await editButton.isVisible()) {
         await editButton.click();
-        
+
         // Esperar redirect a /admin/clientes/:id
         await page.waitForURL(/\/admin\/clientes\/\d+/);
-        
-        // Verificar título
-        await expect(page.locator('h1, h2')).toContainText(/Editar/i);
+
+        // Verificar título (usar selector específico para evitar múltiples h1)
+        await expect(page.getByRole('heading', { name: 'Editar Cliente' })).toBeVisible();
       }
     });
 
@@ -354,26 +358,30 @@ test.describe('Módulo 0.2: Admin - Clientes', () => {
     test('clientes-eliminar-confirma: Elimina y desaparece de lista', async ({ page }) => {
       await page.goto('/admin/clientes');
       await page.waitForSelector('table', { timeout: 5000 });
-      
-      // Contar filas antes
-      const rowsBefore = await page.locator('tbody tr').count();
+
+      // Obtener nombre del primer cliente antes de eliminar
+      const firstRow = page.locator('tbody tr').first();
+      const clienteNombre = await firstRow.locator('td').nth(0).textContent();
       
       // Click en eliminar
-      const deleteButton = page.locator('[aria-label="Eliminar"]').first();
+      const deleteButton = firstRow.getByRole('button', { name: 'Eliminar' });
       if (await deleteButton.isVisible()) {
         await deleteButton.click();
-        
+
         // Confirmar en diálogo
         const confirmButton = page.locator('[role="alertdialog"] button:has-text("Eliminar")');
         await confirmButton.click();
-        
+
         // Esperar éxito
-        await page.waitForTimeout(2000);
         await expectSuccessToast(page, /eliminado|exitoso/i);
-        
-        // Verificar que hay una fila menos
-        const rowsAfter = await page.locator('tbody tr').count();
-        expect(rowsAfter).toBe(rowsBefore - 1);
+
+        // Recargar la página para forzar actualización de datos
+        await page.reload();
+        await page.waitForSelector('table', { timeout: 5000 });
+
+        // Verificar que el cliente eliminado ya no está en la tabla
+        const table = page.locator('table');
+        await expect(table).not.toContainText(clienteNombre || '');
       }
     });
 

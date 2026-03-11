@@ -93,27 +93,24 @@
                   - generic [ref=e124]:
                     - text: Proyecto*
                     - combobox [ref=e125] [cursor=pointer]:
-                      - generic: E-commerce Platform
                       - img [ref=e126]
                     - combobox [ref=e128]
                   - generic [ref=e129]:
                     - text: Nombre de la Actividad*
                     - textbox "Nombre de la Actividad*" [ref=e130]:
                       - /placeholder: Desarrollo de módulo de autenticación
-                      - text: Diseño de UI/UX
+                      - text: Test Actividad Exito 1773209300089
                   - generic [ref=e131]:
                     - text: Descripción
                     - textbox "Descripción" [ref=e132]:
                       - /placeholder: Descripción detallada de la actividad
-                      - text: Diseño de interfaces y experiencia de usuario para e-commerce incluyendo wireframes y prototipos
+                      - text: Descripción de la actividad 1773209300089
                   - generic [ref=e133]:
                     - text: Horas Estimadas*
                     - spinbutton "Horas Estimadas*" [ref=e134]: "40.00"
               - generic [ref=e135]:
-                - checkbox "Actividad activa" [checked] [ref=e136] [cursor=pointer]:
-                  - generic:
-                    - img
-                - checkbox [checked]
+                - checkbox "Actividad activa" [ref=e136] [cursor=pointer]
+                - checkbox
                 - generic [ref=e137] [cursor=pointer]: Actividad activa
               - generic [ref=e138]:
                 - button "Guardar Cambios" [ref=e139] [cursor=pointer]
