@@ -5,6 +5,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { actividadesService } from '../../../services/actividades.service';
 import { proyectosService } from '../../../services/proyectos.service';
+import { buildPath } from '../../../utils/getBasePath';
 import { Button } from '@ui/Button';
 import { Input } from '@ui/Input';
 import { Label } from '@ui/Label';
@@ -36,7 +37,7 @@ export default function AdminActividadesCrear() {
     mutationFn: (data: CreateActividadInput) => actividadesService.create(data),
     onSuccess: () => {
       toast.success('Actividad creada exitosamente');
-      navigate('/admin/actividades');
+      navigate(buildPath('/admin/actividades'));
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al crear actividad');
@@ -55,7 +56,7 @@ export default function AdminActividadesCrear() {
         title="Nueva Actividad"
         description="Crea una nueva actividad para un proyecto"
         backLink={
-          <Link to="/admin/actividades">
+          <Link to={buildPath('/admin/actividades')}>
             <ArrowLeft className="w-5 h-5" aria-hidden="true" />
           </Link>
         }
@@ -161,7 +162,7 @@ export default function AdminActividadesCrear() {
                 type="button"
                 variant="outline"
                 size="default"
-                onClick={() => navigate('/admin/actividades')}
+                onClick={() => navigate(buildPath('/admin/actividades'))}
               >
                 Cancelar
               </Button>

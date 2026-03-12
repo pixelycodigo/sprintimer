@@ -5,6 +5,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { proyectosService } from '../../../services/proyectos.service';
 import { clientesService } from '../../../services/clientes.service';
+import { buildPath } from '../../../utils/getBasePath';
 import { Button } from '@ui/Button';
 import { Input } from '@ui/Input';
 import { Label } from '@ui/Label';
@@ -47,7 +48,7 @@ export default function AdminProyectosEditar() {
     mutationFn: (data: UpdateProyectoInput) => proyectosService.update(Number(id), data),
     onSuccess: () => {
       toast.success('Proyecto actualizado exitosamente');
-      navigate('/admin/proyectos');
+      navigate(buildPath('/admin/proyectos'));
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al actualizar proyecto');
@@ -88,7 +89,7 @@ export default function AdminProyectosEditar() {
         title="Editar Proyecto"
         description="Actualiza la información del proyecto"
         backLink={
-          <Link to="/admin/proyectos">
+          <Link to={buildPath('/admin/proyectos')}>
             <ArrowLeft className="w-5 h-5" aria-hidden="true" />
           </Link>
         }
@@ -215,7 +216,7 @@ export default function AdminProyectosEditar() {
                 type="button"
                 variant="outline"
                 size="default"
-                onClick={() => navigate('/admin/proyectos')}
+                onClick={() => navigate(buildPath('/admin/proyectos'))}
               >
                 Cancelar
               </Button>

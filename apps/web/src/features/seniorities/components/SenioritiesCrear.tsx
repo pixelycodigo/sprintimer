@@ -4,6 +4,7 @@ import { ArrowLeft, Award } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { senioritiesService } from '../../../services/seniorities.service';
+import { buildPath } from '../../../utils/getBasePath';
 import { Button } from '@ui/Button';
 import { Input } from '@ui/Input';
 import { Label } from '@ui/Label';
@@ -24,7 +25,7 @@ export default function AdminSenioritiesCrear() {
     mutationFn: (data: CreateSeniorityInput) => senioritiesService.create(data),
     onSuccess: () => {
       toast.success('Seniority creado exitosamente');
-      navigate('/admin/seniorities');
+      navigate(buildPath('/admin/seniorities'));
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al crear seniority');
@@ -43,7 +44,7 @@ export default function AdminSenioritiesCrear() {
         title="Nuevo Seniority"
         description="Crea un nuevo nivel de seniority"
         backLink={
-          <Link to="/admin/seniorities">
+          <Link to={buildPath('/admin/seniorities')}>
             <ArrowLeft className="w-5 h-5" aria-hidden="true" />
           </Link>
         }
@@ -119,7 +120,7 @@ export default function AdminSenioritiesCrear() {
                 type="button"
                 variant="outline"
                 size="default"
-                onClick={() => navigate('/admin/seniorities')}
+                onClick={() => navigate(buildPath('/admin/seniorities'))}
               >
                 Cancelar
               </Button>

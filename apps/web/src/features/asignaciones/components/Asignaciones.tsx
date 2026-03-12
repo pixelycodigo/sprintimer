@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { asignacionesService } from '../../../services/asignaciones.service';
 import { type ColumnDef } from '@tanstack/react-table';
+import { buildPath } from '../../../utils/getBasePath';
 
 import { DataTable, DataTableActions } from '@ui/DataTable';
 import { EntityCell, StatusBadge } from '@ui';
@@ -103,7 +104,7 @@ export default function AdminAsignaciones() {
         title="Asignaciones"
         description="Gestiona las asignaciones de talents a actividades"
         action={
-          <Link to="/admin/asignaciones/crear">
+          <Link to={buildPath('/admin/asignaciones/crear')}>
             <Button variant="default" size="default">
               <Plus className="w-4 h-4 mr-2" />
               Nueva Asignación

@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { proyectosService } from '../../../services/proyectos.service';
 import { clientesService } from '../../../services/clientes.service';
 import { type ColumnDef } from '@tanstack/react-table';
+import { buildPath } from '../../../utils/getBasePath';
 
 import { DataTable, DataTableActions } from '@ui/DataTable';
 import { EntityCell, StatusBadge, LoadingState } from '@ui';
@@ -119,7 +120,7 @@ export default function AdminProyectos() {
         title="Proyectos"
         description="Gestiona los proyectos de los clientes"
         action={
-          <Link to="/admin/proyectos/crear">
+          <Link to={buildPath('/admin/proyectos/crear')}>
             <Button variant="default" size="default">
               <Plus className="w-4 h-4 mr-2" />
               Nuevo Proyecto

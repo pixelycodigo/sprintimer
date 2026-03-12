@@ -46,11 +46,22 @@ function AppWithConfig() {
       .then((res) => res.json())
       .then(async (data) => {
         // Usar valores de config.json (sin fallback hardcodeado)
-        setBaseUrl(data.baseUrl);
-        
+        const configBaseUrl = data.baseUrl || '/';
+        setBaseUrl(configBaseUrl);
+
+        // Establecer <base href> dinámicamente para rutas relativas
+        const baseElement = document.querySelector('base');
+        if (baseElement) {
+          baseElement.href = configBaseUrl;
+        } else {
+          const newBase = document.createElement('base');
+          newBase.href = configBaseUrl;
+          document.head.prepend(newBase);
+        }
+
         // Inicializar URL de la API desde config.json
         await initApiUrl();
-        
+
         setLoaded(true);
       })
       .catch(async () => {

@@ -5,6 +5,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { actividadesService } from '../../../services/actividades.service';
 import { proyectosService } from '../../../services/proyectos.service';
+import { buildPath } from '../../../utils/getBasePath';
 import { Button } from '@ui/Button';
 import { Input } from '@ui/Input';
 import { Label } from '@ui/Label';
@@ -47,7 +48,7 @@ export default function AdminActividadesEditar() {
     mutationFn: (data: UpdateActividadInput) => actividadesService.update(Number(id), data),
     onSuccess: () => {
       toast.success('Actividad actualizada exitosamente');
-      navigate('/admin/actividades');
+      navigate(buildPath('/admin/actividades'));
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al actualizar actividad');
@@ -87,7 +88,7 @@ export default function AdminActividadesEditar() {
         title="Editar Actividad"
         description="Actualiza la información de la actividad"
         backLink={
-          <Link to="/admin/actividades">
+          <Link to={buildPath('/admin/actividades')}>
             <ArrowLeft className="w-5 h-5" aria-hidden="true" />
           </Link>
         }
@@ -193,7 +194,7 @@ export default function AdminActividadesEditar() {
                 type="button"
                 variant="outline"
                 size="default"
-                onClick={() => navigate('/admin/actividades')}
+                onClick={() => navigate(buildPath('/admin/actividades'))}
               >
                 Cancelar
               </Button>

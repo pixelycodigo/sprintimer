@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { costoPorHoraService } from '../../../services/costoPorHora.service';
 import { type ColumnDef } from '@tanstack/react-table';
+import { buildPath } from '../../../utils/getBasePath';
 
 import { DataTable, DataTableActions } from '@ui/DataTable';
 import { EntityCell, StatusBadge } from '@ui';
@@ -112,7 +113,7 @@ export default function AdminCostoPorHora() {
         title="Costos por Hora"
         description="Gestiona los costos por hora de los talents según perfil y seniority"
         action={
-          <Link to="/admin/costo-por-hora/crear">
+          <Link to={buildPath('/admin/costo-por-hora/crear')}>
             <Button variant="default" size="default">
               <Plus className="w-4 h-4 mr-2" />
               Nuevo Costo

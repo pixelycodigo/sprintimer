@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate, Link } from 'react-router-dom';
 import {
   LayoutDashboard,
   Users,
@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { useSidebarStore } from '../stores/sidebar.store';
 import { useAuthStore } from '../stores/auth.store';
-import { getLoginPath } from '../utils/getBasePath';
+import { getLoginPath, buildPath } from '../utils/getBasePath';
 
 import { ThemeToggle } from '@ui/ThemeToggle';
 import { SidebarToggle } from '@ui/SidebarToggle';
@@ -26,8 +26,8 @@ import { Button } from '@ui/Button';
 import { cn } from '../utils/cn';
 
 const navigation = [
-  { name: 'Dashboard', href: '/super-admin', icon: LayoutDashboard },
-  { name: 'Usuarios', href: '/super-admin/usuarios', icon: Users },
+  { name: 'Dashboard', path: '/super-admin', icon: LayoutDashboard },
+  { name: 'Usuarios', path: '/super-admin/usuarios', icon: Users },
 ];
 
 export default function SuperAdminLayout() {
@@ -50,11 +50,13 @@ export default function SuperAdminLayout() {
         <SidebarContent>
           <SidebarGroup>
             {navigation.map((item) => (
-              <SidebarMenuItem key={item.name} href={item.href}>
-                <SidebarMenuItemIcon>
-                  <item.icon className="w-5 h-5" aria-hidden="true" />
-                </SidebarMenuItemIcon>
-                {item.name}
+              <SidebarMenuItem key={item.name}>
+                <Link to={buildPath(item.path)} className="flex items-center gap-3">
+                  <SidebarMenuItemIcon>
+                    <item.icon className="w-5 h-5" aria-hidden="true" />
+                  </SidebarMenuItemIcon>
+                  {item.name}
+                </Link>
               </SidebarMenuItem>
             ))}
           </SidebarGroup>
@@ -83,8 +85,8 @@ export default function SuperAdminLayout() {
                 avatar: user?.avatar,
               }}
               onLogout={handleLogout}
-              profileLink="/super-admin/perfil"
-              settingsLink="/super-admin/configuracion"
+              profileLink={buildPath('/super-admin/perfil')}
+              settingsLink={buildPath('/super-admin/configuracion')}
             />
           </HeaderRight>
         </Header>

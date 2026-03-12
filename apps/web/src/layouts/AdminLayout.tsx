@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate, Link } from 'react-router-dom';
 import {
   LayoutDashboard,
   Users,
@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { useSidebarStore } from '../stores/sidebar.store';
 import { useAuthStore } from '../stores/auth.store';
-import { getLoginPath } from '../utils/getBasePath';
+import { getLoginPath, buildPath } from '../utils/getBasePath';
 
 import { ThemeToggle } from '@ui/ThemeToggle';
 import { SidebarToggle } from '@ui/SidebarToggle';
@@ -34,23 +34,23 @@ import { Button } from '@ui/Button';
 import { cn } from '../utils/cn';
 
 const navigation = [
-  { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-  { name: 'Clientes', href: '/admin/clientes', icon: Users },
-  { name: 'Proyectos', href: '/admin/proyectos', icon: FolderOpen },
-  { name: 'Actividades', href: '/admin/actividades', icon: Briefcase },
+  { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
+  { name: 'Clientes', path: '/admin/clientes', icon: Users },
+  { name: 'Proyectos', path: '/admin/proyectos', icon: FolderOpen },
+  { name: 'Actividades', path: '/admin/actividades', icon: Briefcase },
 ];
 
 const teamWorkNav = [
-  { name: 'Talents', href: '/admin/talents', icon: Briefcase },
-  { name: 'Perfiles', href: '/admin/perfiles', icon: Tag },
-  { name: 'Seniority', href: '/admin/seniorities', icon: GraduationCap },
-  { name: 'Asignaciones', href: '/admin/asignaciones', icon: Users },
+  { name: 'Talents', path: '/admin/talents', icon: Briefcase },
+  { name: 'Perfiles', path: '/admin/perfiles', icon: Tag },
+  { name: 'Seniority', path: '/admin/seniorities', icon: GraduationCap },
+  { name: 'Asignaciones', path: '/admin/asignaciones', icon: Users },
 ];
 
 const otherNav = [
-  { name: 'Divisas', href: '/admin/divisas', icon: Coins },
-  { name: 'Costo por Hora', href: '/admin/costo-por-hora', icon: DollarSign },
-  { name: 'Eliminados', href: '/admin/eliminados', icon: Trash2 },
+  { name: 'Divisas', path: '/admin/divisas', icon: Coins },
+  { name: 'Costo por Hora', path: '/admin/costo-por-hora', icon: DollarSign },
+  { name: 'Eliminados', path: '/admin/eliminados', icon: Trash2 },
 ];
 
 export default function AdminLayout() {
@@ -74,11 +74,13 @@ export default function AdminLayout() {
           {/* Main Navigation */}
           <SidebarGroup>
             {navigation.map((item) => (
-              <SidebarMenuItem key={item.name} href={item.href}>
-                <SidebarMenuItemIcon>
-                  <item.icon className="w-5 h-5" aria-hidden="true" />
-                </SidebarMenuItemIcon>
-                {item.name}
+              <SidebarMenuItem key={item.name}>
+                <Link to={buildPath(item.path)} className="flex items-center gap-3">
+                  <SidebarMenuItemIcon>
+                    <item.icon className="w-5 h-5" aria-hidden="true" />
+                  </SidebarMenuItemIcon>
+                  {item.name}
+                </Link>
               </SidebarMenuItem>
             ))}
           </SidebarGroup>
@@ -90,11 +92,13 @@ export default function AdminLayout() {
               TeamWork
             </SidebarGroupLabel>
             {teamWorkNav.map((item) => (
-              <SidebarMenuItem key={item.name} href={item.href} nested>
-                <SidebarMenuItemIcon>
-                  <item.icon className="w-5 h-5" aria-hidden="true" />
-                </SidebarMenuItemIcon>
-                {item.name}
+              <SidebarMenuItem key={item.name}>
+                <Link to={buildPath(item.path)} className="flex items-center gap-3 pl-8">
+                  <SidebarMenuItemIcon>
+                    <item.icon className="w-5 h-5" aria-hidden="true" />
+                  </SidebarMenuItemIcon>
+                  {item.name}
+                </Link>
               </SidebarMenuItem>
             ))}
           </SidebarGroup>
@@ -102,11 +106,13 @@ export default function AdminLayout() {
           {/* Other Navigation */}
           <SidebarGroup>
             {otherNav.map((item) => (
-              <SidebarMenuItem key={item.name} href={item.href}>
-                <SidebarMenuItemIcon>
-                  <item.icon className="w-5 h-5" aria-hidden="true" />
-                </SidebarMenuItemIcon>
-                {item.name}
+              <SidebarMenuItem key={item.name}>
+                <Link to={buildPath(item.path)} className="flex items-center gap-3">
+                  <SidebarMenuItemIcon>
+                    <item.icon className="w-5 h-5" aria-hidden="true" />
+                  </SidebarMenuItemIcon>
+                  {item.name}
+                </Link>
               </SidebarMenuItem>
             ))}
           </SidebarGroup>
@@ -136,8 +142,8 @@ export default function AdminLayout() {
                 avatar: user?.avatar,
               }}
               onLogout={handleLogout}
-              profileLink="/admin/perfil"
-              settingsLink="/admin/configuracion"
+              profileLink={buildPath('/admin/perfil')}
+              settingsLink={buildPath('/admin/configuracion')}
             />
           </HeaderRight>
         </Header>

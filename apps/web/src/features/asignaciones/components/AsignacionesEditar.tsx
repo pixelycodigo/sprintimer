@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { asignacionesService } from '../../../services/asignaciones.service';
 import { actividadesService } from '../../../services/actividades.service';
 import { talentsService } from '../../../services/talents.service';
+import { buildPath } from '../../../utils/getBasePath';
 import { Button } from '@ui/Button';
 import { Spinner } from '@ui/Spinner';
 import { Label } from '@ui/Label';
@@ -51,7 +52,7 @@ export default function AdminAsignacionesEditar() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['asignaciones'] });
       toast.success('Asignación actualizada exitosamente');
-      navigate('/admin/asignaciones');
+      navigate(buildPath('/admin/asignaciones'));
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al actualizar asignación');
@@ -88,7 +89,7 @@ export default function AdminAsignacionesEditar() {
         title="Editar Asignación"
         description="Actualiza la información de la asignación"
         backLink={
-          <Link to="/admin/asignaciones">
+          <Link to={buildPath('/admin/asignaciones')}>
             <ArrowLeft className="w-5 h-5" aria-hidden="true" />
           </Link>
         }
@@ -177,7 +178,7 @@ export default function AdminAsignacionesEditar() {
                 type="button"
                 variant="outline"
                 size="default"
-                onClick={() => navigate('/admin/asignaciones')}
+                onClick={() => navigate(buildPath('/admin/asignaciones'))}
               >
                 Cancelar
               </Button>

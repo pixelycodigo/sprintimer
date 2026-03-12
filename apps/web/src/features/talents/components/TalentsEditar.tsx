@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { talentsService } from '../../../services/talents.service';
 import { perfilesService } from '../../../services/perfiles.service';
 import { senioritiesService } from '../../../services/seniorities.service';
+import { buildPath } from '../../../utils/getBasePath';
 import { Button } from '@ui/Button';
 import { Input } from '@ui/Input';
 import { Label } from '@ui/Label';
@@ -63,7 +64,7 @@ export default function AdminTalentsEditar() {
       queryClient.invalidateQueries({ queryKey: talentsService.queryKeys.all() });
       queryClient.invalidateQueries({ queryKey: talentsService.queryKeys.byId(Number(id)) });
       toast.success('Talent actualizado exitosamente');
-      navigate('/admin/talents');
+      navigate(buildPath('/admin/talents'));
     },
     onError: (error: any) => {
       // Mostrar mensaje específico del error
@@ -154,7 +155,7 @@ export default function AdminTalentsEditar() {
         title="Editar Talent"
         description="Actualiza la información del talent"
         backLink={
-          <Link to="/admin/talents">
+          <Link to={buildPath('/admin/talents')}>
             <ArrowLeft className="w-5 h-5" aria-hidden="true" />
           </Link>
         }
@@ -379,7 +380,7 @@ export default function AdminTalentsEditar() {
                 type="button"
                 variant="outline"
                 size="default"
-                onClick={() => navigate('/admin/talents')}
+                onClick={() => navigate(buildPath('/admin/talents'))}
               >
                 Cancelar
               </Button>

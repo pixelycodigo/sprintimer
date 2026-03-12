@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate, Link } from 'react-router-dom';
 import {
   LayoutDashboard,
   Briefcase,
@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { useSidebarStore } from '../stores/sidebar.store';
 import { useAuthStore } from '../stores/auth.store';
-import { getLoginPath } from '../utils/getBasePath';
+import { getLoginPath, buildPath } from '../utils/getBasePath';
 
 import { ThemeToggle } from '@ui/ThemeToggle';
 import { SidebarToggle } from '@ui/SidebarToggle';
@@ -29,11 +29,11 @@ import { Button } from '@ui/Button';
 import { cn } from '../utils/cn';
 
 const navigation = [
-  { name: 'Dashboard', href: '/talent', icon: LayoutDashboard },
-  { name: 'Mis Proyectos', href: '/talent/proyectos', icon: Briefcase },
-  { name: 'Mis Actividades', href: '/talent/actividades', icon: ListTodo },
-  { name: 'Mis Tareas', href: '/talent/tareas', icon: CheckSquare },
-  { name: 'Tareas Eliminadas', href: '/talent/tareas/eliminadas', icon: Trash2 },
+  { name: 'Dashboard', path: '/talent', icon: LayoutDashboard },
+  { name: 'Mis Proyectos', path: '/talent/proyectos', icon: Briefcase },
+  { name: 'Mis Actividades', path: '/talent/actividades', icon: ListTodo },
+  { name: 'Mis Tareas', path: '/talent/tareas', icon: CheckSquare },
+  { name: 'Tareas Eliminadas', path: '/talent/tareas/eliminadas', icon: Trash2 },
 ];
 
 export default function TalentLayout() {
@@ -56,11 +56,13 @@ export default function TalentLayout() {
         <SidebarContent>
           <SidebarGroup>
             {navigation.map((item) => (
-              <SidebarMenuItem key={item.name} href={item.href}>
-                <SidebarMenuItemIcon>
-                  <item.icon className="w-5 h-5" aria-hidden="true" />
-                </SidebarMenuItemIcon>
-                {item.name}
+              <SidebarMenuItem key={item.name}>
+                <Link to={buildPath(item.path)} className="flex items-center gap-3">
+                  <SidebarMenuItemIcon>
+                    <item.icon className="w-5 h-5" aria-hidden="true" />
+                  </SidebarMenuItemIcon>
+                  {item.name}
+                </Link>
               </SidebarMenuItem>
             ))}
           </SidebarGroup>
@@ -89,8 +91,8 @@ export default function TalentLayout() {
                 avatar: user?.avatar,
               }}
               onLogout={handleLogout}
-              profileLink="/talent/perfil"
-              settingsLink="/talent/configuracion"
+              profileLink={buildPath('/talent/perfil')}
+              settingsLink={buildPath('/talent/configuracion')}
             />
           </HeaderRight>
         </Header>

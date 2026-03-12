@@ -4,6 +4,7 @@ import { ArrowLeft, Building2, Mail, Phone, MapPin, Eye, EyeOff } from 'lucide-r
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { clientesService } from '../../../services/clientes.service';
+import { buildPath } from '../../../utils/getBasePath';
 import { Button } from '@ui/Button';
 import { Input } from '@ui/Input';
 import { Label } from '@ui/Label';
@@ -53,7 +54,7 @@ export default function AdminClientesEditar() {
       queryClient.invalidateQueries({ queryKey: clientesService.queryKeys.all() });
       queryClient.invalidateQueries({ queryKey: clientesService.queryKeys.byId(Number(id)) });
       toast.success('Cliente actualizado exitosamente');
-      navigate('/admin/clientes');
+      navigate(buildPath('/admin/clientes'));
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al actualizar cliente');
@@ -150,7 +151,7 @@ export default function AdminClientesEditar() {
       {/* Header */}
       <div className="flex items-center gap-4">
         <Link
-          to="/admin/clientes"
+          to={buildPath('/admin/clientes')}
           className="inline-flex items-center justify-center p-2 text-slate-400 dark:text-zinc-500 hover:text-slate-600 dark:hover:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-md transition-colors"
         >
           <ArrowLeft className="w-5 h-5" aria-hidden="true" />
@@ -370,7 +371,7 @@ export default function AdminClientesEditar() {
                 type="button"
                 variant="outline"
                 size="default"
-                onClick={() => navigate('/admin/clientes')}
+                onClick={() => navigate(buildPath('/admin/clientes'))}
               >
                 Cancelar
               </Button>

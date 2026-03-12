@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { senioritiesService } from '../../../services/seniorities.service';
 import { type ColumnDef } from '@tanstack/react-table';
+import { buildPath } from '../../../utils/getBasePath';
 
 import { DataTable, DataTableActions } from '@ui/DataTable';
 import { EntityCell, LoadingState } from '@ui';
@@ -85,7 +86,7 @@ export default function AdminSeniorities() {
         title="Seniorities"
         description="Gestiona los niveles de seniority de los talents"
         action={
-          <Link to="/admin/seniorities/crear">
+          <Link to={buildPath('/admin/seniorities/crear')}>
             <Button variant="default" size="default">
               <Plus className="w-4 h-4 mr-2" />
               Nuevo Seniority

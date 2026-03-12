@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { talentDashboardService } from '../../../services/talent-dashboard.service';
 import { type ColumnDef } from '@tanstack/react-table';
+import { buildPath } from '../../../utils/getBasePath';
 
 import { DataTable, DataTableActions } from '@ui/DataTable';
 import { LoadingState, StatusBadge } from '@ui';
@@ -126,7 +127,7 @@ export default function TalentTareas() {
           editId={row.original.id}
           deleteId={row.original.id}
           deleteNombre={row.original.nombre}
-          onEdit={(id) => navigate(`/talent/tareas/${id}/editar`)}
+          onEdit={(id) => navigate(buildPath(`/talent/tareas/${id}/editar`))}
           onConfirmDelete={(id: number | string) => deleteMutation.mutate(Number(id))}
           deleteTitle="¿Eliminar tarea?"
           deleteDescription="La tarea se moverá a la papelera de reciclaje. Podrás restaurarla o eliminarla permanentemente antes de los 30 días."
@@ -147,7 +148,7 @@ export default function TalentTareas() {
         title="Mis Tareas"
         description="Tus tareas asignadas en actividades"
         action={
-          <Link to="/talent/tareas/crear">
+          <Link to={buildPath('/talent/tareas/crear')}>
             <Button variant="default" size="default">
               <Plus className="w-4 h-4 mr-2" />
               Nueva Tarea

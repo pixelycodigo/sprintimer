@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { asignacionesService } from '../../../services/asignaciones.service';
 import { actividadesService } from '../../../services/actividades.service';
 import { talentsService } from '../../../services/talents.service';
+import { buildPath } from '../../../utils/getBasePath';
 import { Button } from '@ui/Button';
 import { Label } from '@ui/Label';
 import { Checkbox } from '@ui/Checkbox';
@@ -39,7 +40,7 @@ export default function AdminAsignacionesCrear() {
     mutationFn: (data: CreateAsignacionInput) => asignacionesService.create(data),
     onSuccess: () => {
       toast.success('Asignación creada exitosamente');
-      navigate('/admin/asignaciones');
+      navigate(buildPath('/admin/asignaciones'));
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al crear asignación');
@@ -58,7 +59,7 @@ export default function AdminAsignacionesCrear() {
         title="Nueva Asignación"
         description="Asigna un talent a una actividad"
         backLink={
-          <Link to="/admin/asignaciones">
+          <Link to={buildPath('/admin/asignaciones')}>
             <ArrowLeft className="w-5 h-5" aria-hidden="true" />
           </Link>
         }
@@ -147,7 +148,7 @@ export default function AdminAsignacionesCrear() {
                 type="button"
                 variant="outline"
                 size="default"
-                onClick={() => navigate('/admin/asignaciones')}
+                onClick={() => navigate(buildPath('/admin/asignaciones'))}
               >
                 Cancelar
               </Button>

@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { talentsService } from '../../../services/talents.service';
 import { type ColumnDef } from '@tanstack/react-table';
+import { buildPath } from '../../../utils/getBasePath';
 
 import { DataTable, DataTableActions } from '@ui/DataTable';
 import { EntityCell, StatusBadge, LoadingState } from '@ui';
@@ -29,7 +30,7 @@ export default function AdminTalents() {
       queryClient.invalidateQueries({ queryKey: talentsService.queryKeys.all() });
       toast.success('Talent eliminado exitosamente');
       // Redirigir a la bandeja de Eliminados
-      navigate('/admin/eliminados');
+      navigate(buildPath('/admin/eliminados'));
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al eliminar talent');
@@ -107,7 +108,7 @@ export default function AdminTalents() {
         title="Talents"
         description="Gestiona los talents freelance de la plataforma"
         action={
-          <Link to="/admin/talents/crear">
+          <Link to={buildPath('/admin/talents/crear')}>
             <Button variant="default" size="default">
               <Plus className="w-4 h-4 mr-2" />
               Nuevo Talent

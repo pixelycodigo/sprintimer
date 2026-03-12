@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { clientesService } from '../../../services/clientes.service';
 import { type ColumnDef } from '@tanstack/react-table';
+import { buildPath } from '../../../utils/getBasePath';
 
 import { DataTable, DataTableActions } from '@ui/DataTable';
 import { EntityCell, StatusBadge, LoadingState } from '@ui';
@@ -123,7 +124,7 @@ export default function AdminClientes() {
         title="Clientes"
         description="Gestiona los clientes de la plataforma"
         action={
-          <Link to="/admin/clientes/crear">
+          <Link to={buildPath('/admin/clientes/crear')}>
             <Button variant="default" size="default">
               <Plus className="w-4 h-4 mr-2" />
               Nuevo Cliente

@@ -4,6 +4,7 @@ import { ArrowLeft, ClipboardList, ListTodo } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { talentDashboardService } from '../../../services/talent-dashboard.service';
+import { buildPath } from '../../../utils/getBasePath';
 import { Button } from '@ui/Button';
 import { Input } from '@ui/Input';
 import { Label } from '@ui/Label';
@@ -40,7 +41,7 @@ export default function TalentTareasCrear() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['talent-tareas'] });
       toast.success('Tarea creada exitosamente');
-      navigate('/talent/tareas');
+      navigate(buildPath('/talent/tareas'));
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al crear tarea');
@@ -78,7 +79,7 @@ export default function TalentTareasCrear() {
         title="Nueva Tarea"
         description="Crea una nueva tarea en una actividad asignada"
         backLink={
-          <Link to="/talent/tareas">
+          <Link to={buildPath('/talent/tareas')}>
             <ArrowLeft className="w-5 h-5" aria-hidden="true" />
           </Link>
         }
@@ -171,7 +172,7 @@ export default function TalentTareasCrear() {
                   type="button"
                   variant="outline"
                   size="default"
-                  onClick={() => navigate('/talent/tareas')}
+                  onClick={() => navigate(buildPath('/talent/tareas'))}
                 >
                   Cancelar
                 </Button>

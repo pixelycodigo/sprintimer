@@ -7,6 +7,7 @@ import { costoPorHoraService } from '../../../services/costoPorHora.service';
 import { divisasService } from '../../../services/divisas.service';
 import { perfilesService } from '../../../services/perfiles.service';
 import { senioritiesService } from '../../../services/seniorities.service';
+import { buildPath } from '../../../utils/getBasePath';
 import { Button } from '@ui/Button';
 import { Input } from '@ui/Input';
 import { Label } from '@ui/Label';
@@ -53,7 +54,7 @@ export default function AdminCostoPorHoraCrear() {
     mutationFn: (data: CreateCostoPorHoraInput) => costoPorHoraService.create(data),
     onSuccess: () => {
       toast.success('Costo por hora creado exitosamente');
-      navigate('/admin/costo-por-hora');
+      navigate(buildPath('/admin/costo-por-hora'));
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al crear costo por hora');
@@ -72,7 +73,7 @@ export default function AdminCostoPorHoraCrear() {
         title="Nuevo Costo por Hora"
         description="Crea un nuevo costo por hora"
         backLink={
-          <Link to="/admin/costo-por-hora">
+          <Link to={buildPath('/admin/costo-por-hora')}>
             <ArrowLeft className="w-5 h-5" aria-hidden="true" />
           </Link>
         }
@@ -255,7 +256,7 @@ export default function AdminCostoPorHoraCrear() {
                 type="button"
                 variant="outline"
                 size="default"
-                onClick={() => navigate('/admin/costo-por-hora')}
+                onClick={() => navigate(buildPath('/admin/costo-por-hora'))}
               >
                 Cancelar
               </Button>

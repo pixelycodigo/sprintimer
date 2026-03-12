@@ -5,6 +5,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { proyectosService } from '../../../services/proyectos.service';
 import { clientesService } from '../../../services/clientes.service';
+import { buildPath } from '../../../utils/getBasePath';
 import { Button } from '@ui/Button';
 import { Input } from '@ui/Input';
 import { Label } from '@ui/Label';
@@ -36,7 +37,7 @@ export default function AdminProyectosCrear() {
     mutationFn: (data: CreateProyectoInput) => proyectosService.create(data),
     onSuccess: () => {
       toast.success('Proyecto creado exitosamente');
-      navigate('/admin/proyectos');
+      navigate(buildPath('/admin/proyectos'));
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al crear proyecto');
@@ -55,7 +56,7 @@ export default function AdminProyectosCrear() {
         title="Nuevo Proyecto"
         description="Crea un nuevo proyecto para un cliente"
         backLink={
-          <Link to="/admin/proyectos">
+          <Link to={buildPath('/admin/proyectos')}>
             <ArrowLeft className="w-5 h-5" aria-hidden="true" />
           </Link>
         }
@@ -182,7 +183,7 @@ export default function AdminProyectosCrear() {
                 type="button"
                 variant="outline"
                 size="default"
-                onClick={() => navigate('/admin/proyectos')}
+                onClick={() => navigate(buildPath('/admin/proyectos'))}
               >
                 Cancelar
               </Button>

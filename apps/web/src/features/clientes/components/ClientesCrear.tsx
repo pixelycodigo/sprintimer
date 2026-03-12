@@ -4,6 +4,7 @@ import { ArrowLeft, Building2, Mail, Phone, MapPin, Eye, EyeOff } from 'lucide-r
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { clientesService } from '../../../services/clientes.service';
+import { buildPath } from '../../../utils/getBasePath';
 import { Button } from '@ui/Button';
 import { Input } from '@ui/Input';
 import { Label } from '@ui/Label';
@@ -35,7 +36,7 @@ export default function AdminClientesCrear() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: clientesService.queryKeys.all() });
       toast.success('Cliente creado exitosamente');
-      navigate('/admin/clientes');
+      navigate(buildPath('/admin/clientes'));
     },
     onError: (error: any) => {
       // Mostrar mensaje específico del error de validación
@@ -152,7 +153,7 @@ export default function AdminClientesCrear() {
         title="Nuevo Cliente"
         description="Crea un nuevo cliente en la plataforma"
         backLink={
-          <Link to="/admin/clientes">
+          <Link to={buildPath('/admin/clientes')}>
             <ArrowLeft className="w-5 h-5" aria-hidden="true" />
           </Link>
         }
@@ -358,7 +359,7 @@ export default function AdminClientesCrear() {
                 type="button"
                 variant="outline"
                 size="default"
-                onClick={() => navigate('/admin/clientes')}
+                onClick={() => navigate(buildPath('/admin/clientes'))}
               >
                 Cancelar
               </Button>

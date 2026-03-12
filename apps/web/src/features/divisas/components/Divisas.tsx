@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { divisasService } from '../../../services/divisas.service';
 import { type ColumnDef } from '@tanstack/react-table';
+import { buildPath } from '../../../utils/getBasePath';
 
 import { DataTable, DataTableActions } from '@ui/DataTable';
 import { EntityCell, StatusBadge, LoadingState } from '@ui';
@@ -99,7 +100,7 @@ export default function AdminDivisas() {
         title="Divisas"
         description="Gestiona las monedas disponibles para los costos por hora"
         action={
-          <Link to="/admin/divisas/crear">
+          <Link to={buildPath('/admin/divisas/crear')}>
             <Button variant="default" size="default">
               <Plus className="w-4 h-4 mr-2" />
               Nueva Divisa

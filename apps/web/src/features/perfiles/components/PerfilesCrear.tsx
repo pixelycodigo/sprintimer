@@ -4,6 +4,7 @@ import { ArrowLeft, Tag } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { perfilesService } from '../../../services/perfiles.service';
+import { buildPath } from '../../../utils/getBasePath';
 import { Button } from '@ui/Button';
 import { Input } from '@ui/Input';
 import { Label } from '@ui/Label';
@@ -25,7 +26,7 @@ export default function AdminPerfilesCrear() {
     mutationFn: (data: CreatePerfilInput) => perfilesService.create(data),
     onSuccess: () => {
       toast.success('Perfil creado exitosamente');
-      navigate('/admin/perfiles');
+      navigate(buildPath('/admin/perfiles'));
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al crear perfil');
@@ -44,7 +45,7 @@ export default function AdminPerfilesCrear() {
         title="Nuevo Perfil"
         description="Crea un nuevo perfil profesional"
         backLink={
-          <Link to="/admin/perfiles">
+          <Link to={buildPath('/admin/perfiles')}>
             <ArrowLeft className="w-5 h-5" aria-hidden="true" />
           </Link>
         }
@@ -115,7 +116,7 @@ export default function AdminPerfilesCrear() {
                 type="button"
                 variant="outline"
                 size="default"
-                onClick={() => navigate('/admin/perfiles')}
+                onClick={() => navigate(buildPath('/admin/perfiles'))}
               >
                 Cancelar
               </Button>

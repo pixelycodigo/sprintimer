@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { actividadesService } from '../../../services/actividades.service';
 import { type ColumnDef } from '@tanstack/react-table';
+import { buildPath } from '../../../utils/getBasePath';
 
 import { DataTable, DataTableActions } from '@ui/DataTable';
 import { EntityCell, StatusBadge, LoadingState } from '@ui';
@@ -100,7 +101,7 @@ export default function AdminActividades() {
         title="Actividades"
         description="Gestiona las actividades de los proyectos"
         action={
-          <Link to="/admin/actividades/crear">
+          <Link to={buildPath('/admin/actividades/crear')}>
             <Button variant="default" size="default">
               <Plus className="w-4 h-4 mr-2" />
               Nueva Actividad

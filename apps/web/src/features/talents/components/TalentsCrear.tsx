@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { talentsService } from '../../../services/talents.service';
 import { perfilesService } from '../../../services/perfiles.service';
 import { senioritiesService } from '../../../services/seniorities.service';
+import { buildPath } from '../../../utils/getBasePath';
 import { Button } from '@ui/Button';
 import { Input } from '@ui/Input';
 import { Label } from '@ui/Label';
@@ -51,7 +52,7 @@ export default function AdminTalentsCrear() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: talentsService.queryKeys.all() });
       toast.success('Talent creado exitosamente');
-      navigate('/admin/talents');
+      navigate(buildPath('/admin/talents'));
     },
     onError: (error: any) => {
       // Mostrar mensaje específico del error de validación
@@ -174,7 +175,7 @@ export default function AdminTalentsCrear() {
         title="Nuevo Talent"
         description="Crea un nuevo talent en la plataforma"
         backLink={
-          <Link to="/admin/talents">
+          <Link to={buildPath('/admin/talents')}>
             <ArrowLeft className="w-5 h-5" aria-hidden="true" />
           </Link>
         }
@@ -401,7 +402,7 @@ export default function AdminTalentsCrear() {
                 type="button"
                 variant="outline"
                 size="default"
-                onClick={() => navigate('/admin/talents')}
+                onClick={() => navigate(buildPath('/admin/talents'))}
               >
                 Cancelar
               </Button>

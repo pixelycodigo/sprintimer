@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { perfilesService } from '../../../services/perfiles.service';
 import { type ColumnDef } from '@tanstack/react-table';
+import { buildPath } from '../../../utils/getBasePath';
 
 import { DataTable, DataTableActions } from '@ui/DataTable';
 import { EntityCell, StatusBadge, LoadingState } from '@ui';
@@ -84,7 +85,7 @@ export default function AdminPerfiles() {
         title="Perfiles"
         description="Gestiona los perfiles profesionales de los talents"
         action={
-          <Link to="/admin/perfiles/crear">
+          <Link to={buildPath('/admin/perfiles/crear')}>
             <Button variant="default" size="default">
               <Plus className="w-4 h-4 mr-2" />
               Nuevo Perfil

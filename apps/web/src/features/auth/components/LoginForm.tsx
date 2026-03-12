@@ -10,6 +10,7 @@ import { Label } from '@ui/Label';
 import { Checkbox } from '@ui/Checkbox';
 import { Button } from '@ui/Button';
 import { Spinner } from '@ui/Spinner';
+import { buildPath } from '../../../utils/getBasePath';
 
 export interface LoginFormProps {
   title?: string;
@@ -52,22 +53,22 @@ export function LoginForm({
       } else if (redirectTo) {
         navigate(redirectTo);
       } else {
-        // Redirección automática según el rol del usuario
+        // Redirección automática según el rol del usuario (con basePath dinámico)
         switch (user.rol) {
           case 'super_admin':
-            navigate('/super-admin');
+            navigate(buildPath('/super-admin'));
             break;
           case 'administrador':
-            navigate('/admin');
+            navigate(buildPath('/admin'));
             break;
           case 'talent':
-            navigate('/talent');
+            navigate(buildPath('/talent'));
             break;
           case 'cliente':
-            navigate('/cliente');
+            navigate(buildPath('/cliente'));
             break;
           default:
-            navigate('/admin');
+            navigate(buildPath('/admin'));
         }
       }
     } catch (error: unknown) {

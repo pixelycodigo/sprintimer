@@ -3,6 +3,7 @@ import { type ColumnDef } from '@tanstack/react-table';
 import { FolderOpen, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { talentDashboardService } from '../../../services/talent-dashboard.service';
+import { buildPath } from '../../../utils/getBasePath';
 
 import { DataTable } from '@ui/DataTable';
 import { Muted } from '@ui/Typography';
@@ -81,7 +82,7 @@ export default function TalentProyectos() {
             asChild
             title="Ver actividades"
           >
-            <Link to={`/talent/actividades?proyecto=${row.original.id}`}>
+            <Link to={buildPath(`/talent/actividades?proyecto=${row.original.id}`)}>
               <Eye className="w-4 h-4" />
             </Link>
           </Button>

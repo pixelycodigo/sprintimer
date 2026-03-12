@@ -4,6 +4,7 @@ import { ArrowLeft, Coins } from 'lucide-react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { divisasService } from '../../../services/divisas.service';
+import { buildPath } from '../../../utils/getBasePath';
 import { Button } from '@ui/Button';
 import { Input } from '@ui/Input';
 import { Label } from '@ui/Label';
@@ -36,7 +37,7 @@ export default function AdminDivisasEditar() {
     mutationFn: (data: UpdateDivisaInput) => divisasService.update(Number(id), data),
     onSuccess: () => {
       toast.success('Divisa actualizada exitosamente');
-      navigate('/admin/divisas');
+      navigate(buildPath('/admin/divisas'));
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al actualizar divisa');
@@ -74,7 +75,7 @@ export default function AdminDivisasEditar() {
         title="Editar Divisa"
         description="Actualiza la información de la divisa"
         backLink={
-          <Link to="/admin/divisas">
+          <Link to={buildPath('/admin/divisas')}>
             <ArrowLeft className="w-5 h-5" aria-hidden="true" />
           </Link>
         }
@@ -163,7 +164,7 @@ export default function AdminDivisasEditar() {
                 type="button"
                 variant="outline"
                 size="default"
-                onClick={() => navigate('/admin/divisas')}
+                onClick={() => navigate(buildPath('/admin/divisas'))}
               >
                 Cancelar
               </Button>

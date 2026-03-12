@@ -3,6 +3,7 @@ import { type ColumnDef } from '@tanstack/react-table';
 import { ListTodo, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { talentDashboardService } from '../../../services/talent-dashboard.service';
+import { buildPath } from '../../../utils/getBasePath';
 
 import { DataTable } from '@ui/DataTable';
 import { Muted } from '@ui/Typography';
@@ -79,7 +80,7 @@ export default function TalentActividades() {
             asChild
             title="Ver tareas"
           >
-            <Link to={`/talent/tareas?actividad=${row.original.id}`}>
+            <Link to={buildPath(`/talent/tareas?actividad=${row.original.id}`)}>
               <Eye className="w-4 h-4" />
             </Link>
           </Button>

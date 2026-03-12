@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { usuariosService } from '../../../services/usuarios.service';
 import { type ColumnDef } from '@tanstack/react-table';
+import { buildPath } from '../../../utils/getBasePath';
 
 import { DataTable, DataTableActions } from '@ui/DataTable';
 import { EntityCell, StatusBadge, LoadingState } from '@ui';
@@ -115,7 +116,7 @@ export default function SuperAdminUsuarios() {
         title="Usuarios"
         description="Gestiona los administradores de la plataforma"
         action={
-          <Link to="/super-admin/usuarios/crear">
+          <Link to={buildPath('/super-admin/usuarios/crear')}>
             <Button variant="default" size="default">
               <Plus className="w-4 h-4 mr-2" />
               Nuevo Usuario

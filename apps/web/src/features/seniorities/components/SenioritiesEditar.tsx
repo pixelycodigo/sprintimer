@@ -4,6 +4,7 @@ import { ArrowLeft, Award } from 'lucide-react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { senioritiesService } from '../../../services/seniorities.service';
+import { buildPath } from '../../../utils/getBasePath';
 import { Button } from '@ui/Button';
 import { Input } from '@ui/Input';
 import { Label } from '@ui/Label';
@@ -35,7 +36,7 @@ export default function AdminSenioritiesEditar() {
     mutationFn: (data: UpdateSeniorityInput) => senioritiesService.update(Number(id), data),
     onSuccess: () => {
       toast.success('Seniority actualizado exitosamente');
-      navigate('/admin/seniorities');
+      navigate(buildPath('/admin/seniorities'));
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al actualizar seniority');
@@ -72,7 +73,7 @@ export default function AdminSenioritiesEditar() {
         title="Editar Seniority"
         description="Actualiza la información del seniority"
         backLink={
-          <Link to="/admin/seniorities">
+          <Link to={buildPath('/admin/seniorities')}>
             <ArrowLeft className="w-5 h-5" aria-hidden="true" />
           </Link>
         }
@@ -148,7 +149,7 @@ export default function AdminSenioritiesEditar() {
                 type="button"
                 variant="outline"
                 size="default"
-                onClick={() => navigate('/admin/seniorities')}
+                onClick={() => navigate(buildPath('/admin/seniorities'))}
               >
                 Cancelar
               </Button>

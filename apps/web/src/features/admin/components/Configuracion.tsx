@@ -4,6 +4,7 @@ import { ArrowLeft, Lock, Key, Eye, EyeOff } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { authService } from '../../../services/auth.service';
+import { buildPath } from '../../../utils/getBasePath';
 import { Button } from '@ui/Button';
 import { Spinner } from '@ui/Spinner';
 import { Input } from '@ui/Input';
@@ -76,7 +77,7 @@ export default function AdminConfiguracion() {
         description="Gestiona tu contraseña y preferencias"
         backLink={
           <Link
-            to="/admin"
+            to={buildPath('/admin')}
             className="p-2 text-slate-400 dark:text-zinc-500 hover:text-slate-600 dark:hover:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-md transition-colors"
           >
             <ArrowLeft className="w-5 h-5" aria-hidden="true" />
@@ -211,7 +212,7 @@ export default function AdminConfiguracion() {
                 type="button"
                 variant="outline"
                 size="default"
-                onClick={() => navigate('/admin')}
+                onClick={() => navigate(buildPath('/admin'))}
               >
                 Cancelar
               </Button>

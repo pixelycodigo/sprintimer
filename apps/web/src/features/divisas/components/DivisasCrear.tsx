@@ -4,6 +4,7 @@ import { ArrowLeft, Coins } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { divisasService } from '../../../services/divisas.service';
+import { buildPath } from '../../../utils/getBasePath';
 import { Button } from '@ui/Button';
 import { Input } from '@ui/Input';
 import { Label } from '@ui/Label';
@@ -25,7 +26,7 @@ export default function AdminDivisasCrear() {
     mutationFn: (data: CreateDivisaInput) => divisasService.create(data),
     onSuccess: () => {
       toast.success('Divisa creada exitosamente');
-      navigate('/admin/divisas');
+      navigate(buildPath('/admin/divisas'));
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al crear divisa');
@@ -44,7 +45,7 @@ export default function AdminDivisasCrear() {
         title="Nueva Divisa"
         description="Crea una nueva divisa"
         backLink={
-          <Link to="/admin/divisas">
+          <Link to={buildPath('/admin/divisas')}>
             <ArrowLeft className="w-5 h-5" aria-hidden="true" />
           </Link>
         }
@@ -133,7 +134,7 @@ export default function AdminDivisasCrear() {
                 type="button"
                 variant="outline"
                 size="default"
-                onClick={() => navigate('/admin/divisas')}
+                onClick={() => navigate(buildPath('/admin/divisas'))}
               >
                 Cancelar
               </Button>

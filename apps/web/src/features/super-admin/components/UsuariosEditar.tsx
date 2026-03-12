@@ -4,6 +4,7 @@ import { ArrowLeft, Shield, Mail, User, Eye, EyeOff } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { usuariosService } from '../../../services/usuarios.service';
+import { buildPath } from '../../../utils/getBasePath';
 import { Button } from '@ui/Button';
 import { Input } from '@ui/Input';
 import { Label } from '@ui/Label';
@@ -47,7 +48,7 @@ export default function SuperAdminUsuariosEditar() {
       queryClient.invalidateQueries({ queryKey: usuariosService.queryKeys.all() });
       queryClient.invalidateQueries({ queryKey: usuariosService.queryKeys.byId(Number(id)) });
       toast.success('Usuario actualizado exitosamente');
-      navigate('/super-admin/usuarios');
+      navigate(buildPath('/super-admin/usuarios'));
     },
     onError: (error: any) => {
       // Mostrar mensaje específico del error
@@ -107,7 +108,7 @@ export default function SuperAdminUsuariosEditar() {
         title="Editar Usuario"
         description="Modificar información del usuario administrador"
         backLink={
-          <Link to="/super-admin/usuarios">
+          <Link to={buildPath('/super-admin/usuarios')}>
             <ArrowLeft className="w-5 h-5" aria-hidden="true" />
           </Link>
         }
@@ -250,7 +251,7 @@ export default function SuperAdminUsuariosEditar() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => navigate('/super-admin/usuarios')}
+                onClick={() => navigate(buildPath('/super-admin/usuarios'))}
               >
                 Cancelar
               </Button>

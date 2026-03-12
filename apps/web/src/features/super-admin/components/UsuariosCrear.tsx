@@ -4,6 +4,7 @@ import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { usuariosService } from '../../../services/usuarios.service';
+import { buildPath } from '../../../utils/getBasePath';
 import { Button } from '@ui/Button';
 import { Card, CardContent } from '@ui/Card';
 import { Input } from '@ui/Input';
@@ -45,7 +46,7 @@ export default function SuperAdminUsuariosCrear() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: usuariosService.queryKeys.all() });
       toast.success('Usuario creado exitosamente');
-      navigate('/super-admin/usuarios');
+      navigate(buildPath('/super-admin/usuarios'));
     },
     onError: (error: any) => {
       // Mostrar mensaje específico del error de validación
@@ -167,7 +168,7 @@ export default function SuperAdminUsuariosCrear() {
         title="Nuevo Usuario"
         description="Crea un nuevo usuario administrador"
         backLink={
-          <Link to="/super-admin/usuarios">
+          <Link to={buildPath('/super-admin/usuarios')}>
             <ArrowLeft className="w-5 h-5" aria-hidden="true" />
           </Link>
         }
@@ -324,7 +325,7 @@ export default function SuperAdminUsuariosCrear() {
               >
                 {createMutation.isPending ? 'Creando...' : 'Crear Usuario'}
               </Button>
-              <Link to="/super-admin/usuarios">
+              <Link to={buildPath('/super-admin/usuarios')}>
                 <Button type="button" variant="secondary" size="default">
                   Cancelar
                 </Button>
