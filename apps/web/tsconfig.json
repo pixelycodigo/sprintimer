@@ -20,7 +20,7 @@
       "@shared/*": ["../../packages/shared/src/*"],
       "@shared": ["../../packages/shared/src/index.ts"]
     },
-    "types": ["vitest/globals", "@testing-library/jest-dom/vitest"]
+    "types": ["vitest/globals", "@testing-library/jest-dom/vitest", "vite/client"]
   },
   "include": ["src", "../../packages/ui/src", "../../packages/shared/src"],
   "exclude": ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx"],

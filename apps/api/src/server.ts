@@ -9,7 +9,7 @@ import { morganStream } from './config/logger.js';
 import routes from './routes/index.js';
 import logger from './config/logger.js';
 
-// Cargar variables de entorno
+// Cargar variables de entorno (solo backend - configuración sensible)
 dotenv.config();
 
 const app = express();

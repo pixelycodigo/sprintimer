@@ -81,6 +81,40 @@ cd apps/web
 cp .env.example .env
 ```
 
+---
+
+## 📦 Despliegue Multi-Tenant (Bundled Backend)
+
+**Un solo build → FTP_DEPLOY/ completa → Subir por FTP.**
+
+### Build Inicial (una sola vez en local)
+
+```bash
+# Build completo con backend bundled
+npm run build:deploy
+```
+
+### 📖 Guía Completa de Configuración
+
+**Para instrucciones detalladas de despliegue, consultar:**
+- [`docs/configuracionSaaS.md`](docs/configuracionSaaS.md) ← **Documentación oficial**
+
+Esta guía incluye:
+- Configuración paso a paso para raíz y subcarpeta
+- Configuración de `.env`, `config.json`, `.htaccess`
+- Configuración de base de datos
+- Configuración de Node.js en cPanel
+- Verificación y troubleshooting
+
+### Comandos Útiles
+
+```bash
+# Cambiar ruta base (antes de subir)
+npm run set-base /sprintask/
+```
+
+---
+
 ### 5. Ejecutar Migraciones y Seeds (Datos Simulados)
 
 ```bash

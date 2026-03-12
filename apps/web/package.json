@@ -7,8 +7,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "build:post": "tsc && vite build && node scripts/postbuild.js",
     "build:analyze": "tsc && vite build --mode analyze",
-    "preview": "vite preview",
+    "preview": "vite preview --base /sprintask/",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.tsx",
     "test": "vitest"

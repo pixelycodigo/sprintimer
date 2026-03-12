@@ -146,7 +146,7 @@ La acción que representa que SprinTask ha entregado valor al usuario es cuando 
 
 ## 6. Anexo: Enlaces y Evidencias
 
-- **URL del producto desplegado:** `https://pixelycodigo.com/sprintask/`
+- **URL del producto desplegado:** `https://tudominio.com/sprintask/`
 - **Repositorio:** [link al repositorio de SprinTask] (Se asume que el usuario proporcionará el enlace real si es necesario)
 
 - **Credenciales de prueba:**

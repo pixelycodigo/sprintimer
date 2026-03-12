@@ -61,3 +61,6 @@ database/*.sql
 # OS
 Thumbs.db
 Desktop.ini
+
+# FTP Deploy folder
+FTP_DEPLOY/

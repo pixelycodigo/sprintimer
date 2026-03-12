@@ -11,31 +11,31 @@ export const clientesService = {
   },
 
   async findAll(): Promise<Cliente[]> {
-    const response = await api.get<{ data: Cliente[] }>('/admin/clientes');
+    const response = await api.get<{ data: Cliente[] }>('admin/clientes');
     return response.data.data;
   },
 
   async findById(id: number): Promise<Cliente> {
-    const response = await api.get<{ data: Cliente }>(`/admin/clientes/${id}`);
+    const response = await api.get<{ data: Cliente }>(`admin/clientes/${id}`);
     return response.data.data;
   },
 
   async create(data: CreateClienteInput): Promise<Cliente> {
-    const response = await api.post<{ data: Cliente }>('/admin/clientes', data);
+    const response = await api.post<{ data: Cliente }>('admin/clientes', data);
     return response.data.data;
   },
 
   async update(id: number, data: UpdateClienteInput): Promise<Cliente> {
-    const response = await api.put<{ data: Cliente }>(`/admin/clientes/${id}`, data);
+    const response = await api.put<{ data: Cliente }>(`admin/clientes/${id}`, data);
     return response.data.data;
   },
 
   async delete(id: number): Promise<void> {
-    await api.delete(`/admin/clientes/${id}`);
+    await api.delete(`admin/clientes/${id}`);
   },
 
   async search(term: string): Promise<Cliente[]> {
-    const response = await api.get<{ data: Cliente[] }>(`/admin/clientes?search=${encodeURIComponent(term)}`);
+    const response = await api.get<{ data: Cliente[] }>(`admin/clientes?search=${encodeURIComponent(term)}`);
     return response.data.data;
   },
 };

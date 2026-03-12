@@ -1,18 +1,26 @@
 import { CorsOptions } from 'cors';
 
-// Configuración CORS para desarrollo local
-const allowedOrigins = [
+// Configuración CORS dinámica
+// En desarrollo usa localhost, en producción permite cualquier origen (o configura FRONTEND_URL)
+const isDevelopment = process.env.NODE_ENV !== 'production';
+
+const allowedOrigins = isDevelopment ? [
   'http://localhost:5173',
   'http://127.0.0.1:5173',
   'http://localhost:3000',
   process.env.FRONTEND_URL,
-].filter((origin): origin is string => origin !== undefined);
+].filter((origin): origin is string => origin !== undefined) : [];
 
 export const corsOptions: CorsOptions = {
   origin: function (origin, callback) {
     // Permitir requests sin origin (mobile apps, curl, etc.)
     if (!origin) return callback(null, true);
-    
+
+    // En producción, permitir cualquier origen si no está configurado FRONTEND_URL
+    if (!isDevelopment && !process.env.FRONTEND_URL) {
+      return callback(null, true);
+    }
+
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {

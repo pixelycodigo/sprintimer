@@ -2,7 +2,25 @@ import axios, { AxiosError } from 'axios';
 import { useAuthStore } from '../stores/auth.store';
 import { authService } from '../services/auth.service';
 
-const API_URL = 'http://localhost:3001/api';
+// URL de la API se lee desde config.json en tiempo de ejecución
+// Esto permite cambiar la ruta sin rebuild
+let API_URL = '/api'; // Valor inicial, se actualiza con initApiUrl()
+
+// Función para inicializar la URL de la API desde config.json
+export async function initApiUrl() {
+  try {
+    const response = await fetch('./config.json');
+    const config = await response.json();
+    API_URL = config.apiUrl;
+    
+    // Actualizar baseURL de la instancia existente
+    api.defaults.baseURL = API_URL;
+    
+    console.log('✅ API URL configurada:', API_URL);
+  } catch (error) {
+    console.warn('⚠️ No se pudo cargar config.json, usando /api por defecto');
+  }
+}
 
 export const api = axios.create({
   baseURL: API_URL,

@@ -28,35 +28,35 @@ export interface RefreshTokenResponse {
 
 export const authService = {
   async login(data: LoginData): Promise<AuthResponse> {
-    const response = await api.post<{ data: AuthResponse }>('/auth/login', data);
+    const response = await api.post<{ data: AuthResponse }>('auth/login', data);
     return response.data.data;
   },
 
   async registro(data: RegistroData): Promise<AuthResponse> {
-    const response = await api.post<{ data: AuthResponse }>('/auth/registro', data);
+    const response = await api.post<{ data: AuthResponse }>('auth/registro', data);
     return response.data.data;
   },
 
   async logout(): Promise<void> {
-    await api.post('/auth/logout');
+    await api.post('auth/logout');
   },
 
   async refreshToken(refreshToken: string): Promise<RefreshTokenResponse> {
-    const response = await api.post<{ data: RefreshTokenResponse }>('/auth/refresh-token', { refreshToken });
+    const response = await api.post<{ data: RefreshTokenResponse }>('auth/refresh-token', { refreshToken });
     return response.data.data;
   },
 
   async getMe(): Promise<User> {
-    const response = await api.get<{ data: User }>('/auth/me');
+    const response = await api.get<{ data: User }>('auth/me');
     return response.data.data;
   },
 
   async updateProfile(data: { nombre?: string; email?: string }): Promise<User> {
-    const response = await api.put<{ data: User }>('/auth/profile', data);
+    const response = await api.put<{ data: User }>('auth/profile', data);
     return response.data.data;
   },
 
   async changePassword(currentPassword: string, newPassword: string): Promise<void> {
-    await api.put('/auth/change-password', { currentPassword, newPassword });
+    await api.put('auth/change-password', { currentPassword, newPassword });
   },
 };
