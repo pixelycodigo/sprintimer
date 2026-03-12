@@ -5,21 +5,36 @@ import { authService } from '../services/auth.service';
 // URL de la API se lee desde config.json en tiempo de ejecución
 // Esto permite cambiar la ruta sin rebuild
 let API_URL = '/api'; // Valor inicial, se actualiza con initApiUrl()
+let BASE_URL = '/'; // Base URL para redirecciones (se actualiza con initApiUrl())
 
-// Función para inicializar la URL de la API desde config.json
+// Función para inicializar la URL de la API y baseUrl desde config.json
 export async function initApiUrl() {
   try {
     const response = await fetch('./config.json');
     const config = await response.json();
     API_URL = config.apiUrl;
-    
+    BASE_URL = config.baseUrl || '/';
+
+    // Asegurar que baseUrl termine con /
+    if (!BASE_URL.endsWith('/')) {
+      BASE_URL += '/';
+    }
+
     // Actualizar baseURL de la instancia existente
     api.defaults.baseURL = API_URL;
-    
+
     console.log('✅ API URL configurada:', API_URL);
+    console.log('✅ Base URL configurada:', BASE_URL);
   } catch (error) {
-    console.warn('⚠️ No se pudo cargar config.json, usando /api por defecto');
+    console.warn('⚠️ No se pudo cargar config.json, usando valores por defecto');
   }
+}
+
+// Función para obtener la ruta de login completa
+export function getLoginPath(): string {
+  // Asegurar que no haya doble slash
+  const base = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL;
+  return `${base}/login`;
 }
 
 export const api = axios.create({
@@ -88,7 +103,7 @@ api.interceptors.response.use(
     // Si no hay refresh token, cerramos sesión
     if (!refreshToken) {
       useAuthStore.getState().logout();
-      window.location.href = '/login';
+      window.location.href = getLoginPath();
       return Promise.reject(error);
     }
 
@@ -125,7 +140,7 @@ api.interceptors.response.use(
       // Si falla el refresh, cerramos sesión
       processQueue(error as Error, null);
       useAuthStore.getState().logout();
-      window.location.href = '/login';
+      window.location.href = getLoginPath();
       return Promise.reject(refreshError);
     } finally {
       isRefreshing = false;

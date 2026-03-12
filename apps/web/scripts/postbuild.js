@@ -2,7 +2,8 @@
 
 /**
  * Script post-build para el frontend
- * Genera .htaccess y actualiza <base href> según VITE_BASE_URL
+ * Con rutas relativas, NO se modifica index.html
+ * Solo genera .htaccess con la ruta correcta para Apache
  */
 
 import { writeFileSync, existsSync, readFileSync } from 'fs';
@@ -12,7 +13,7 @@ const webDir = process.cwd();
 const ftpDeployDir = resolve(webDir, '../../FTP_DEPLOY');
 
 // ==========================================
-// Leer VITE_BASE_URL desde .env
+// Leer VITE_BASE_URL desde .env (solo para .htaccess)
 // ==========================================
 
 const envPath = resolve(webDir, '.env');
@@ -29,22 +30,11 @@ try {
 }
 
 // ==========================================
-// Actualizar <base href> en index.html
+// NO modificar index.html (ya tiene rutas relativas)
 // ==========================================
 
-const indexPath = resolve(ftpDeployDir, 'index.html');
-let indexContent = readFileSync(indexPath, 'utf-8');
-
-// Reemplazar <base href> existente
-if (indexContent.includes('<base href=')) {
-  indexContent = indexContent.replace(
-    /<base href="[^"]*" \/>/,
-    `<base href="${baseUrl}" />`
-  );
-  console.log(`✅ <base href> actualizado: ${baseUrl}`);
-}
-
-writeFileSync(indexPath, indexContent, 'utf-8');
+console.log('✅ index.html mantiene rutas relativas (./assets/)');
+console.log('   No es necesario modificar <base href> ni rutas de assets');
 
 // ==========================================
 // Generar .htaccess con la ruta correcta
@@ -60,7 +50,7 @@ RewriteEngine On
 RewriteCond %{HTTPS} !=on
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-# IMPORTANTE: base de la aplicación
+# IMPORTANTE: base de la aplicación (editar en servidor si es necesario)
 RewriteBase ${baseUrl}
 
 # Bloquear acceso directo a /api
@@ -86,7 +76,9 @@ writeFileSync(htaccessPath, htaccessContent, 'utf-8');
 console.log(`✅ .htaccess generado con RewriteBase: ${baseUrl}`);
 
 console.log('\n📦 Frontend build completado en FTP_DEPLOY/');
-console.log(`🔧 Ruta configurada: ${baseUrl}`);
+console.log('🔧 Configuración de rutas: RELATIVA (./)');
 console.log('📝 En servidor, editar:');
 console.log('   1. config.json → baseUrl, apiUrl');
-console.log('   2. .env → Credenciales de BD');
+console.log('   2. .htaccess → RewriteBase (si cambia la ruta)');
+console.log('   3. .env → Credenciales de BD');
+console.log('\n✨ El mismo build funciona en raíz o subcarpeta!');

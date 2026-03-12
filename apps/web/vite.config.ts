@@ -4,9 +4,10 @@ import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig(({ mode }) => {
-  // Leer VITE_BASE_URL desde .env para el build
+  // Leer VITE_BASE_URL desde .env para desarrollo
+  // En producción se usa './' para rutas relativas (flexible para cualquier carpeta)
   const env = loadEnv(mode, process.cwd(), '');
-  const BASE_URL = env.VITE_BASE_URL || '/';
+  const BASE_URL = mode === 'production' ? './' : (env.VITE_BASE_URL || '/');
 
   return {
     base: BASE_URL,

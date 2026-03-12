@@ -1,5 +1,6 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from './stores/auth.store';
+import { getBasePath } from './utils/getBasePath';
 
 // Layouts
 import AdminLayout from './layouts/AdminLayout';
@@ -45,19 +46,29 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
   const { isAuthenticated, user } = useAuthStore();
+  const location = useLocation();
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    // Construir ruta de login dinámica
+    const basePath = getBasePath();
+    const loginPath = basePath ? `${basePath}/login` : '/login';
+    return <Navigate to={loginPath} replace state={{ from: location }} />;
   }
 
   if (allowedRoles && user && !allowedRoles.includes(user.rol)) {
-    return <Navigate to="/unauthorized" replace />;
+    // Construir ruta de unauthorized dinámica
+    const basePath = getBasePath();
+    const unauthorizedPath = basePath ? `${basePath}/unauthorized` : '/unauthorized';
+    return <Navigate to={unauthorizedPath} replace />;
   }
 
   return children;
 };
 
 function App() {
+  const basePath = getBasePath();
+  const loginPath = basePath ? `${basePath}/login` : '/login';
+
   return (
     <Routes>
       {/* Rutas públicas */}
@@ -155,8 +166,8 @@ function App() {
       </Route>
 
       {/* Ruta por defecto */}
-      <Route path="/" element={<Navigate to="/login" replace />} />
-      <Route path="*" element={<Navigate to="/login" replace />} />
+      <Route path="/" element={<Navigate to={loginPath} replace />} />
+      <Route path="*" element={<Navigate to={loginPath} replace />} />
     </Routes>
   );
 }

@@ -1,5 +1,7 @@
 # Entrega Final: Documentación del Producto - SprinTask SaaS
 
+![Sprintask](images/dashboard-admin-light.png "Acceso a Plataforma")
+
 ## 1. Resumen Ejecutivo
 
 **Nombre del Proyecto:** SprinTask SaaS
@@ -146,8 +148,10 @@ La acción que representa que SprinTask ha entregado valor al usuario es cuando 
 
 ## 6. Anexo: Enlaces y Evidencias
 
-- **URL del producto desplegado:** `https://tudominio.com/sprintask/`
-- **Repositorio:** [link al repositorio de SprinTask] (Se asume que el usuario proporcionará el enlace real si es necesario)
+![Sprintask](images/login.png "Acceso a Plataforma")
+
+- **URL del producto desplegado:** `https://pixelycodigo.com/sprintask/`
+- **Repositorio:** [https://github.com/pixelycodigo/sprintimer] 
 
 - **Credenciales de prueba:**
     - **Usuario Administrador:**
@@ -165,18 +169,11 @@ La acción que representa que SprinTask ha entregado valor al usuario es cuando 
             4.  **Proyecto "Dashboard de Analíticas":** Actividad "Implementación de Gráficos", "Optimización de Consultas".
         - Este usuario puede ver sus asignaciones, registrar horas en sus tareas y acceder a su dashboard.
 
-- **Capturas de integraciones funcionando:** No aplica para esta presentación textual.
-- **Dashboard de métricas:** No aplica para esta presentación textual.
-
+![Sprintask](images/dashboard-admin-dark.png "Dashboard Dark")
+![Sprintask](images/dashboard-admin-light.png "Dashboard Light")
+![Sprintask](images/proyectos.png "Proyectos")
+![Sprintask](images/talents.png "Talents")
+![Sprintask](images/seniorities.png "Seniorities")
 ---
 
-## Checklist de cumplimiento
-
-- [X] Integración de al menos 2 servicios (email/analytics)
-- [X] Cada integración asociada a acción concreta de usuario
-- [X] Unidad mínima de valor definida
-- [X] 5 KPIs AARRR definidos
-- [X] Métricas priorizadas y postergadas justificadas
-- [X] Deck de 5 slides completo
-- [X] 3 hacks de límites de vibe coding implementados
-- [X] Riesgos y decisiones postergadas documentados
+## ¡GRACIAS POR LEER MI PROYECTO!

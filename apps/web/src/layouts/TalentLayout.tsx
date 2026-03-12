@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { useSidebarStore } from '../stores/sidebar.store';
 import { useAuthStore } from '../stores/auth.store';
+import { getLoginPath } from '../utils/getBasePath';
 
 import { ThemeToggle } from '@ui/ThemeToggle';
 import { SidebarToggle } from '@ui/SidebarToggle';
@@ -42,7 +43,7 @@ export default function TalentLayout() {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate(getLoginPath());
   };
 
   return (

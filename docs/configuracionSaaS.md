@@ -1,72 +1,109 @@
-# 🚀 Configuración de SprinTask SaaS en Producción
+# 🚀 Configuración de SprinTask SaaS - Build Flexible Multi-Tenant
 
-**Guía oficial para despliegue manual en servidor**
+**Guía oficial para despliegue con rutas relativas**
 
 **Última actualización:** 12 de Marzo, 2026  
-**Versión:** 2.0 - Configuración 100% en Servidor (Sin Rebuild)
+**Versión:** 9.3 - Frontend Funcional | Backend Esperando Soporte
 
 ---
 
 ## 📋 Índice
 
-1. [Requisitos Previos](#requisitos-previos)
-2. [Estructura del Proyecto](#estructura-del-proyecto)
+1. [Arquitectura del Build](#arquitectura-del-build)
+2. [Estructura de FTP_DEPLOY](#estructura-de-ftp_deploy)
 3. [Build en Local](#build-en-local)
 4. [Configuración en Servidor](#configuración-en-servidor)
-   - [Raíz del Dominio](#configuración-en-raíz-del-dominio)
-   - [Subcarpeta](#configuración-en-subcarpeta)
-5. [Archivos a Configurar](#archivos-a-configurar)
-   - [config.json](#1-configjson)
-   - [.htaccess](#2-htaccess)
-   - [.env](#3-env)
-6. [Configuración del Backend](#configuración-del-backend)
-7. [Configuración de Base de Datos](#configuración-de-base-de-datos)
-8. [Verificación](#verificación)
-9. [Troubleshooting](#troubleshooting)
+5. [Archivos de Configuración](#archivos-de-configuración)
+6. [Base de Datos](#base-de-datos)
+7. [Verificación](#verificación)
+8. [Troubleshooting](#troubleshooting)
 
 ---
 
-## 🎯 Enfoque: Configuración 100% en Servidor
+## 🎯 Arquitectura del Build Flexible
 
-**✅ Sin rebuild para diferentes rutas**
+### **Características Principales**
 
-1. **Build único en local** (una vez)
-2. **Subir al servidor**
-3. **Editar 3 archivos en el servidor**:
-   - `config.json` → Rutas del frontend
-   - `.htaccess` → Redirecciones Apache
-   - `.env` → Credenciales del backend
+| Característica | Descripción | Beneficio |
+|---------------|-------------|-----------|
+| **Rutas Relativas** | Assets con `./assets/...` | Mismo build para cualquier ruta |
+| **Config Runtime** | `config.json` editable en servidor | Sin rebuild por cliente |
+| **Backend Bundled** | Todo en `api/server.js` (118KB) | Sin `node_modules` en servidor |
+| **Redirecciones Dinámicas** | Login/logout usa `baseUrl` de config | Funciona en raíz y subcarpetas |
+| **CSS Inline** | Tailwind CSS sin archivos externos | Sin rutas rotas en estilos |
 
-**Ventajas:**
-- ✅ Mismo build para todos los clientes
-- ✅ Solo editar archivos en servidor
-- ✅ Sin necesidad de rebuild por cliente
+### **Flujo de Configuración**
+
+```
+┌─────────────────────┐
+│  1. Build en Local  │
+│  npm run build:deploy │
+│  (rutas relativas)  │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│  2. Subir a Servidor│
+│  FTP_DEPLOY/ → FTP  │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│  3. Configurar      │
+│  - config.json      │
+│  - .htaccess        │
+│  - .env             │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│  4. Listo ✅        │
+│  Funciona en        │
+│  raíz o subcarpeta  │
+└─────────────────────┘
+```
 
 ---
 
-## 📦 Requisitos Previos
+## 📁 Estructura de FTP_DEPLOY
 
-### Del Servidor
+```
+FTP_DEPLOY/
+├── package.json           ← cPanel Node.js config
+├── tmp/
+│   └── restart.txt        ← Reinicio automático cPanel (en raíz)
+├── api/
+│   └── server.js          ← Backend bundled (118KB)
+├── assets/
+│   ├── index-*.js         ← Frontend chunks
+│   ├── vendor-*.js        ← Vendor chunks
+│   └── index-*.css        ← Estilos (Tailwind inline)
+├── index.html             ← Rutas relativas (./assets/)
+├── config.json            ← Configuración frontend (editar)
+├── .env                   ← Configuración backend (editar)
+└── .htaccess              ← Redirecciones Apache (editar)
+```
 
-| Requisito | Mínimo | Recomendado |
-|-----------|--------|-------------|
-| **Node.js** | 18.x | 20.x |
-| **MySQL** | 8.0 | 8.0+ |
-| **Apache** | 2.4+ | 2.4+ con mod_rewrite |
-| **RAM** | 1 GB | 2+ GB |
-| **Disco** | 5 GB | 10+ GB |
-
-### Acceso Necesario
-
-- ✅ cPanel o acceso FTP
-- ✅ phpMyAdmin o acceso MySQL
-- ✅ File Manager o SSH (opcional)
+> **Nota:** `tmp/` está en la raíz de `FTP_DEPLOY/` (no dentro de `api/`) para compatibilidad con cPanel/Passenger.
 
 ---
 
-## 🏗️ Build en Local (Una Sola Vez)
+## 🔨 Build en Local
 
-### Paso 1: Configurar `.env` para Build Genérico
+### Comandos Disponibles
+
+```bash
+# Build completo (frontend + backend)
+npm run build:deploy
+
+# Solo frontend
+npm run build:web
+
+# Solo backend
+npm run build:api
+```
+
+### Configuración de Desarrollo
 
 **Archivo:** `apps/web/.env`
 
@@ -76,80 +113,17 @@ VITE_API_URL=/api
 VITE_APP_NAME=SprinTask
 ```
 
-**Nota:** Usamos `/` como ruta base genérica.
+> **Nota:** En producción, Vite usa automáticamente `base: './'` para rutas relativas.
 
 ---
 
-### Paso 2: Ejecutar Build
+## ⚙️ Configuración en Servidor
 
-```bash
-npm run build:deploy
-```
+### **Opción A: Raíz del Dominio**
 
-**Resultado:** `FTP_DEPLOY/` listo para subir.
+**Ejemplo:** `https://tudominio.com/`
 
----
-
-### Paso 3: Subir al Servidor
-
-**Destino:** `public_html/` o `public_html/nombre-carpeta/`
-
-```bash
-# Ejemplo con FTP o rsync
-rsync -avz FTP_DEPLOY/ usuario@servidor:/home/usuario/public_html/sprintask/
-```
-
----
-
-## 🔧 Configuración en Servidor
-
-### Configuración en Raíz del Dominio
-
-**Destino:** `public_html/`
-
-```
-public_html/
-├── api/
-├── assets/
-├── index.html
-├── config.json    ← Editar
-├── .env           ← Editar
-└── .htaccess      ← Editar
-```
-
----
-
-### Configuración en Subcarpeta
-
-**Destino:** `public_html/sprintask/`
-
-```
-public_html/
-└── sprintask/
-    ├── api/
-    ├── assets/
-    ├── index.html
-    ├── config.json    ← Editar
-    ├── .env           ← Editar
-    └── .htaccess      ← Editar
-```
-
-**Para otras carpetas, reemplaza `/sprintask/` por tu ruta:**
-- `/admin/`
-- `/cliente/`
-- `/app/`
-
----
-
-## 📝 Archivos a Configurar
-
-### 1. `config.json`
-
-**Propósito:** Configuración del frontend (rutas)
-
-**Ubicación:** `public_html/sprintask/config.json`
-
-**Para raíz del dominio:**
+#### 1. `config.json`
 ```json
 {
   "baseUrl": "/",
@@ -157,7 +131,21 @@ public_html/
 }
 ```
 
-**Para subcarpeta `/sprintask/`:**
+#### 2. `.htaccess`
+```apache
+RewriteBase /
+RewriteRule ^api/?$ /index.html [L]
+RewriteRule ^api/.*$ /index.html [L]
+RewriteRule . /index.html [L]
+```
+
+---
+
+### **Opción B: Subcarpeta**
+
+**Ejemplo:** `https://tudominio.com/sprintask/`
+
+#### 1. `config.json`
 ```json
 {
   "baseUrl": "/sprintask/",
@@ -165,28 +153,54 @@ public_html/
 }
 ```
 
-**Para otras rutas:**
-```json
-{
-  "baseUrl": "/TU_RUTA/",
-  "apiUrl": "/TU_RUTA/api"
-}
+#### 2. `.htaccess`
+```apache
+RewriteBase /sprintask/
+RewriteRule ^api/?$ /sprintask/index.html [L]
+RewriteRule ^api/.*$ /sprintask/index.html [L]
+RewriteRule . /sprintask/index.html [L]
 ```
 
-**⚠️ Importante:**
-- `baseUrl` debe terminar en `/`
-- `apiUrl` debe incluir la ruta completa
+> **Importante:** Reemplaza `/sprintask/` por tu ruta real en los 4 lugares del `.htaccess`.
 
 ---
 
-### 2. `.htaccess`
+## 📝 Archivos de Configuración
 
-**Propósito:** Configuración de Apache (redirecciones, seguridad)
+### **1. config.json**
 
-**Ubicación:** `public_html/sprintask/.htaccess`
+**Propósito:** Configuración runtime del frontend (sin rebuild)
 
-**Para raíz del dominio:**
+**Ubicación:** `FTP_DEPLOY/config.json`
+
+| Campo | Descripción | Ejemplo Raíz | Ejemplo Subcarpeta |
+|-------|-------------|--------------|-------------------|
+| `baseUrl` | Ruta base de la aplicación | `/` | `/sprintask/` |
+| `apiUrl` | Ruta de la API | `/api` | `/sprintask/api` |
+
+**⚠️ Importante:**
+- `baseUrl` debe terminar en `/`
+- `apiUrl` debe ser ruta completa si es subcarpeta
+
+---
+
+### **2. .htaccess**
+
+**Propósito:** Redirecciones de Apache para SPA
+
+**Ubicación:** `FTP_DEPLOY/.htaccess`
+
+**Contenido completo:**
 ```apache
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION BEGIN
+PassengerAppRoot "/home/ecointer/pixelycodigo/sprintask"
+PassengerBaseURI "/sprintask"
+PassengerNodejs "/home/ecointer/nodevenv/pixelycodigo/sprintask/18/bin/node"
+PassengerAppType node
+PassengerStartupFile api/server.js
+PassengerStartupTimeout 300
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION END
+
 # Desactivar listado de directorios
 Options -Indexes
 
@@ -198,50 +212,21 @@ RewriteCond %{HTTPS} !=on
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
 # IMPORTANTE: base de la aplicación
-RewriteBase /
-
-# Bloquear acceso directo a /api
-RewriteRule ^api/?$ /index.html [L]
-RewriteRule ^api/.*$ /index.html [L]
-
-# SPA routing
-RewriteRule ^index.html$ - [L]
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /index.html [L]
-
-</IfModule>
-
-# Proteger archivos sensibles
-<FilesMatch "(\.env|\.git|\.htaccess)">
-Require all denied
-</FilesMatch>
-```
-
-**Para subcarpeta `/sprintask/`:**
-```apache
-# Desactivar listado de directorios
-Options -Indexes
-
-<IfModule mod_rewrite.c>
-RewriteEngine On
-
-# Forzar HTTPS
-RewriteCond %{HTTPS} !=on
-RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-
-# IMPORTANTE: base de la aplicación (CAMBIAR POR TU RUTA)
 RewriteBase /sprintask/
 
-# Bloquear acceso directo a /api
-RewriteRule ^api/?$ /sprintask/index.html [L]
-RewriteRule ^api/.*$ /sprintask/index.html [L]
+# API va al backend (NO redirigir)
+RewriteCond %{REQUEST_URI} ^/api/
+RewriteRule . - [L]
+
+# Archivos existentes (JS, CSS, imágenes) NO redirigir
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule . - [L]
 
 # SPA routing
 RewriteRule ^index.html$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /sprintask/index.html [L]
+RewriteRule . index.html [L]
 
 </IfModule>
 
@@ -250,20 +235,14 @@ RewriteRule . /sprintask/index.html [L]
 Require all denied
 </FilesMatch>
 ```
-
-**⚠️ Importante:** Reemplaza `/sprintask/` por tu ruta en 4 lugares:
-1. `RewriteBase /sprintask/`
-2. `RewriteRule ^api/?$ /sprintask/index.html`
-3. `RewriteRule ^api/.*$ /sprintask/index.html`
-4. `RewriteRule . /sprintask/index.html`
 
 ---
 
-### 3. `.env`
+### **3. .env**
 
-**Propósito:** Configuración del backend (credenciales, secretos)
+**Propósito:** Configuración del backend (credenciales)
 
-**Ubicación:** `public_html/sprintask/.env`
+**Ubicación:** `FTP_DEPLOY/.env`
 
 ```env
 # Puerto del servidor
@@ -272,9 +251,9 @@ PORT=3001
 # Base de Datos MySQL
 DB_HOST=localhost
 DB_PORT=3306
-DB_USER=usuario_base_datos
+DB_USER=usuario_cpanel
 DB_PASSWORD=contraseña_segura
-DB_NAME=nombre_base_datos
+DB_NAME=sprintask_db
 
 # JWT Secret (generar con: openssl rand -base64 32)
 JWT_SECRET=genera_un_secreto_unico_y_seguro_aqui
@@ -294,160 +273,130 @@ NODE_ENV=production
 
 ---
 
-## 🔧 Configuración del Backend
+### **4. package.json**
 
-### Opción A: cPanel con Node.js App
+**Propósito:** Configuración para cPanel Node.js
 
-1. **Ir a:** cPanel → Setup Node.js App
-2. **Click en:** "Create Application"
-3. **Completar:**
+**Ubicación:** `FTP_DEPLOY/package.json`
 
-| Campo | Valor |
-|-------|-------|
-| Node.js version | 18.x o 20.x |
-| Application mode | Production |
-| Application root | `.` (punto) o `sprintask` |
-| Application startup file | `api/server.js` |
-
-4. **Environment Variables:** Agregar cada variable del `.env`:
-
-```
-PORT → 3001
-DB_HOST → localhost
-DB_USER → tu_usuario
-DB_PASSWORD → tu_contraseña
-DB_NAME → tu_base_datos
-JWT_SECRET → tu_secreto
-NODE_ENV → production
-```
-
-5. **Click en:** Create
-6. **Verificar:** Status debe decir "Running"
-
----
-
-### Opción B: VPS con PM2
-
-```bash
-# Navegar al directorio
-cd /var/www/sprintask
-
-# Instalar PM2 (si no está instalado)
-npm install -g pm2
-
-# Iniciar aplicación
-pm2 start api/server.js --name sprintask
-
-# Guardar configuración
-pm2 save
-
-# Configurar inicio automático
-pm2 startup
+```json
+{
+  "name": "sprintask-deploy",
+  "version": "1.0.0",
+  "description": "SprinTask SaaS - Build multi-tenant",
+  "main": "api/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node api/server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
 ```
 
 ---
 
-## 🗄️ Configuración de Base de Datos
+### **5. tmp/restart.txt**
 
-### Paso 1: Crear Base de Datos en cPanel
+**Propósito:** Forzar reinicio automático en cPanel/Passenger
 
-1. **Ir a:** cPanel → MySQL Databases
-2. **Crear nueva base de datos:**
-   - Nombre: `usuario_sprintask_db`
-3. **Crear usuario:**
-   - Usuario: `usuario_sprintask_user`
-   - Contraseña: (generar contraseña segura)
-4. **Asignar usuario a la base de datos:**
-   - Seleccionar usuario y base de datos
-   - Marcar "ALL PRIVILEGES"
-   - Click en "Add"
+**Ubicación:** `FTP_DEPLOY/tmp/restart.txt`
+
+```
+# Este archivo se usa para forzar el reinicio automático de la app
+# Solo funciona en servidores cPanel que utilizan Passenger
+# No eliminar este archivo
+
+version=1.0.2
+build=2026-03-12T15:01:07Z
+environment=production
+```
+
+> **Nota:** El script `prepare-deploy.js` actualiza automáticamente este archivo en cada build.
 
 ---
 
-### Paso 2: Importar Estructura
+## 🗄️ Base de Datos
 
-1. **Ir a:** cPanel → phpMyAdmin
-2. **Seleccionar:** Tu base de datos
-3. **Click en:** Import
-4. **Subir archivo:** `database/create_database.sql` (desde tu proyecto local)
-5. **Click en:** Go
+### **Tablas Existentes** (17 tablas)
 
----
+| # | Tabla | Descripción | Soft Delete |
+|---|-------|-------------|-------------|
+| 1 | `roles` | Roles del sistema | ✅ |
+| 2 | `usuarios` | Usuarios (autenticación unificada) | ✅ |
+| 3 | `clientes` | Clientes (relación por email) | ✅ |
+| 4 | `talents` | Talents (relación por email) | ✅ |
+| 5 | `perfiles` | Perfiles profesionales | ✅ |
+| 6 | `seniorities` | Niveles de seniority | ✅ |
+| 7 | `divisas` | Divisas disponibles | ✅ |
+| 8 | `costos_por_hora` | Costos por hora | ✅ |
+| 9 | `proyectos` | Proyectos de clientes | ✅ |
+| 10 | `sprints` | Sprints dentro de proyectos | ✅ |
+| 11 | `actividades` | Actividades dentro de sprints | ✅ |
+| 12 | `actividades_integrantes` | Asignación de talents | ✅ |
+| 13 | `tareas` | Tareas dentro de actividades | ❌ |
+| 14 | `eliminados` | Registro de eliminados | N/A |
+| 15 | `migrations` | Historial de migraciones | N/A |
+| 16 | `migrations_lock` | Control de locks | N/A |
 
-### Paso 3: Verificar Tablas
+### **Arquitectura de Autenticación**
 
-En phpMyAdmin, ejecutar:
-```sql
-SHOW TABLES;
+**IMPORTANTE:** Todos los usuarios se autentican contra la tabla `usuarios`.
+
+| Rol | `rol_id` | Ruta de Redirección |
+|-----|----------|---------------------|
+| Super Admin | 1 | `/super-admin` |
+| Administrador | 2 | `/admin` |
+| Cliente | 3 | `/cliente` |
+| Talent | 4 | `/talent` |
+
+**Flujo de Login:**
+```
+1. Usuario ingresa email + password
+2. Backend busca en `usuarios` por email
+3. Backend verifica password_hash con bcrypt
+4. Backend obtiene rol_id
+5. Genera JWT token
+6. Frontend redirige según rol
 ```
 
-**Deberías ver:**
-- `usuarios`
-- `roles`
-- `clientes`
-- `talents`
-- `proyectos`
-- `actividades`
-- `perfiles`
-- `seniorities`
-- `divisas`
-- `costos_por_hora`
-- `asignaciones`
-- `eliminados`
-- `migrations`
+### **Credenciales por Defecto**
 
----
+| Rol | Email | Contraseña |
+|-----|-------|------------|
+| Super Admin | `superadmin@sprintask.com` | `Admin1234!` |
+| Administrador | `admin@sprintask.com` | `Admin1234!` |
 
-## 🔐 Generar JWT_SECRET
-
-### Opción 1: Terminal (Recomendado)
-
-```bash
-openssl rand -base64 32
-```
-
-**Ejemplo de salida:**
-```
-KiN6O89kzQZpznT2oXv/5ZTFD++GA/jMkPG88Dr6uQo=
-```
-
----
-
-### Opción 2: Online
-
-1. Ir a: https://generate-secret.vercel.app/32
-2. Copiar el valor generado
-3. Pegar en `.env`
-
----
-
-### Opción 3: Node.js
-
-```bash
-node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
-```
+> **⚠️ Importante:** Cambiar estas credenciales después del primer login.
 
 ---
 
 ## ✅ Verificación
 
-### 1. Verificar Frontend
+### **1. Verificar Frontend**
 
-**URL:** `https://tudominio.com/` (o `https://tudominio.com/sprintask/`)
-
-**Deberías ver:** Página de login de SprinTask
+**URL:** `https://tudominio.com/sprintask/`
 
 **En el navegador (F12 → Network):**
 - ✅ `index.html` → 200 OK
 - ✅ `assets/index-*.js` → 200 OK
 - ✅ `assets/index-*.css` → 200 OK
-- ❌ Sin errores 404
+- ✅ `Content-Type: application/javascript`
+- ❌ Sin errores 404 o MIME type
+
+**Comando SSH:**
+```bash
+curl -I "https://tudominio.com/sprintask/assets/react-vendor-*.js"
+# HTTP/1.1 200 OK
+# Content-Type: application/javascript ✅
+```
 
 ---
 
-### 2. Verificar Health Check
+### **2. Verificar Health Check**
 
-**URL:** `https://tudominio.com/api/health`
+**URL:** `https://tudominio.com/sprintask/api/health`
 
 **Respuesta esperada:**
 ```json
@@ -457,92 +406,137 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 }
 ```
 
+**Comando SSH:**
+```bash
+curl "https://tudominio.com/sprintask/api/health"
+# Debería mostrar JSON, NO HTML
+```
+
 ---
 
-### 3. Verificar Archivos Protegidos
+### **3. Verificar Archivos Protegidos**
 
-**URL:** `https://tudominio.com/.env`
+**URL:** `https://tudominio.com/sprintask/.env`
 
 **Debería mostrar:** `403 Forbidden` ✅
 
 ---
 
-### 4. Verificar HTTPS Forzado
+### **4. Verificar HTTPS Forzado**
 
-**URL:** `http://tudominio.com/`
+**URL:** `http://tudominio.com/sprintask/`
 
-**Debería redirigir a:** `https://tudominio.com/` ✅
+**Debería redirigir a:** `https://tudominio.com/sprintask/` ✅
 
 ---
 
-### 5. Verificar Base de Datos
+### **5. Verificar Login/Logout**
 
-En phpMyAdmin:
-```sql
-SELECT COUNT(*) FROM usuarios;
+1. **Login:** Ingresa credenciales → Redirige a dashboard según rol ✅
+2. **Logout:** Click en logout → Redirige a `/sprintask/login` ✅
+
+---
+
+### **6. Verificar Proceso Node.js**
+
+**Comando SSH:**
+```bash
+ps aux | grep node | grep -v grep
 ```
 
-**Debería retornar:** Al menos 1 usuario (admin por defecto)
+**Resultado esperado:**
+```
+ecointer  12345  2.5  5.0  123456  54321  ?  Sl  12:00  0:05  node api/server.js
+```
+
+**Si está vacío:** Contactar soporte (Passenger no inició la app)
 
 ---
 
 ## 🐛 Troubleshooting
 
-### Error 404 en Assets
+### **Error 404 en Assets**
 
 **Síntoma:**
 ```
-GET https://tudominio.com/assets/index-*.js 404 (Not Found)
+GET https://tudominio.com/sprintask/assets/index-*.js 404 (Not Found)
 ```
 
-**Causa:** `config.json` o `index.html` con ruta incorrecta
+**Causa:** `config.json` con `baseUrl` incorrecto o assets no subidos
 
 **Solución:**
+```json
+// config.json
+{
+  "baseUrl": "/sprintask/",
+  "apiUrl": "/sprintask/api"
+}
+```
 
-1. **Verificar `config.json`:**
-   ```json
-   {
-     "baseUrl": "/sprintask/"
-   }
-   ```
-
-2. **Verificar `index.html`:**
-   ```html
-   <base href="/sprintask/" />
-   <script src="/sprintask/assets/index-*.js"></script>
-   ```
-
-3. **Verificar `.htaccess`:**
-   ```apache
-   RewriteBase /sprintask/
-   RewriteRule . /sprintask/index.html [L]
-   ```
+**Verificar archivos:**
+```bash
+ls -la /home/ecointer/pixelycodigo/sprintask/assets/
+```
 
 ---
 
-### Error 404 en Frontend
+### **Error MIME Type (Assets cargan como HTML)**
 
-**Causa:** `.htaccess` incorrecto o mal ubicado
+**Síntoma:**
+```
+Failed to load module script: Expected a JavaScript-or-Wasm module script 
+but the server responded with a MIME type of "text/html"
+```
+
+**Causa:** Caché del navegador o `.htaccess` incorrecto
 
 **Solución:**
-1. Verificar que `.htaccess` está en la raíz del proyecto
-2. Verificar `RewriteBase` coincide con tu ruta
-3. Verificar mod_rewrite está habilitado en Apache
+1. Limpiar caché del navegador (Ctrl + Shift + Supr)
+2. Probar en modo incógnito (Ctrl + Shift + N)
+3. Verificar `.htaccess` tenga regla para archivos existentes
+4. Forzar recarga (Ctrl + F5)
 
 ---
 
-### Error 500 Internal Server Error
+### **Error 500 Internal Server Error en Assets**
 
-**Causa:** Error en `.htaccess` o backend
+**Síntoma:**
+```
+HTTP/1.1 500 Internal Server Error
+```
+
+**Causa:** Configuración de Apache/mod_mime incorrecta
 
 **Solución:**
-1. Revisar logs de error de Apache
-2. Verificar sintaxis de `.htaccess`
-3. Verificar que Node.js está corriendo
+1. Verificar permisos: `chmod 644 assets/*`
+2. Contactar soporte para verificar configuración de Apache
 
 ---
 
-### Error de Conexión a Base de Datos
+### **Backend API Devuelve HTML en Lugar de JSON**
+
+**Síntoma:**
+```bash
+curl https://tudominio.com/sprintask/api/health
+# Devuelve HTML del frontend en lugar de JSON
+```
+
+**Causa:** Passenger no está iniciando el proceso Node.js
+
+**Verificación:**
+```bash
+ps aux | grep node | grep -v grep
+# Si está vacío → Node.js no está corriendo
+```
+
+**Solución:**
+1. Verificar en cPanel → Node.js App → Status: Running
+2. Reiniciar aplicación en cPanel (Stop → Start)
+3. Si persiste, contactar soporte técnico
+
+---
+
+### **Error de Conexión a Base de Datos**
 
 **Causa:** Credenciales incorrectas
 
@@ -553,18 +547,29 @@ GET https://tudominio.com/assets/index-*.js 404 (Not Found)
 
 ---
 
-### Error CORS
+### **Error CORS**
 
-**Causa:** Backend no configurado para producción
+**Causa:** `NODE_ENV` no configurado como `production`
 
 **Solución:**
-1. Verificar `NODE_ENV=production` en `.env`
+1. Verificar `.env` tiene `NODE_ENV=production`
 2. Reiniciar aplicación Node.js
 3. Verificar `config.json` tiene `apiUrl` correcto
 
 ---
 
-### Error 403 Forbidden en Archivos
+### **Logout no redirige correctamente**
+
+**Causa:** `config.json` no cargado o `baseUrl` incorrecto
+
+**Solución:**
+1. Verificar `config.json` existe y tiene `baseUrl` correcto
+2. Verificar en navegador (F12 → Console) que se cargó config.json
+3. Limpiar caché del navegador
+
+---
+
+### **Error 403 Forbidden en Archivos**
 
 **Causa:** Permisos incorrectos
 
@@ -572,78 +577,148 @@ GET https://tudominio.com/assets/index-*.js 404 (Not Found)
 ```bash
 # Desde SSH
 chmod 644 index.html config.json
-chmod 755 api/ assets/
+chmod 755 api/ assets/ tmp/
 chmod 600 .env
 ```
 
 ---
 
-## 📞 Credenciales por Defecto
+## 🔐 Generar JWT_SECRET
 
-Después de importar la base de datos:
+### **Opción 1: Terminal (Recomendado)**
+```bash
+openssl rand -base64 32
+```
 
-| Rol | Email | Contraseña |
-|-----|-------|------------|
-| Super Admin | `superadmin@sprintask.com` | `Admin1234!` |
-| Administrador | `admin@sprintask.com` | `Admin1234!` |
+### **Opción 2: Online**
+1. Ir a: https://generate-secret.vercel.app/32
+2. Copiar el valor generado
 
-**⚠️ Importante:** Cambiar estas credenciales después del primer login
+### **Opción 3: Node.js**
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+```
 
 ---
 
-## 📝 Checklist Final
+## 📝 Checklist de Despliegue
 
-- [ ] Build en local con `VITE_BASE_URL=/`
-- [ ] Subir `FTP_DEPLOY/` al servidor
-- [ ] Configurar `config.json` con ruta correcta
-- [ ] Configurar `.htaccess` con ruta correcta
-- [ ] Configurar `.env` con credenciales reales
+- [ ] Build en local: `npm run build:deploy`
+- [ ] Subir `FTP_DEPLOY/` al servidor por FTP
+- [ ] Editar `config.json` con ruta correcta
+- [ ] Editar `.htaccess` con `RewriteBase` correcto
+- [ ] Editar `.env` con credenciales reales de MySQL
 - [ ] Generar JWT_SECRET único
 - [ ] Crear base de datos en cPanel
-- [ ] Importar estructura de tablas
+- [ ] Verificar tablas existentes (17 tablas)
 - [ ] Configurar Node.js App en cPanel
-- [ ] Verificar health check
+- [ ] Verificar health check (`/api/health`)
 - [ ] Verificar frontend carga correctamente
 - [ ] Verificar HTTPS forzado
 - [ ] Verificar archivos protegidos (403 en .env)
+- [ ] Verificar proceso Node.js corre (`ps aux | grep node`)
+- [ ] Probar login con credenciales por defecto
 - [ ] Cambiar credenciales de admin por defecto
+- [ ] Verificar logout redirige correctamente
 
 ---
 
-## 🔄 Resumen del Flujo
+## 🔄 Resumen del Flujo de Configuración
 
 ```
-┌─────────────────────┐
-│  1. Build en Local  │
-│  VITE_BASE_URL=/    │
-│  npm run build:deploy │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│  2. Subir a Servidor│
-│  FTP_DEPLOY/        │
-│  → public_html/     │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│  3. Configurar      │
-│  - config.json      │
-│  - .htaccess        │
-│  - .env             │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│  4. Verificar       │
-│  - Frontend         │
-│  - API              │
-│  - BD               │
-└─────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                    BUILD EN LOCAL                           │
+│  npm run build:deploy                                       │
+│  - Vite usa base: './' (rutas relativas)                    │
+│  - tsup bundlea todo en api/server.js                       │
+│  - Scripts generan config por defecto                       │
+│  - tmp/ en raíz de FTP_DEPLOY                               │
+│  - restart.txt para reinicio automático                     │
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────────┐
+│                   SUBIR AL SERVIDOR                         │
+│  FTP_DEPLOY/ → public_html/ o public_html/carpeta/          │
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────────┐
+│                 CONFIGURAR EN SERVIDOR                      │
+│  1. config.json → baseUrl, apiUrl                           │
+│  2. .htaccess → RewriteBase                                 │
+│  3. .env → Credenciales MySQL, JWT_SECRET                   │
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────────┐
+│              CONFIGURAR NODE.JS EN CPANEL                   │
+│  - Application root: . o nombre de carpeta                  │
+│  - Application startup file: api/server.js                  │
+│  - Node.js version: 18.x o 20.x                             │
+│  - Environment variables desde .env                         │
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    VERIFICAR                                │
+│  ✅ /api/health → { status: "ok" }                          │
+│  ✅ Frontend carga sin 404                                  │
+│  ✅ Login funciona y redirige según rol                     │
+│  ✅ Logout redirige a login                                 │
+│  ✅ ps aux | grep node → Muestra proceso                    │
+└─────────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## 📚 Documentación Adicional
+
+| Documento | Ubicación |
+|-----------|-----------|
+| **Guía Rápida de Configuración** | `docs/CONFIGURACION-SERVIDOR.md` |
+| **Modelo de Base de Datos** | `docs/plans/modelo_base_datos_auto.md` |
+| **Resumen de Avance** | `docs/RESUMEN-DE-AVANCE.md` |
+
+---
+
+## 📞 Contacto con Soporte Técnico
+
+**Si el backend no inicia, contactar al hosting con:**
+
+```
+Asunto: Backend Node.js no inicia - Passenger no está corriendo el proceso
+
+Evidencia:
+- ps aux | grep node → Vacío (ningún proceso)
+- curl /api/health → Devuelve HTML, no JSON
+- Frontend assets → Funcionan correctamente (HTTP 200 OK)
+
+Configuración:
+- Application root: /home/ecointer/pixelycodigo/sprintask
+- Startup file: api/server.js (118 KB, bundled)
+- Node.js version: 18.x
+- Status en cPanel: Running (pero no hay proceso)
+
+Solicitud:
+1. Revisar logs de error de Passenger (nivel servidor root)
+2. Verificar por qué el proceso no se inicia
+3. Iniciar manualmente la aplicación Node.js
+4. Confirmar cuando el proceso esté corriendo
+```
+
+---
+
+## 📚 Documentación Adicional
+
+| Documento | Ubicación |
+|-----------|-----------|
+| **Guía Rápida de Configuración** | [docs/CONFIGURACION-SERVIDOR.md](CONFIGURACION-SERVIDOR.md) |
+| **Modelo de Base de Datos** | [docs/plans/modelo_base_datos_auto.md](plans/modelo_base_datos_auto.md) |
+| **Resumen de Avance** | [docs/RESUMEN-DE-AVANCE.md](RESUMEN-DE-AVANCE.md) |
 
 ---
 
 **Última actualización:** 12 de Marzo, 2026  
-**Versión:** 2.0 - Configuración 100% en Servidor (Sin Rebuild)
+**Versión:** 9.3 - Frontend 100% Funcional | Backend Esperando Soporte  
+**Documentación oficial de SprinTask SaaS**

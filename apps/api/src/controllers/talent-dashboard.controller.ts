@@ -16,13 +16,14 @@ export class TalentDashboardController {
 
       logger.debug(`${req.method} ${req.originalUrl} - Obteniendo estadísticas para talent`, { userId });
 
+      // Buscar talent por email (la relación es por email, no por usuario_id)
       const talent = await db('talents')
         .select('id')
-        .where('usuario_id', userId)
+        .where('email', req.user?.email)
         .first();
 
       if (!talent) {
-        logger.warn(`${req.method} ${req.originalUrl} - Talent no encontrado`, { userId });
+        logger.warn(`${req.method} ${req.originalUrl} - Talent no encontrado`, { userId, email: req.user?.email });
         throw new AppError('Talent no encontrado', 404);
       }
 
@@ -62,13 +63,14 @@ export class TalentDashboardController {
 
       logger.debug(`${req.method} ${req.originalUrl} - Obteniendo proyectos para talent`, { userId });
 
+      // Buscar talent por email
       const talent = await db('talents')
         .select('id')
-        .where('usuario_id', userId)
+        .where('email', req.user?.email)
         .first();
 
       if (!talent) {
-        logger.warn(`${req.method} ${req.originalUrl} - Talent no encontrado`, { userId });
+        logger.warn(`${req.method} ${req.originalUrl} - Talent no encontrado`, { userId, email: req.user?.email });
         throw new AppError('Talent no encontrado', 404);
       }
 
@@ -109,13 +111,14 @@ export class TalentDashboardController {
 
       logger.debug(`${req.method} ${req.originalUrl} - Obteniendo tareas para talent`, { userId });
 
+      // Buscar talent por email
       const talent = await db('talents')
         .select('id')
-        .where('usuario_id', userId)
+        .where('email', req.user?.email)
         .first();
 
       if (!talent) {
-        logger.warn(`${req.method} ${req.originalUrl} - Talent no encontrado`, { userId });
+        logger.warn(`${req.method} ${req.originalUrl} - Talent no encontrado`, { userId, email: req.user?.email });
         throw new AppError('Talent no encontrado', 404);
       }
 
@@ -156,13 +159,14 @@ export class TalentDashboardController {
 
       logger.debug(`${req.method} ${req.originalUrl} - Obteniendo actividades para talent`, { userId });
 
+      // Buscar talent por email
       const talent = await db('talents')
         .select('id')
-        .where('usuario_id', userId)
+        .where('email', req.user?.email)
         .first();
 
       if (!talent) {
-        logger.warn(`${req.method} ${req.originalUrl} - Talent no encontrado`, { userId });
+        logger.warn(`${req.method} ${req.originalUrl} - Talent no encontrado`, { userId, email: req.user?.email });
         throw new AppError('Talent no encontrado', 404);
       }
 
@@ -204,13 +208,14 @@ export class TalentDashboardController {
 
       logger.debug(`${req.method} ${req.originalUrl} - Obteniendo actividades por proyecto para talent`, { userId, proyectoId });
 
+      // Buscar talent por email
       const talent = await db('talents')
         .select('id')
-        .where('usuario_id', userId)
+        .where('email', req.user?.email)
         .first();
 
       if (!talent) {
-        logger.warn(`${req.method} ${req.originalUrl} - Talent no encontrado`, { userId });
+        logger.warn(`${req.method} ${req.originalUrl} - Talent no encontrado`, { userId, email: req.user?.email });
         throw new AppError('Talent no encontrado', 404);
       }
 
@@ -280,13 +285,14 @@ export class TalentDashboardController {
 
       logger.debug(`${req.method} ${req.originalUrl} - Creando nueva tarea para talent`, { userId });
 
+      // Buscar talent por email
       const talent = await db('talents')
         .select('id')
-        .where('usuario_id', userId)
+        .where('email', req.user?.email)
         .first();
 
       if (!talent) {
-        logger.warn(`${req.method} ${req.originalUrl} - Talent no encontrado`, { userId });
+        logger.warn(`${req.method} ${req.originalUrl} - Talent no encontrado`, { userId, email: req.user?.email });
         throw new AppError('Talent no encontrado', 404);
       }
 
@@ -363,13 +369,14 @@ export class TalentDashboardController {
 
       logger.debug(`${req.method} ${req.originalUrl} - Actualizando tarea ID: ${id}`, { userId });
 
+      // Buscar talent por email
       const talent = await db('talents')
         .select('id')
-        .where('usuario_id', userId)
+        .where('email', req.user?.email)
         .first();
 
       if (!talent) {
-        logger.warn(`${req.method} ${req.originalUrl} - Talent no encontrado`, { userId });
+        logger.warn(`${req.method} ${req.originalUrl} - Talent no encontrado`, { userId, email: req.user?.email });
         throw new AppError('Talent no encontrado', 404);
       }
 
@@ -439,13 +446,14 @@ export class TalentDashboardController {
 
       logger.info(`${req.method} ${req.originalUrl} - Eliminando tarea ID: ${id}`, { userId });
 
+      // Buscar talent por email
       const talent = await db('talents')
         .select('id')
-        .where('usuario_id', userId)
+        .where('email', req.user?.email)
         .first();
 
       if (!talent) {
-        logger.warn(`${req.method} ${req.originalUrl} - Talent no encontrado`, { userId });
+        logger.warn(`${req.method} ${req.originalUrl} - Talent no encontrado`, { userId, email: req.user?.email });
         throw new AppError('Talent no encontrado', 404);
       }
 
@@ -569,13 +577,14 @@ export class TalentDashboardController {
 
       logger.info(`${req.method} ${req.originalUrl} - Restaurando tarea eliminada`, { userId });
 
+      // Buscar talent por email
       const talent = await db('talents')
         .select('id')
-        .where('usuario_id', userId)
+        .where('email', req.user?.email)
         .first();
 
       if (!talent) {
-        logger.warn(`${req.method} ${req.originalUrl} - Talent no encontrado`, { userId });
+        logger.warn(`${req.method} ${req.originalUrl} - Talent no encontrado`, { userId, email: req.user?.email });
         throw new AppError('Talent no encontrado', 404);
       }
 

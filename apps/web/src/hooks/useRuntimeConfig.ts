@@ -20,7 +20,7 @@ export function useRuntimeConfig() {
       return;
     }
 
-    fetch('/config.json')
+    fetch('./config.json')
       .then((res) => {
         if (!res.ok) throw new Error('Config not found');
         return res.json();
