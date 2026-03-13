@@ -1,25 +1,48 @@
 /**
- * Obtiene la ruta base actual desde la URL del navegador
+ * Obtiene la ruta base actual desde la configuración o URL del navegador
  * Esto permite que las redirecciones funcionen correctamente
  * tanto en raíz como en subcarpetas
+ * 
+ * IMPORTANTE: Cuando React Router tiene basename configurado,
+ * las rutas internas NO deben usar buildPath(), solo usar para:
+ * - window.location.href
+ * - Enlaces externos
+ * - Configuracion de API
  */
 
 let cachedBasePath: string | null = null;
 
 /**
- * Obtiene el basePath desde la URL actual
+ * Obtiene el basePath desde la URL actual o configuración
  * Ejemplos:
  * - https://dominio.com/ → ''
  * - https://dominio.com/sprintask/ → '/sprintask'
  * - https://dominio.com/app/ → '/app'
  */
 export function getBasePath(): string {
+  // Si ya está en caché, retornar
   if (cachedBasePath !== null) {
     return cachedBasePath;
   }
 
+  // Obtener desde el <base href> que main.tsx establece
+  const baseElement = document.querySelector('base');
+  if (baseElement && baseElement.href) {
+    try {
+      const url = new URL(baseElement.href);
+      const pathname = url.pathname;
+      
+      // Retornar sin trailing slash
+      cachedBasePath = pathname === '/' ? '' : pathname.replace(/\/$/, '');
+      return cachedBasePath;
+    } catch (error) {
+      // Ignorar errores de parseo
+    }
+  }
+
+  // Fallback: detectar desde window.location.pathname
   const pathname = window.location.pathname;
-  
+
   // Si estamos en la raíz, retornar string vacío
   if (pathname === '/' || pathname === '/index.html') {
     cachedBasePath = '';
@@ -27,20 +50,16 @@ export function getBasePath(): string {
   }
 
   // Obtener la primera parte del path
-  // /sprintask/login → /sprintask
-  // /app/admin → /app
   const parts = pathname.split('/').filter(Boolean);
-  
+
   if (parts.length === 0) {
     cachedBasePath = '';
     return '';
   }
 
-  // Si es una ruta conocida (login, admin, talent, cliente, super-admin)
-  // el basePath es la parte anterior
+  // Si es una ruta conocida, estamos en raíz
   const knownPaths = ['login', 'registro', 'admin', 'talent', 'cliente', 'super-admin'];
-  
-  // Si el primer segmento es una ruta conocida, estamos en raíz
+
   if (knownPaths.includes(parts[0])) {
     cachedBasePath = '';
     return '';

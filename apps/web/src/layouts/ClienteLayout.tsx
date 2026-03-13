@@ -53,7 +53,7 @@ export default function ClienteLayout() {
           <SidebarGroup>
             {navigation.map((item) => (
               <SidebarMenuItem key={item.name}>
-                <Link to={buildPath(item.path)} className="flex items-center gap-3">
+                <Link to={item.path} className="flex items-center gap-3">
                   <SidebarMenuItemIcon>
                     <item.icon className="w-5 h-5" aria-hidden="true" />
                   </SidebarMenuItemIcon>

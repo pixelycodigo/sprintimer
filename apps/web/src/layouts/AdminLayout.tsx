@@ -75,7 +75,7 @@ export default function AdminLayout() {
           <SidebarGroup>
             {navigation.map((item) => (
               <SidebarMenuItem key={item.name}>
-                <Link to={buildPath(item.path)} className="flex items-center gap-3">
+                <Link to={item.path} className="flex items-center gap-3">
                   <SidebarMenuItemIcon>
                     <item.icon className="w-5 h-5" aria-hidden="true" />
                   </SidebarMenuItemIcon>
@@ -93,7 +93,7 @@ export default function AdminLayout() {
             </SidebarGroupLabel>
             {teamWorkNav.map((item) => (
               <SidebarMenuItem key={item.name}>
-                <Link to={buildPath(item.path)} className="flex items-center gap-3 pl-8">
+                <Link to={item.path} className="flex items-center gap-3 pl-8">
                   <SidebarMenuItemIcon>
                     <item.icon className="w-5 h-5" aria-hidden="true" />
                   </SidebarMenuItemIcon>
@@ -107,7 +107,7 @@ export default function AdminLayout() {
           <SidebarGroup>
             {otherNav.map((item) => (
               <SidebarMenuItem key={item.name}>
-                <Link to={buildPath(item.path)} className="flex items-center gap-3">
+                <Link to={item.path} className="flex items-center gap-3">
                   <SidebarMenuItemIcon>
                     <item.icon className="w-5 h-5" aria-hidden="true" />
                   </SidebarMenuItemIcon>

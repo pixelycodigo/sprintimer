@@ -1,8 +1,8 @@
 # 📊 Resumen de Avance - SprinTask SaaS
 
 **Fecha:** 13 de Marzo, 2026
-**Estado:** ✅ Build 100% Listo | ⏳ Backend Esperando Despliegue
-**Versión:** 14.0 - Build Automático con Limpieza Implementada
+**Estado:** ✅ Build 100% Listo | ⏳ Backend Esperando Soporte Técnico
+**Versión:** 15.0 - Build Node.js 18 + Documentación Técnica
 
 ---
 
@@ -11,9 +11,9 @@
 | Componente | Estado | Notas |
 |------------|--------|-------|
 | **Frontend** | ✅ 100% | React 18 + Vite + TS - Rutas relativas validadas |
-| **Backend** | ✅ Build Listo | API bundled (119 KB) lista para desplegar |
+| **Backend Build** | ✅ Listo | API bundled (118 KB) - Node.js 18 CommonJS |
 | **Base de Datos** | ✅ Configurada | 17 tablas con datos |
-| **Build Automático** | ✅ Implementado | Limpieza automática antes de build |
+| **Documentación** | ✅ Completa | `docs/nodeJsCpanel.md` creado |
 
 ---
 
@@ -21,6 +21,8 @@
 
 | Fecha | Cambio | Impacto |
 |-------|--------|---------|
+| **13/Mar - Noche** | **Documentación Node.js/cPanel** | ✅ `docs/nodeJsCpanel.md` creado |
+| **13/Mar - Tarde** | **Build Node.js 18 CommonJS** | ✅ `target: 'node18'`, `format: ['cjs']` |
 | **13/Mar - Tarde** | **Build con limpieza automática** | ✅ `prebuild.js` elimina archivos antiguos |
 | **13/Mar - Tarde** | **Perfil/Config para Talent** | ✅ 2 componentes creados |
 | **13/Mar - Tarde** | **Validación contraseñas** | ✅ 8 caracteres (consistente con registro) |
@@ -46,7 +48,9 @@
    └─> Elimina .htaccess anterior
 
 2. build:deploy API (tsup)
-   └─> Bundled: 119 KB
+   └─> Target: Node.js 18
+   └─> Format: CommonJS (cjs)
+   └─> Bundled: 118 KB
    └─> Output: FTP_DEPLOY/api/server.js
 
 3. build:post Web (Vite + postbuild.js)
@@ -59,7 +63,7 @@
    └─> Crea .env (desde .env.example)
    └─> Verifica config.json
    └─> Verifica .htaccess
-   └─> Actualiza restart.txt (v1.0.2)
+   └─> Actualiza restart.txt (v1.0.8)
 
 ✅ FTP_DEPLOY listo para subir al servidor
 ```
@@ -70,18 +74,108 @@
 |---------|-----------|-----------|
 | **prebuild.js** | Limpieza automática | `scripts/prebuild.js` |
 | **prepare-deploy.js** | Configuración post-build | `scripts/prepare-deploy.js` |
-| **tsup.config.ts** | Output API | `apps/api/tsup.config.ts` |
+| **tsup.config.ts** | Output API (Node 18) | `apps/api/tsup.config.ts` |
 | **vite.config.ts** | Base relativa | `apps/web/vite.config.ts` |
 | **package.json** | Scripts | Root (`build:deploy`) |
 
-### **Resultado del Build**
+### **Resultado del Build (v1.0.8)**
 
 | Componente | Tamaño | Estado |
 |------------|--------|--------|
 | **Frontend** | ~1.26 MB (7 archivos) | ✅ Listo |
-| **Backend** | 119 KB (bundled) | ✅ Listo |
+| **Backend** | 118 KB (bundled, Node 18) | ✅ Listo |
 | **Config** | 4 archivos | ✅ Creados |
 | **Total** | ~1.38 MB | ✅ Optimizado |
+
+---
+
+## ⏳ ESTADO ACTUAL: ESPERANDO SOPORTE TÉCNICO
+
+### **Problema Identificado**
+
+| Componente | Configurado | Realidad | Estado |
+|------------|-------------|----------|--------|
+| **cPanel Node.js** | 18.20.8 | - | ✅ Configurado |
+| **Sistema Node.js** | - | 10.24.0 | ❌ En uso |
+| **Passenger** | Debería usar 18.20.8 | Usa 10.24.0 | ❌ Problema |
+
+### **Error en Logs de Passenger**
+
+```
+Error [ERR_REQUIRE_ESM]: require() of ES Module .../server.js
+from .../node-loader.js not supported.
+code: 'ERR_REQUIRE_ESM'
+```
+
+**Causa:** Passenger usa Node.js 10 aunque cPanel muestra 18.20.8 configurado.
+
+---
+
+### **Acción Tomada**
+
+✅ **Documentación creada:** `docs/nodeJsCpanel.md`
+
+**Contenido:**
+- ✅ Resumen ejecutivo del problema
+- ✅ Configuración requerida en cPanel
+- ✅ Diagnóstico realizado (comandos y errores)
+- ✅ Soluciones intentadas
+- ✅ Build actual (Node.js 18 CommonJS)
+- ✅ Ticket de soporte para enviar
+- ✅ Plan B (compilar para otra versión)
+
+---
+
+### **Próxima Acción: Enviar Ticket de Soporte**
+
+**Template disponible en:** `docs/nodeJsCpanel.md` (sección "Ticket de Soporte")
+
+**Información clave:**
+```
+Asunto: URGENTE - Passenger no usa Node.js 18 configurado en cPanel
+
+Configuración:
+- Application root: /home/ecointer/pixelycodigo/sprintask
+- Startup file: api/server.js
+- Node.js version: 18.20.8 (configurado en cPanel)
+- Sistema usa: v10.24.0
+
+Solicitud:
+1. Verificar configuración de Passenger
+2. Asegurar que use Node.js 18.20.8
+3. Reiniciar la aplicación
+```
+
+---
+
+## 📋 Plan B: Si Soporte No Resuelve
+
+### **Opción 1: Ver Versión Real Disponible**
+
+```bash
+# En servidor SSH
+node --version
+# O
+ls /opt/cpanel/ | grep node
+```
+
+### **Opción 2: Compilar para Versión Disponible**
+
+**Editar:** `apps/api/tsup.config.ts`
+
+```typescript
+export default defineConfig({
+  target: 'node10',  // o node12, node14, node16, node18, node20
+  format: ['cjs'],
+  // ... resto de configuración
+});
+```
+
+**Luego:**
+```bash
+npm run build:deploy
+# Subir nuevo server.js
+```
 
 ---
 
@@ -191,32 +285,7 @@ No se encontraron rutas absolutas hardcodeadas pendientes. El frontend está lis
 
 ---
 
-## ✅ Soporte Técnico - Backend Iniciado
-
-### **Mensaje del Soporte (Resuelto)**
-
-> *"We have thoroughly checked the issue and resolved the problem that was preventing your Node.js server from starting. The server is now able to start without any issues."*
-
-**Problema resuelto:** Passenger ahora inicia correctamente el proceso Node.js.
-
----
-
-### **Validación de Recomendaciones del Soporte**
-
-El soporte identificó 4 instancias de `localhost` y recomendó cambiarlas. **Análisis y validación:**
-
-| # | Instancia | ¿Es Problema? | ¿Debe Cambiarse? | Justificación |
-|---|-----------|---------------|------------------|---------------|
-| 1 | **CORS Origins** (`localhost:5173`) | ❌ No | ❌ **No** | Solo aplica en desarrollo. Producción permite cualquier origen o usa `FRONTEND_URL` |
-| 2 | **DB Host Fallback** (`localhost`) | ❌ No | ❌ **No** | Solo para desarrollo. Producción requiere `DB_HOST` (sin fallback) |
-| 3 | **Logger Host** (`localhost`) | ❌ No | ❌ **No** | Metadata interna de winston (no afecta funcionalidad) |
-| 4 | **Console Log** (`http://localhost:${PORT}`) | ❌ No | ❌ **No** | Solo mensaje informativo, usa PORT dinámico |
-
-**Conclusión:** ✅ **NO se requieren cambios** - Los `localhost` son parte del diseño intencional para desarrollo.
-
----
-
-## 🔐 Configuración CORS - Explicación Técnica
+## 🔐 Configuración CORS - Resumen
 
 ### **¿Para qué sirve CORS?**
 
@@ -224,117 +293,42 @@ El soporte identificó 4 instancias de `localhost` y recomendó cambiarlas. **An
 
 ### **Configuración Actual**
 
-```typescript
-// cors.ts
-const isDevelopment = process.env.NODE_ENV !== 'production';
+| Configuración | `FRONTEND_URL` | ¿Quién puede acceder? |
+|---------------|----------------|-----------------------|
+| **Producción abierta** | (no configurado) | **Cualquier dominio** ✅ |
+| **Producción restringida** | `https://pixelycodigo.com` | Solo ese dominio |
 
-const allowedOrigins = isDevelopment ? [
-  'http://localhost:5173',      // Desarrollo
-  'http://127.0.0.1:5173',
-  'http://localhost:3000',
-  process.env.FRONTEND_URL,     // Opcional en producción
-].filter((origin): origin is string => origin !== undefined) : [];
+### **⚠️ IMPORTANTE: Solo Dominio, SIN subcarpeta**
 
-export const corsOptions: CorsOptions = {
-  origin: function (origin, callback) {
-    // Producción sin FRONTEND_URL → permite CUALQUIER origen
-    if (!isDevelopment && !process.env.FRONTEND_URL) {
-      return callback(null, true);
-    }
-    // Producción con FRONTEND_URL → solo permite ese origen
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('No permitido por CORS'));
-    }
-  },
-  // ...
-};
-```
+| Configuración | `FRONTEND_URL` | ¿Funciona? |
+|---------------|----------------|------------|
+| **✅ Correcto** | `https://pixelycodigo.com` | ✅ **SÍ** |
+| **❌ Incorrecto** | `https://pixelycodigo.com/sprintask` | ❌ **NO** |
 
-### **Escenarios de Configuración**
-
-| Configuración | `NODE_ENV` | `FRONTEND_URL` | ¿Quién puede acceder? | Caso de uso |
-|---------------|------------|----------------|-----------------------|-------------|
-| **Desarrollo** | `development` | (cualquiera) | Solo localhost | Desarrollo local |
-| **Producción restringida** | `production` | `https://pixelycodigo.com` | Solo ese dominio | App privada |
-| **Producción abierta** | `production` | (no configurado) | **Cualquier dominio** | API pública |
-
----
-
-### **⚠️ IMPORTANTE: Configurar FRONTEND_URL (Solo Dominio, SIN subcarpeta)**
-
-**¿Por qué solo el dominio?**
-
-El navegador envía el header `Origin` que **SOLO incluye protocolo + dominio + puerto**, **NO incluye la ruta/path**.
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    Header Origin del Navegador               │
-└─────────────────────────────────────────────────────────────┘
-
-Frontend en: https://pixelycodigo.com/sprintask/login
-
-↓ El navegador envía:
-
-Origin: https://pixelycodigo.com
-         └──────────────┬──────────────┘
-         Solo dominio, NO incluye /sprintask/
-```
-
-### **Configuración Correcta vs Incorrecta**
-
-| Configuración | `FRONTEND_URL` | ¿Funciona? | ¿Por qué? |
-|---------------|----------------|------------|-----------|
-| **✅ Correcto** | `https://pixelycodigo.com` | ✅ **SÍ** | Coincide con el `Origin` del navegador |
-| **❌ Incorrecto** | `https://pixelycodigo.com/sprintask` | ❌ **NO** | El navegador NO envía la subcarpeta en el Origin |
-| **✅ Actual** | (no configurado) | ✅ **SÍ** | Permite cualquier origen (producción abierta) |
-
-### **Recomendación**
-
-**Opción 1: Sin restricción (actual - funciona bien)**
-```env
-NODE_ENV=production
-# FRONTEND_URL no configurado → permite cualquier origen
-```
-**Ventaja:** No necesitas cambiar nada, ya funciona.
-
-**Opción 2: Restringir a tu dominio (seguridad extra - opcional)**
-```env
-NODE_ENV=production
-FRONTEND_URL=https://pixelycodigo.com
-```
-**Ventaja:** Solo tu dominio puede consumir la API desde el navegador.
-
-**⚠️ NUNCA usar:**
-```env
-FRONTEND_URL=https://pixelycodigo.com/sprintask  # ❌ Esto bloquearía todas las peticiones
-```
+**¿Por qué?** El navegador envía `Origin: https://pixelycodigo.com` (NO incluye la subcarpeta).
 
 ---
 
 ## 📝 Próximos Pasos
 
-### **Inmediato - Despliegue:**
-- [ ] Editar `FTP_DEPLOY/config.json` con `baseUrl` y `apiUrl` correctos
-- [ ] Editar `FTP_DEPLOY/.env` con credenciales reales de MySQL
-- [ ] Editar `FTP_DEPLOY/.htaccess` con `RewriteBase` correcto
-- [ ] Subir `FTP_DEPLOY/` al servidor por FTP
-- [ ] Importar base de datos en MySQL
-- [ ] Configurar Node.js en cPanel (startup file: `api/server.js`)
+### **Inmediato - Esperando Soporte:**
+- [ ] Enviar ticket de soporte (template en `docs/nodeJsCpanel.md`)
+- [ ] Esperar respuesta (24-48 horas)
+- [ ] Verificar que Passenger usa Node.js 18
 
-### **Después del Despliegue:**
-- [ ] Probar health check: `curl /api/health`
-- [ ] Probar login API
-- [ ] Verificar dashboard y CRUDs
-- [ ] Validar rutas relativas en subcarpeta
+### **Si Soporte Resuelve:**
+- [ ] `ps aux | grep node` muestra proceso
+- [ ] `curl /api/health` devuelve JSON
+- [ ] Login funciona en navegador
 
-### **Opcional - Seguridad CORS:**
-- [ ] Si quieres restringir CORS, agregar al `.env` en producción:
-  ```env
-  FRONTEND_URL=https://pixelycodigo.com
-  ```
-- [ ] **NO incluir la subcarpeta** `/sprintask` en `FRONTEND_URL`
+### **Si Soporte NO Resuelve:**
+- [ ] Ver versión real: `node --version`
+- [ ] Compilar para esa versión (Plan B)
+- [ ] Re-desplegar
+
+### **Archivos a Subir (Listos):**
+- [ ] `api/server.js` (118 KB)
+- [ ] `tmp/restart.txt` (v1.0.8)
 
 ---
 
@@ -344,23 +338,24 @@ FRONTEND_URL=https://pixelycodigo.com/sprintask  # ❌ Esto bloquearía todas la
 |---------|-------|--------|
 | **Rutas Relativas** | 100% | ✅ 39 archivos corregidos |
 | **Frontend Funcional** | 100% | ✅ Completo |
-| **Backend Build** | 100% | ✅ 119 KB bundled |
+| **Backend Build** | 100% | ✅ 118 KB (Node 18 CommonJS) |
 | **Limpieza Automática** | 100% | ✅ `prebuild.js` implementado |
 | **Perfil/Config Talent** | 100% | ✅ 2 componentes creados |
+| **Documentación Técnica** | 100% | ✅ `nodeJsCpanel.md` creado |
 | **Errores de Build** | 0 | ✅ Sin errores |
 | **Errores de TypeCheck** | 0 | ✅ Sin errores |
-| **CORS Configurado** | ⚠️ Por validar | ✅ Funciona (abierto) |
 
 ---
 
 ## 📖 Documentación Actualizada
 
-| Documento | Versión |
-|-----------|---------|
-| `docs/configuracionSaaS.md` | 9.2 |
-| `docs/CONFIGURACION-SERVIDOR.md` | 2.0 |
-| `docs/plans/modelo_base_datos_auto.md` | 3.0 |
-| `docs/caso-talent.md` | ✅ Resuelto + Perfil/Config |
+| Documento | Propósito | Versión |
+|-----------|-----------|---------|
+| `docs/nodeJsCpanel.md` | Node.js en cPanel - Troubleshooting | 1.0 |
+| `docs/configuracionSaaS.md` | Configuración en Servidor | 9.2 |
+| `docs/CONFIGURACION-SERVIDOR.md` | Guía Rápida | 2.0 |
+| `docs/plans/modelo_base_datos_auto.md` | Modelo de BD | 3.0 |
+| `docs/caso-talent.md` | Caso Talent - Perfil/Config | ✅ Resuelto |
 
 ---
 
@@ -370,24 +365,26 @@ FRONTEND_URL=https://pixelycodigo.com/sprintask  # ❌ Esto bloquearía todas la
 # Build completo (con limpieza automática)
 npm run build:deploy
 
-# Verificar proceso Node.js (en servidor)
-ps aux | grep node | grep -v grep
-# Debería mostrar: ecointer ... node api/server.js
+# En servidor (después de subir archivos):
+# 1. Verificar archivos
+ls -lh api/server.js
+# Debería mostrar: 118K
 
-# Health check (en servidor)
+# 2. Esperar 60 segundos
+sleep 60
+
+# 3. Verificar proceso Node.js
+ps aux | grep node | grep -v grep
+# Debería mostrar: node api/server.js
+
+# 4. Probar health check
 curl "https://pixelycodigo.com/sprintask/api/health"
 # Debería mostrar: {"status":"ok","timestamp":"..."}
 
-# Login API (en servidor)
-curl -X POST "https://pixelycodigo.com/sprintask/api/auth/login" \
-  -H "Content-Type: application/json" \
-  -d '{"email":"admin@sprintask.com","password":"Admin1234!"}'
-# Debería mostrar: {"success":true,"token":"..."}
-
-# Verificar en navegador
-# Ir a: https://pixelycodigo.com/sprintask/login
-# Credenciales: admin@sprintask.com / Admin1234!
-# Debería redirigir a: /sprintask/admin
+# Plan B: Ver versión de Node.js
+node --version
+# O
+ls /opt/cpanel/ | grep node
 ```
 
 ---
@@ -408,18 +405,10 @@ curl -X POST "https://pixelycodigo.com/sprintask/api/auth/login" \
 |---|--------|-------|--------|-----------|-------------------|
 | 1 | Carlos Mendoza | `carlos.mendoza@sprintask.com` | UX Designer | Semi-Senior | E-commerce Platform |
 
-**⭐ Talent recomendado para pruebas:** `carlos.mendoza@sprintask.com` (UX Designer en E-commerce Platform con actividades y tareas asignadas)
-
-### Usuarios Clientes (4 disponibles)
-
-**Contraseña común:** `Cliente123!`
-
-| Nombre | Email | Empresa | País | Proyectos |
-|--------|-------|---------|------|-----------|
-| Roberto Gómez | `roberto.gomez@techcorp.pe` | Tech Corp S.A.C. | Perú | 4 proyectos |
+**⭐ Talent recomendado para pruebas:** `carlos.mendoza@sprintask.com`
 
 ---
 
-**Última actualización:** 13 de Marzo, 2026 - Tarde
-**Versión:** 14.0 - Build Automático con Limpieza Implementada
-**Próximo Hito:** Despliegue en Servidor
+**Última actualización:** 13 de Marzo, 2026 - Noche
+**Versión:** 15.0 - Build Node.js 18 + Documentación Técnica
+**Próxima acción:** Enviar ticket de soporte técnico
