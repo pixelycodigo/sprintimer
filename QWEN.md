@@ -1,0 +1,2 @@
+## Qwen Added Memories
+- SprinTask Build Flow: `npm run build:deploy` ejecuta: 1) prebuild.js (limpia FTP_DEPLOY/), 2) build:deploy API (tsup → api/server.js), 3) build:post Web (Vite → assets/), 4) prepare-deploy.js (crea package.json, .env, config.json, restart.txt). Archivos clave: package.json (scripts), scripts/prebuild.js (limpieza), scripts/prepare-deploy.js (configuración), apps/api/tsup.config.ts (output: FTP_DEPLOY/api/), apps/web/vite.config.ts (base: './' producción). Build genera ~1.26 MB en 7 archivos JS + 119 KB backend.

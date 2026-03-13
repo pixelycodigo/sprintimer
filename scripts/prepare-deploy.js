@@ -2,11 +2,11 @@
 
 /**
  * Script para preparar FTP_DEPLOY después del build
- * Copia archivos de configuración a la raíz de FTP_DEPLOY
+ * Limpia builds anteriores y copia archivos de configuración
  * Crea/actualiza version.txt para reinicio automático en cPanel/Passenger
  */
 
-import { copyFileSync, writeFileSync, existsSync, mkdirSync, readFileSync } from 'fs';
+import { copyFileSync, writeFileSync, existsSync, mkdirSync, readFileSync, rmSync, readdirSync } from 'fs';
 import { resolve } from 'path';
 
 const rootDir = process.cwd();
@@ -20,7 +20,7 @@ if (!existsSync(ftpDeployDir)) {
 }
 
 // ==========================================
-// 0. Crear package.json para cPanel Node.js
+// 1. Crear package.json para cPanel Node.js
 // ==========================================
 
 const packageJsonPath = resolve(ftpDeployDir, 'package.json');
@@ -47,7 +47,7 @@ if (!existsSync(packageJsonPath)) {
 }
 
 // ==========================================
-// 1. Crear .env para el backend (desde .env.example)
+// 2. Crear .env para el backend (desde .env.example)
 // ==========================================
 
 const envExamplePath = resolve(rootDir, 'apps/api/.env.example');
@@ -87,7 +87,7 @@ NODE_ENV=production
 }
 
 // ==========================================
-// 2. Crear config.json para el frontend
+// 3. Crear config.json para el frontend
 // ==========================================
 
 const configPath = resolve(ftpDeployDir, 'config.json');
@@ -109,7 +109,7 @@ if (!existsSync(configPath)) {
 }
 
 // ==========================================
-// 3. Verificar .htaccess
+// 4. Verificar .htaccess
 // ==========================================
 
 const htaccessPath = resolve(ftpDeployDir, '.htaccess');
@@ -156,7 +156,7 @@ Require all denied
 }
 
 // ==========================================
-// 4. Crear/Actualizar restart.txt para reinicio automático
+// 5. Crear/Actualizar restart.txt para reinicio automático
 // ==========================================
 
 // tmp/ ahora está en la raíz de FTP_DEPLOY (no dentro de api/)
@@ -210,7 +210,7 @@ console.log(`✅ restart.txt actualizado: ${newVersion} (${timestamp})`);
 console.log('   🔄 Esto forzará el reinicio automático en cPanel/Passenger');
 
 // ==========================================
-// 5. Verificar estructura final
+// 6. Verificar estructura final
 // ==========================================
 
 console.log('\n📁 Estructura de FTP_DEPLOY:');

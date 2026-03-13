@@ -4,6 +4,17 @@ import { cn } from '../utils/cn';
 import { Button } from '../Button';
 import type { LucideIcon } from 'lucide-react';
 
+// Función helper para obtener el basePath (se define en el frontend)
+// Si no está disponible, usa la ruta tal cual
+let getBasePathFn: ((path: string) => string) | null = null;
+
+/**
+ * Permite registrar la función buildPath desde el frontend
+ */
+export function setBuildPathFn(fn: (path: string) => string) {
+  getBasePathFn = fn;
+}
+
 export interface QuickActionItem {
   label: string;
   href: string;
@@ -23,6 +34,14 @@ export interface QuickActionsProps {
  */
 const QuickActions = React.forwardRef<HTMLDivElement, QuickActionsProps>(
   ({ className, title, actions, columns = 3, variant = 'secondary', ...props }, ref) => {
+    const buildPath = (path: string) => {
+      if (getBasePathFn) {
+        return getBasePathFn(path);
+      }
+      // Fallback: retornar la ruta tal cual
+      return path;
+    };
+
     return (
       <div
         ref={ref}
@@ -43,7 +62,7 @@ const QuickActions = React.forwardRef<HTMLDivElement, QuickActionsProps>(
           columns === 6 && 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-6'
         )}>
           {actions.map((action) => (
-            <Link key={action.href} to={action.href} className="block">
+            <Link key={action.href} to={buildPath(action.href)} className="block">
               <Button
                 variant={variant}
                 size="default"

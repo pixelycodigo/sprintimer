@@ -11,6 +11,7 @@ import { Card, CardHeader, CardTitle, CardDescription } from '@ui/Card';
 import { StatCard } from './StatCard';
 import { DashboardSection } from './DashboardSection';
 import { superAdminDashboardService } from '../../../services/super-admin-dashboard.service';
+import { buildPath } from '../../../utils/getBasePath';
 
 interface SuperAdminStats {
   total_administradores: number;
@@ -43,10 +44,10 @@ export default function SuperAdminDashboard() {
   }
 
   const statCards = [
-    { name: 'Administradores', value: stats?.total_administradores || 0, icon: Shield, href: '/super-admin/usuarios' },
-    { name: 'Clientes', value: stats?.total_clientes || 0, icon: Users, href: '/admin/clientes' },
-    { name: 'Proyectos', value: stats?.total_proyectos || 0, icon: Activity, href: '/admin/proyectos' },
-    { name: 'Talents', value: stats?.total_talents || 0, icon: TrendingUp, href: '/admin/talents' },
+    { name: 'Administradores', value: stats?.total_administradores || 0, icon: Shield, href: buildPath('/super-admin/usuarios') },
+    { name: 'Clientes', value: stats?.total_clientes || 0, icon: Users, href: buildPath('/admin/clientes') },
+    { name: 'Proyectos', value: stats?.total_proyectos || 0, icon: Activity, href: buildPath('/admin/proyectos') },
+    { name: 'Talents', value: stats?.total_talents || 0, icon: TrendingUp, href: buildPath('/admin/talents') },
   ];
 
   const extraStats = [
@@ -113,10 +114,10 @@ export default function SuperAdminDashboard() {
         <QuickActions
           columns={4}
           actions={[
-            { label: 'Gestionar Usuarios', href: '/super-admin/usuarios', icon: Shield },
-            { label: 'Panel Admin', href: '/admin', icon: Activity },
-            { label: 'Clientes', href: '/admin/clientes', icon: Users },
-            { label: 'Proyectos', href: '/admin/proyectos', icon: Briefcase },
+            { label: 'Gestionar Usuarios', href: buildPath('/super-admin/usuarios'), icon: Shield },
+            { label: 'Panel Admin', href: buildPath('/admin'), icon: Activity },
+            { label: 'Clientes', href: buildPath('/admin/clientes'), icon: Users },
+            { label: 'Proyectos', href: buildPath('/admin/proyectos'), icon: Briefcase },
           ]}
         />
       </DashboardSection>

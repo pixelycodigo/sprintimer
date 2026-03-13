@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { dashboardService } from '../../../services/dashboard.service';
+import { buildPath } from '../../../utils/getBasePath';
 
 import { Spinner } from '@ui/Spinner';
 import { Badge } from '@ui/Badge';
@@ -35,10 +36,10 @@ export default function AdminDashboard() {
   }
 
   const statCards = [
-    { name: 'Clientes', value: stats?.total_clientes || 0, icon: Users, href: '/admin/clientes' },
-    { name: 'Proyectos', value: stats?.total_proyectos || 0, icon: Briefcase, href: '/admin/proyectos' },
-    { name: 'Talents', value: stats?.total_talents || 0, icon: CheckSquare, href: '/admin/talents' },
-    { name: 'Actividades', value: stats?.total_actividades || 0, icon: TrendingUp, href: '/admin/actividades' },
+    { name: 'Clientes', value: stats?.total_clientes || 0, icon: Users, href: buildPath('/admin/clientes') },
+    { name: 'Proyectos', value: stats?.total_proyectos || 0, icon: Briefcase, href: buildPath('/admin/proyectos') },
+    { name: 'Talents', value: stats?.total_talents || 0, icon: CheckSquare, href: buildPath('/admin/talents') },
+    { name: 'Actividades', value: stats?.total_actividades || 0, icon: TrendingUp, href: buildPath('/admin/actividades') },
   ];
 
   const columns: ColumnDef<any>[] = [
@@ -65,7 +66,7 @@ export default function AdminDashboard() {
       header: 'Acciones',
       accessorKey: 'acciones',
       cell: () => (
-        <Link to={`/admin/proyectos`}>
+        <Link to={buildPath('/admin/proyectos')}>
           <ActionButtonView />
         </Link>
       ),
@@ -186,12 +187,12 @@ export default function AdminDashboard() {
         <QuickActions
           columns={6}
           actions={[
-            { label: 'Cliente', href: '/admin/clientes/crear', icon: Users },
-            { label: 'Proyecto', href: '/admin/proyectos/crear', icon: Briefcase },
-            { label: 'Talent', href: '/admin/talents/crear', icon: CheckSquare },
-            { label: 'Actividad', href: '/admin/actividades/crear', icon: TrendingUp },
-            { label: 'Perfil', href: '/admin/perfiles/crear', icon: Tag },
-            { label: 'Seniority', href: '/admin/seniorities/crear', icon: TrendingUp },
+            { label: 'Cliente', href: buildPath('/admin/clientes/crear'), icon: Users },
+            { label: 'Proyecto', href: buildPath('/admin/proyectos/crear'), icon: Briefcase },
+            { label: 'Talent', href: buildPath('/admin/talents/crear'), icon: CheckSquare },
+            { label: 'Actividad', href: buildPath('/admin/actividades/crear'), icon: TrendingUp },
+            { label: 'Perfil', href: buildPath('/admin/perfiles/crear'), icon: Tag },
+            { label: 'Seniority', href: buildPath('/admin/seniorities/crear'), icon: TrendingUp },
           ]}
         />
       </DashboardSection>

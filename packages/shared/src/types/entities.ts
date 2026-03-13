@@ -115,7 +115,7 @@ export interface Sprint {
 export interface Actividad {
   id: number;
   proyecto_id: number;
-  sprint_id?: number;
+  sprint_id?: number | null;
   nombre: string;
   descripcion?: string;
   horas_estimadas: number;

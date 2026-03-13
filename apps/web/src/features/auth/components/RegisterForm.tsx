@@ -9,6 +9,7 @@ import { Label } from '@ui/Label';
 import { Button } from '@ui/Button';
 import { Spinner } from '@ui/Spinner';
 import { Checkbox } from '@ui/Checkbox';
+import { buildPath } from '../../../utils/getBasePath';
 
 export interface RegisterFormProps {
   title?: string;
@@ -79,7 +80,7 @@ export function RegisterForm({
         onRegisterSuccess();
       } else {
         // Redirigir al login después de registro exitoso
-        navigate('/login');
+        navigate(buildPath('/login'));
       }
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };
@@ -314,7 +315,7 @@ export function RegisterForm({
 
       {/* Login Link */}
       <div className="px-6 pb-6">
-        <Link to="/login">
+        <Link to={buildPath('/login')}>
           <Button variant="secondary" size="default" className="w-full">
             Iniciar sesión
           </Button>

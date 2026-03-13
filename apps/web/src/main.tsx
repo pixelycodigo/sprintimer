@@ -3,9 +3,11 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
+import { setBuildPathFn } from '@ui/QuickActions';
 import App from './App';
 import './index.css';
 import { initApiUrl } from './services/api';
+import { buildPath } from './utils/getBasePath';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -16,6 +18,9 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+// Registrar la función buildPath en QuickActions para rutas relativas
+setBuildPathFn(buildPath);
 
 // Aplicar tema inicial antes de renderizar
 if (typeof window !== 'undefined') {

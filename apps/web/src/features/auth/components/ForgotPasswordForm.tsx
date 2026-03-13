@@ -7,6 +7,7 @@ import { Input } from '@ui/Input';
 import { Label } from '@ui/Label';
 import { Button } from '@ui/Button';
 import { Spinner } from '@ui/Spinner';
+import { buildPath } from '../../../utils/getBasePath';
 
 export interface ForgotPasswordFormProps {
   title?: string;
@@ -74,7 +75,7 @@ export function ForgotPasswordForm({
               intenta de nuevo
             </button>
           </p>
-          <Link to="/login">
+          <Link to={buildPath('/login')}>
             <Button variant="secondary" className="w-full">
               Volver al login
             </Button>
@@ -137,7 +138,7 @@ export function ForgotPasswordForm({
         {/* Back to Login */}
         <div className="mt-6">
           <Link
-            to="/login"
+            to={buildPath('/login')}
             className="flex items-center justify-center text-sm font-medium text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />

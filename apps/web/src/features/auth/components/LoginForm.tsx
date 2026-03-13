@@ -157,7 +157,7 @@ export function LoginForm({
               </div>
 
               <Link
-                to="/recuperar-password"
+                to={buildPath('/recuperar-password')}
                 className="text-sm font-medium text-slate-900 dark:text-zinc-100 hover:text-slate-700 dark:hover:text-zinc-300 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-zinc-100 rounded px-1"
               >
                 ¿Olvidaste tu contraseña?
@@ -198,7 +198,7 @@ export function LoginForm({
 
           {/* Register Link */}
           <Link
-            to="/registro"
+            to={buildPath('/registro')}
             className="block w-full"
           >
             <Button

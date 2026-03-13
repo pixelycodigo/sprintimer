@@ -1,6 +1,8 @@
 import { LucideIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@ui/Card';
+import { buildPath } from '../../../utils/getBasePath';
+import { cn } from '@ui/utils/cn';
 
 export interface StatCardProps {
   name: string;
@@ -19,11 +21,11 @@ export function StatCard({ name, value, icon: Icon, href, color = 'default' }: S
   };
 
   const content = (
-    <Card className="transition-shadow hover:shadow-md cursor-pointer">
+    <Card className={cn('transition-shadow hover:shadow-md', href && 'cursor-pointer')}>
       <CardContent>
         <div className="flex items-center">
           <div className="flex-shrink-0">
-            <div className={`flex items-center justify-center h-12 w-12 rounded-lg ${colorClasses[color]}`}>
+            <div className={cn('flex items-center justify-center h-12 w-12 rounded-lg', colorClasses[color])}>
               <Icon className="h-6 w-6 text-slate-500 dark:text-zinc-400" aria-hidden="true" />
             </div>
           </div>
@@ -38,7 +40,7 @@ export function StatCard({ name, value, icon: Icon, href, color = 'default' }: S
 
   if (href) {
     return (
-      <Link to={href} className="transition-shadow hover:shadow-md">
+      <Link to={buildPath(href)} className="transition-shadow hover:shadow-md">
         {content}
       </Link>
     );

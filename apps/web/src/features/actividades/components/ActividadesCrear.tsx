@@ -20,7 +20,7 @@ export default function AdminActividadesCrear() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<CreateActividadInput>({
     proyecto_id: 0,
-    sprint_id: undefined,
+    sprint_id: null,
     nombre: '',
     descripcion: '',
     horas_estimadas: 0,

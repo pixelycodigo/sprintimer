@@ -20,10 +20,10 @@ import type { UpdateActividadInput } from '@shared';
 export default function AdminActividadesEditar() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  
+
   const [formData, setFormData] = useState<UpdateActividadInput>({
     proyecto_id: undefined,
-    sprint_id: undefined,
+    sprint_id: null,
     nombre: '',
     descripcion: '',
     horas_estimadas: 0,

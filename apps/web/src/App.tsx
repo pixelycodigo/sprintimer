@@ -33,7 +33,7 @@ import { UsuariosList, UsuariosCrear, UsuariosEditar } from './features/super-ad
 import { AdminPerfil, AdminConfiguracion } from './features/admin';
 
 // Páginas de Talent
-import { TalentProyectos, TalentTareas, TareasCrear, TareasEditar, TareasEliminadas, TalentActividades } from './features/talent';
+import { TalentProyectos, TalentTareas, TareasCrear, TareasEditar, TareasEliminadas, TalentActividades, TalentPerfil, TalentConfiguracion } from './features/talent';
 
 // Páginas de Cliente
 import { ClienteProyectos, ClienteActividades } from './features/cliente';
@@ -149,6 +149,8 @@ function App() {
         <Route path="tareas/crear" element={<TareasCrear />} />
         <Route path="tareas/:id/editar" element={<TareasEditar />} />
         <Route path="tareas/eliminadas" element={<TareasEliminadas />} />
+        <Route path="perfil" element={<TalentPerfil />} />
+        <Route path="configuracion" element={<TalentConfiguracion />} />
       </Route>
 
       {/* Rutas Cliente */}

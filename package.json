@@ -13,7 +13,7 @@
     "dev:api": "npm run dev -w apps/api",
     "dev:web": "npm run dev -w apps/web",
     "build": "npm run build -w apps/api && npm run build:post -w apps/web",
-    "build:deploy": "npm run build:deploy -w apps/api && npm run build:post -w apps/web && node scripts/prepare-deploy.js",
+    "build:deploy": "node scripts/prebuild.js && npm run build:deploy -w apps/api && npm run build:post -w apps/web && node scripts/prepare-deploy.js",
     "build:api": "npm run build:deploy -w apps/api",
     "build:web": "npm run build:post -w apps/web",
     "set-base": "node scripts/set-base.js",

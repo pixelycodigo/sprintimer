@@ -212,43 +212,44 @@ INSERT INTO actividades (proyecto_id, sprint_id, nombre, descripcion, horas_esti
 -- 9. ACTIVIDADES_INTEGRANTES (20 asignaciones)
 -- ================================================================
 -- Cada talent asignado a una actividad principal
+-- NOTA: Se usa subconsulta por email para evitar problemas con IDs autoincrementales
 
 INSERT INTO actividades_integrantes (actividad_id, talent_id, fecha_asignacion, activo) VALUES
 -- UX/UI Designers (actividades 1)
-(1, 1, NOW(), 1),
-(1, 2, NOW(), 1),
+(1, (SELECT id FROM talents WHERE email='carlos.mendoza@sprintask.com'), NOW(), 1),
+(1, (SELECT id FROM talents WHERE email='maria.fernandez@sprintask.com'), NOW(), 1),
 
 -- Frontend Developers (actividad 2)
-(2, 3, NOW(), 1),
-(2, 4, NOW(), 1),
-(2, 5, NOW(), 1),
+(2, (SELECT id FROM talents WHERE email='jose.garcia@sprintask.com'), NOW(), 1),
+(2, (SELECT id FROM talents WHERE email='ana.rodriguez@sprintask.com'), NOW(), 1),
+(2, (SELECT id FROM talents WHERE email='luis.martinez@sprintask.com'), NOW(), 1),
 
 -- Backend Developers (actividad 6)
-(6, 6, NOW(), 1),
-(6, 7, NOW(), 1),
-(6, 8, NOW(), 1),
+(6, (SELECT id FROM talents WHERE email='carmen.lopez@sprintask.com'), NOW(), 1),
+(6, (SELECT id FROM talents WHERE email='diego.sanchez@sprintask.com'), NOW(), 1),
+(6, (SELECT id FROM talents WHERE email='laura.ramirez@sprintask.com'), NOW(), 1),
 
 -- Full Stack Developers (actividades 7, 8)
-(7, 9, NOW(), 1),
-(7, 10, NOW(), 1),
-(8, 11, NOW(), 1),
-(8, 12, NOW(), 1),
+(7, (SELECT id FROM talents WHERE email='pablo.torres@sprintask.com'), NOW(), 1),
+(7, (SELECT id FROM talents WHERE email='sofia.flores@sprintask.com'), NOW(), 1),
+(8, (SELECT id FROM talents WHERE email='andres.morales@sprintask.com'), NOW(), 1),
+(8, (SELECT id FROM talents WHERE email='valentina.cruz@sprintask.com'), NOW(), 1),
 
 -- Mobile Developers (actividades 3, 4)
-(3, 13, NOW(), 1),
-(4, 14, NOW(), 1),
+(3, (SELECT id FROM talents WHERE email='sebastian.vargas@sprintask.com'), NOW(), 1),
+(4, (SELECT id FROM talents WHERE email='camila.herrera@sprintask.com'), NOW(), 1),
 
 -- DevOps Engineers (actividad 5)
-(5, 15, NOW(), 1),
-(5, 16, NOW(), 1),
+(5, (SELECT id FROM talents WHERE email='mateo.jimenez@sprintask.com'), NOW(), 1),
+(5, (SELECT id FROM talents WHERE email='lucia.castillo@sprintask.com'), NOW(), 1),
 
 -- QA Engineers (actividades varias)
-(2, 17, NOW(), 1),
-(6, 18, NOW(), 1),
+(2, (SELECT id FROM talents WHERE email='daniel.ortiz@sprintask.com'), NOW(), 1),
+(6, (SELECT id FROM talents WHERE email='elena.mendoza@sprintask.com'), NOW(), 1),
 
 -- UX/UI Lead (actividades 19, 20)
-(19, 19, NOW(), 1),
-(20, 20, NOW(), 1);
+(19, (SELECT id FROM talents WHERE email='alejandro.rojas@sprintask.com'), NOW(), 1),
+(20, (SELECT id FROM talents WHERE email='isabel.delgado@sprintask.com'), NOW(), 1);
 
 -- ================================================================
 -- 10. COSTOS_POR_HORA (40: 2 por talent - 1 fijo + 1 variable)
@@ -362,106 +363,107 @@ INSERT INTO costos_por_hora (tipo, costo_min, costo_max, costo_hora, divisa_id, 
 -- ================================================================
 -- 11. TAREAS (40: 2 por talent)
 -- ================================================================
+-- NOTA: Se usa subconsulta por email para evitar problemas con IDs autoincrementales
 
 -- Talent 1: UX Designer - Actividad 1 (Diseño UI/UX)
 INSERT INTO tareas (actividad_id, talent_id, nombre, descripcion, horas_registradas, completado, created_at, updated_at) VALUES
-(1, 1, 'Wireframes de homepage', 'Creación de wireframes de baja fidelidad para la página principal del e-commerce', 4.00, 1, NOW(), NOW()),
-(1, 1, 'Prototipo navegable', 'Desarrollo de prototipo interactivo en Figma para flujo de compra completo', 6.00, 0, NOW(), NOW());
+(1, (SELECT id FROM talents WHERE email='carlos.mendoza@sprintask.com'), 'Wireframes de homepage', 'Creación de wireframes de baja fidelidad para la página principal del e-commerce', 4.00, 1, NOW(), NOW()),
+(1, (SELECT id FROM talents WHERE email='carlos.mendoza@sprintask.com'), 'Prototipo navegable', 'Desarrollo de prototipo interactivo en Figma para flujo de compra completo', 6.00, 0, NOW(), NOW());
 
 -- Talent 2: UI Designer - Actividad 1 (Diseño UI/UX)
 INSERT INTO tareas (actividad_id, talent_id, nombre, descripcion, horas_registradas, completado, created_at, updated_at) VALUES
-(1, 2, 'Design System components', 'Creación de biblioteca de componentes UI con variables de diseño', 8.00, 0, NOW(), NOW()),
-(1, 2, 'Iconografía personalizada', 'Diseño de set de íconos personalizados para la plataforma', 3.00, 1, NOW(), NOW());
+(1, (SELECT id FROM talents WHERE email='maria.fernandez@sprintask.com'), 'Design System components', 'Creación de biblioteca de componentes UI con variables de diseño', 8.00, 0, NOW(), NOW()),
+(1, (SELECT id FROM talents WHERE email='maria.fernandez@sprintask.com'), 'Iconografía personalizada', 'Diseño de set de íconos personalizados para la plataforma', 3.00, 1, NOW(), NOW());
 
 -- Talent 3: Frontend Dev - Actividad 2 (Desarrollo Frontend React)
 INSERT INTO tareas (actividad_id, talent_id, nombre, descripcion, horas_registradas, completado, created_at, updated_at) VALUES
-(2, 3, 'Componente Header', 'Implementación de header responsive con navegación y carrito', 5.00, 1, NOW(), NOW()),
-(2, 3, 'Componente ProductCard', 'Desarrollo de tarjeta de producto con imágenes y acciones', 4.00, 1, NOW(), NOW());
+(2, (SELECT id FROM talents WHERE email='jose.garcia@sprintask.com'), 'Componente Header', 'Implementación de header responsive con navegación y carrito', 5.00, 1, NOW(), NOW()),
+(2, (SELECT id FROM talents WHERE email='jose.garcia@sprintask.com'), 'Componente ProductCard', 'Desarrollo de tarjeta de producto con imágenes y acciones', 4.00, 1, NOW(), NOW());
 
 -- Talent 4: Frontend Dev - Actividad 2 (Desarrollo Frontend React)
 INSERT INTO tareas (actividad_id, talent_id, nombre, descripcion, horas_registradas, completado, created_at, updated_at) VALUES
-(2, 4, 'Carrito de compras', 'Implementación de carrito con persistencia en localStorage', 8.00, 0, NOW(), NOW()),
-(2, 4, 'Checkout flow', 'Desarrollo de flujo de checkout en 3 pasos', 10.00, 0, NOW(), NOW());
+(2, (SELECT id FROM talents WHERE email='ana.rodriguez@sprintask.com'), 'Carrito de compras', 'Implementación de carrito con persistencia en localStorage', 8.00, 0, NOW(), NOW()),
+(2, (SELECT id FROM talents WHERE email='ana.rodriguez@sprintask.com'), 'Checkout flow', 'Desarrollo de flujo de checkout en 3 pasos', 10.00, 0, NOW(), NOW());
 
 -- Talent 5: Frontend Dev Lead - Actividad 2 (Desarrollo Frontend React)
 INSERT INTO tareas (actividad_id, talent_id, nombre, descripcion, horas_registradas, completado, created_at, updated_at) VALUES
-(2, 5, 'Arquitectura de componentes', 'Definición de estructura y patrones de componentes React', 6.00, 1, NOW(), NOW()),
-(2, 5, 'Code review frontend', 'Revisión de código y optimización de rendimiento', 4.00, 0, NOW(), NOW());
+(2, (SELECT id FROM talents WHERE email='luis.martinez@sprintask.com'), 'Arquitectura de componentes', 'Definición de estructura y patrones de componentes React', 6.00, 1, NOW(), NOW()),
+(2, (SELECT id FROM talents WHERE email='luis.martinez@sprintask.com'), 'Code review frontend', 'Revisión de código y optimización de rendimiento', 4.00, 0, NOW(), NOW());
 
 -- Talent 6: Backend Dev - Actividad 6 (Implementación Backend)
 INSERT INTO tareas (actividad_id, talent_id, nombre, descripcion, horas_registradas, completado, created_at, updated_at) VALUES
-(6, 6, 'Auth middleware', 'Implementación de middleware de autenticación con JWT', 6.00, 1, NOW(), NOW()),
-(6, 6, 'Rate limiting', 'Configuración de rate limiting por IP y usuario', 4.00, 1, NOW(), NOW());
+(6, (SELECT id FROM talents WHERE email='carmen.lopez@sprintask.com'), 'Auth middleware', 'Implementación de middleware de autenticación con JWT', 6.00, 1, NOW(), NOW()),
+(6, (SELECT id FROM talents WHERE email='carmen.lopez@sprintask.com'), 'Rate limiting', 'Configuración de rate limiting por IP y usuario', 4.00, 1, NOW(), NOW());
 
 -- Talent 7: Backend Dev - Actividad 6 (Implementación Backend)
 INSERT INTO tareas (actividad_id, talent_id, nombre, descripcion, horas_registradas, completado, created_at, updated_at) VALUES
-(6, 7, 'Endpoints REST productos', 'Desarrollo de CRUD de productos con validaciones', 8.00, 0, NOW(), NOW()),
-(6, 7, 'Endpoints REST órdenes', 'Implementación de gestión de órdenes de compra', 10.00, 0, NOW(), NOW());
+(6, (SELECT id FROM talents WHERE email='diego.sanchez@sprintask.com'), 'Endpoints REST productos', 'Desarrollo de CRUD de productos con validaciones', 8.00, 0, NOW(), NOW()),
+(6, (SELECT id FROM talents WHERE email='diego.sanchez@sprintask.com'), 'Endpoints REST órdenes', 'Implementación de gestión de órdenes de compra', 10.00, 0, NOW(), NOW());
 
 -- Talent 8: Backend Dev Lead - Actividad 6 (Implementación Backend)
 INSERT INTO tareas (actividad_id, talent_id, nombre, descripcion, horas_registradas, completado, created_at, updated_at) VALUES
-(6, 8, 'Diseño de base de datos', 'Modelado de esquema de base de datos y migraciones', 5.00, 1, NOW(), NOW()),
-(6, 8, 'Documentación API', 'Documentación de endpoints con OpenAPI/Swagger', 3.00, 0, NOW(), NOW());
+(6, (SELECT id FROM talents WHERE email='laura.ramirez@sprintask.com'), 'Diseño de base de datos', 'Modelado de esquema de base de datos y migraciones', 5.00, 1, NOW(), NOW()),
+(6, (SELECT id FROM talents WHERE email='laura.ramirez@sprintask.com'), 'Documentación API', 'Documentación de endpoints con OpenAPI/Swagger', 3.00, 0, NOW(), NOW());
 
 -- Talent 9: Full Stack Dev - Actividad 7 (Integración de Datos)
 INSERT INTO tareas (actividad_id, talent_id, nombre, descripcion, horas_registradas, completado, created_at, updated_at) VALUES
-(7, 9, 'Pipeline ETL', 'Implementación de pipeline de extracción y transformación de datos', 8.00, 0, NOW(), NOW()),
-(7, 9, 'Conexión APIs externas', 'Integración con APIs de terceros para datos en tiempo real', 6.00, 0, NOW(), NOW());
+(7, (SELECT id FROM talents WHERE email='pablo.torres@sprintask.com'), 'Pipeline ETL', 'Implementación de pipeline de extracción y transformación de datos', 8.00, 0, NOW(), NOW()),
+(7, (SELECT id FROM talents WHERE email='pablo.torres@sprintask.com'), 'Conexión APIs externas', 'Integración con APIs de terceros para datos en tiempo real', 6.00, 0, NOW(), NOW());
 
 -- Talent 10: Full Stack Dev - Actividad 7 (Integración de Datos)
 INSERT INTO tareas (actividad_id, talent_id, nombre, descripcion, horas_registradas, completado, created_at, updated_at) VALUES
-(7, 10, 'Normalización de datos', 'Limpieza y normalización de datos de múltiples fuentes', 5.00, 1, NOW(), NOW()),
-(7, 10, 'Validación de datos', 'Implementación de reglas de validación y calidad de datos', 4.00, 0, NOW(), NOW());
+(7, (SELECT id FROM talents WHERE email='sofia.flores@sprintask.com'), 'Normalización de datos', 'Limpieza y normalización de datos de múltiples fuentes', 5.00, 1, NOW(), NOW()),
+(7, (SELECT id FROM talents WHERE email='sofia.flores@sprintask.com'), 'Validación de datos', 'Implementación de reglas de validación y calidad de datos', 4.00, 0, NOW(), NOW());
 
 -- Talent 11: Full Stack Dev - Actividad 8 (Visualización de Métricas)
 INSERT INTO tareas (actividad_id, talent_id, nombre, descripcion, horas_registradas, completado, created_at, updated_at) VALUES
-(8, 11, 'Gráficos de barras', 'Desarrollo de componente de gráficos de barras con Recharts', 6.00, 1, NOW(), NOW()),
-(8, 11, 'KPIs en tiempo real', 'Implementación de tarjetas de KPIs con actualización automática', 5.00, 0, NOW(), NOW());
+(8, (SELECT id FROM talents WHERE email='andres.morales@sprintask.com'), 'Gráficos de barras', 'Desarrollo de componente de gráficos de barras con Recharts', 6.00, 1, NOW(), NOW()),
+(8, (SELECT id FROM talents WHERE email='andres.morales@sprintask.com'), 'KPIs en tiempo real', 'Implementación de tarjetas de KPIs con actualización automática', 5.00, 0, NOW(), NOW());
 
 -- Talent 12: Full Stack Dev Lead - Actividad 8 (Visualización de Métricas)
 INSERT INTO tareas (actividad_id, talent_id, nombre, descripcion, horas_registradas, completado, created_at, updated_at) VALUES
-(8, 12, 'Dashboard layout', 'Diseño de layout responsivo para dashboard', 4.00, 1, NOW(), NOW()),
-(8, 12, 'Filtros avanzados', 'Implementación de sistema de filtros y segmentación de datos', 7.00, 0, NOW(), NOW());
+(8, (SELECT id FROM talents WHERE email='valentina.cruz@sprintask.com'), 'Dashboard layout', 'Diseño de layout responsivo para dashboard', 4.00, 1, NOW(), NOW()),
+(8, (SELECT id FROM talents WHERE email='valentina.cruz@sprintask.com'), 'Filtros avanzados', 'Implementación de sistema de filtros y segmentación de datos', 7.00, 0, NOW(), NOW());
 
 -- Talent 13: Mobile Dev - Actividad 3 (Desarrollo iOS Native)
 INSERT INTO tareas (actividad_id, talent_id, nombre, descripcion, horas_registradas, completado, created_at, updated_at) VALUES
-(3, 13, 'Configuración proyecto iOS', 'Setup inicial de proyecto Xcode con arquitectura MVVM', 4.00, 1, NOW(), NOW()),
-(3, 13, 'Pantalla de login', 'Implementación de pantalla de autenticación con FaceID', 6.00, 0, NOW(), NOW());
+(3, (SELECT id FROM talents WHERE email='sebastian.vargas@sprintask.com'), 'Configuración proyecto iOS', 'Setup inicial de proyecto Xcode con arquitectura MVVM', 4.00, 1, NOW(), NOW()),
+(3, (SELECT id FROM talents WHERE email='sebastian.vargas@sprintask.com'), 'Pantalla de login', 'Implementación de pantalla de autenticación con FaceID', 6.00, 0, NOW(), NOW());
 
 -- Talent 14: Mobile Dev - Actividad 4 (Desarrollo Android Native)
 INSERT INTO tareas (actividad_id, talent_id, nombre, descripcion, horas_registradas, completado, created_at, updated_at) VALUES
-(4, 14, 'Configuración proyecto Android', 'Setup inicial de proyecto Android Studio con Jetpack Compose', 4.00, 1, NOW(), NOW()),
-(4, 14, 'Pantalla principal', 'Implementación de home screen con lista de transacciones', 8.00, 0, NOW(), NOW());
+(4, (SELECT id FROM talents WHERE email='camila.herrera@sprintask.com'), 'Configuración proyecto Android', 'Setup inicial de proyecto Android Studio con Jetpack Compose', 4.00, 1, NOW(), NOW()),
+(4, (SELECT id FROM talents WHERE email='camila.herrera@sprintask.com'), 'Pantalla principal', 'Implementación de home screen con lista de transacciones', 8.00, 0, NOW(), NOW());
 
 -- Talent 15: DevOps Engineer - Actividad 5 (Arquitectura Microservicios)
 INSERT INTO tareas (actividad_id, talent_id, nombre, descripcion, horas_registradas, completado, created_at, updated_at) VALUES
-(5, 15, 'Configuración Docker', 'Creación de Dockerfiles y docker-compose para servicios', 6.00, 1, NOW(), NOW()),
-(5, 15, 'Pipeline CI/CD', 'Implementación de pipeline de integración continua con GitHub Actions', 8.00, 0, NOW(), NOW());
+(5, (SELECT id FROM talents WHERE email='mateo.jimenez@sprintask.com'), 'Configuración Docker', 'Creación de Dockerfiles y docker-compose para servicios', 6.00, 1, NOW(), NOW()),
+(5, (SELECT id FROM talents WHERE email='mateo.jimenez@sprintask.com'), 'Pipeline CI/CD', 'Implementación de pipeline de integración continua con GitHub Actions', 8.00, 0, NOW(), NOW());
 
 -- Talent 16: DevOps Engineer - Actividad 5 (Arquitectura Microservicios)
 INSERT INTO tareas (actividad_id, talent_id, nombre, descripcion, horas_registradas, completado, created_at, updated_at) VALUES
-(5, 16, 'Kubernetes cluster', 'Configuración de cluster Kubernetes para producción', 10.00, 0, NOW(), NOW()),
-(5, 16, 'Monitoreo y logs', 'Implementación de sistema de monitoreo con Prometheus y Grafana', 7.00, 0, NOW(), NOW());
+(5, (SELECT id FROM talents WHERE email='lucia.castillo@sprintask.com'), 'Kubernetes cluster', 'Configuración de cluster Kubernetes para producción', 10.00, 0, NOW(), NOW()),
+(5, (SELECT id FROM talents WHERE email='lucia.castillo@sprintask.com'), 'Monitoreo y logs', 'Implementación de sistema de monitoreo con Prometheus y Grafana', 7.00, 0, NOW(), NOW());
 
 -- Talent 17: QA Engineer - Actividad 2 (Desarrollo Frontend React)
 INSERT INTO tareas (actividad_id, talent_id, nombre, descripcion, horas_registradas, completado, created_at, updated_at) VALUES
-(2, 17, 'Tests unitarios componentes', 'Creación de tests unitarios para componentes React con Jest', 6.00, 0, NOW(), NOW()),
-(2, 17, 'Tests E2E checkout', 'Implementación de tests end-to-end para flujo de checkout', 5.00, 0, NOW(), NOW());
+(2, (SELECT id FROM talents WHERE email='daniel.ortiz@sprintask.com'), 'Tests unitarios componentes', 'Creación de tests unitarios para componentes React con Jest', 6.00, 0, NOW(), NOW()),
+(2, (SELECT id FROM talents WHERE email='daniel.ortiz@sprintask.com'), 'Tests E2E checkout', 'Implementación de tests end-to-end para flujo de checkout', 5.00, 0, NOW(), NOW());
 
 -- Talent 18: QA Engineer - Actividad 6 (Implementación Backend)
 INSERT INTO tareas (actividad_id, talent_id, nombre, descripcion, horas_registradas, completado, created_at, updated_at) VALUES
-(6, 18, 'Tests de API', 'Desarrollo de tests de integración para endpoints REST', 7.00, 0, NOW(), NOW()),
-(6, 18, 'Pruebas de carga', 'Ejecución de pruebas de carga y rendimiento de API', 4.00, 0, NOW(), NOW());
+(6, (SELECT id FROM talents WHERE email='elena.mendoza@sprintask.com'), 'Tests de API', 'Desarrollo de tests de integración para endpoints REST', 7.00, 0, NOW(), NOW()),
+(6, (SELECT id FROM talents WHERE email='elena.mendoza@sprintask.com'), 'Pruebas de carga', 'Ejecución de pruebas de carga y rendimiento de API', 4.00, 0, NOW(), NOW());
 
 -- Talent 19: UX Designer Lead - Actividad 19 (Video Consultas)
 INSERT INTO tareas (actividad_id, talent_id, nombre, descripcion, horas_registradas, completado, created_at, updated_at) VALUES
-(19, 19, 'User flow consultas', 'Diseño de flujo de usuario para agendar y realizar consultas', 5.00, 1, NOW(), NOW()),
-(19, 19, 'Prototipo video llamada', 'Prototipo de interfaz de video llamada médica', 6.00, 0, NOW(), NOW());
+(19, (SELECT id FROM talents WHERE email='alejandro.rojas@sprintask.com'), 'User flow consultas', 'Diseño de flujo de usuario para agendar y realizar consultas', 5.00, 1, NOW(), NOW()),
+(19, (SELECT id FROM talents WHERE email='alejandro.rojas@sprintask.com'), 'Prototipo video llamada', 'Prototipo de interfaz de video llamada médica', 6.00, 0, NOW(), NOW());
 
 -- Talent 20: UI Designer Lead - Actividad 20 (Historial Médico Digital)
 INSERT INTO tareas (actividad_id, talent_id, nombre, descripcion, horas_registradas, completado, created_at, updated_at) VALUES
-(20, 20, 'Diseño historial clínico', 'Diseño de interfaz de historial clínico electrónico', 7.00, 0, NOW(), NOW()),
-(20, 20, 'Recetas digitales UI', 'Diseño de interfaz de generación y visualización de recetas', 5.00, 0, NOW(), NOW());
+(20, (SELECT id FROM talents WHERE email='isabel.delgado@sprintask.com'), 'Diseño historial clínico', 'Diseño de interfaz de historial clínico electrónico', 7.00, 0, NOW(), NOW()),
+(20, (SELECT id FROM talents WHERE email='isabel.delgado@sprintask.com'), 'Recetas digitales UI', 'Diseño de interfaz de generación y visualización de recetas', 5.00, 0, NOW(), NOW());
 
 -- ================================================================
 -- Reactivar verificaciones de claves foráneas
@@ -486,5 +488,23 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- SELECT 'tareas' as tabla, COUNT(*) as total FROM tareas;
 
 -- ================================================================
+-- CONSULTAS DE VALIDACIÓN ESPECÍFICAS
+-- ================================================================
+
+-- Verificar asignaciones de Carlos Mendoza (debería tener 1 actividad)
+-- SELECT ai.actividad_id, a.nombre as actividad, t.email 
+-- FROM actividades_integrantes ai
+-- JOIN talents t ON ai.talent_id = t.id
+-- JOIN actividades a ON ai.actividad_id = a.id
+-- WHERE t.email = 'carlos.mendoza@sprintask.com';
+
+-- Verificar tareas de Carlos Mendoza (debería tener 2 tareas)
+-- SELECT t.id, t.nombre, t.actividad_id, tal.email
+-- FROM tareas t
+-- JOIN talents tal ON t.talent_id = tal.id
+-- WHERE tal.email = 'carlos.mendoza@sprintask.com';
+
+-- ================================================================
 -- FIN DEL SCRIPT DE SEED
+-- ================================================================
 -- ================================================================

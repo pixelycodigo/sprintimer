@@ -12,7 +12,7 @@ import { Label } from '@ui/Label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/Card';
 import { HeaderPage } from '@ui/HeaderPage';
 
-export default function AdminConfiguracion() {
+export default function TalentConfiguracion() {
   const navigate = useNavigate();
   const [showPasswords, setShowPasswords] = useState({
     current: false,
@@ -77,7 +77,7 @@ export default function AdminConfiguracion() {
         description="Gestiona tu contraseña y preferencias"
         backLink={
           <Link
-            to={buildPath('/admin')}
+            to={buildPath('/talent')}
             className="p-2 text-slate-400 dark:text-zinc-500 hover:text-slate-600 dark:hover:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-md transition-colors"
           >
             <ArrowLeft className="w-5 h-5" aria-hidden="true" />
@@ -212,7 +212,7 @@ export default function AdminConfiguracion() {
                 type="button"
                 variant="outline"
                 size="default"
-                onClick={() => navigate(buildPath('/admin'))}
+                onClick={() => navigate(buildPath('/talent'))}
               >
                 Cancelar
               </Button>
