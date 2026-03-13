@@ -2,21 +2,25 @@
 
 **Guía oficial para despliegue con rutas relativas**
 
-**Última actualización:** 12 de Marzo, 2026  
-**Versión:** 9.3 - Frontend Funcional | Backend Esperando Soporte
+**Última actualización:** 13 de Marzo, 2026
+**Versión:** 10.0 - ✅ Solución Completa Implementada | Cache Busting Producción
 
 ---
 
 ## 📋 Índice
 
 1. [Arquitectura del Build](#arquitectura-del-build)
-2. [Estructura de FTP_DEPLOY](#estructura-de-ftp_deploy)
-3. [Build en Local](#build-en-local)
-4. [Configuración en Servidor](#configuración-en-servidor)
-5. [Archivos de Configuración](#archivos-de-configuración)
-6. [Base de Datos](#base-de-datos)
-7. [Verificación](#verificación)
-8. [Troubleshooting](#troubleshooting)
+2. [Cómo Funciona el Despliegue Flexible](#cómo-funciona-el-despliegue-flexible)
+3. [Estructura de FTP_DEPLOY](#estructura-de-ftp_deploy)
+4. [Build en Local](#build-en-local)
+5. [Configuración en Servidor](#configuración-en-servidor)
+6. [Archivos de Configuración](#archivos-de-configuración)
+7. [Solución para cPanel con Node.js](#solución-para-cpanel-con-nodejs)
+8. [Si la Versión de Node.js Cambia](#si-la-versión-de-nodejs-cambia)
+9. [Base de Datos](#base-de-datos)
+10. [Verificación](#verificación)
+11. [Troubleshooting](#troubleshooting)
+12. [Resumen de la Lógica Implementada](#resumen-de-la-lógica-implementada)
 
 ---
 
@@ -31,6 +35,7 @@
 | **Backend Bundled** | Todo en `api/server.js` (118KB) | Sin `node_modules` en servidor |
 | **Redirecciones Dinámicas** | Login/logout usa `baseUrl` de config | Funciona en raíz y subcarpetas |
 | **CSS Inline** | Tailwind CSS sin archivos externos | Sin rutas rotas en estilos |
+| **Cache Busting** | Versión en assets y config | Sin caché obsoleto en producción |
 
 ### **Flujo de Configuración**
 
@@ -65,26 +70,91 @@
 
 ---
 
+## 🔑 Cómo Funciona el Despliegue Flexible
+
+### **Principio Fundamental: `config.json` es la Única Fuente de Verdad**
+
+**NO hay detección automática.** Toda la configuración de rutas viene de `config.json`.
+
+---
+
+### **Flujo de Rutas**
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Flujo de Rutas Relativas                  │
+└─────────────────────────────────────────────────────────────┘
+
+1. Navegador solicita: https://dominio.com/sprintask/
+
+2. Servidor devuelve: /sprintask/index.html
+   └─> Assets con rutas relativas: ./assets/...
+
+3. index.html carga assets:
+   └─> ./assets/index-*.js → /sprintask/assets/index-*.js ✅
+   └─> ./config.json → /sprintask/config.json ✅
+
+4. main.tsx lee config.json:
+   └─> baseUrl: "/sprintask/"
+   └─> Establece <base href="/sprintask/">
+
+5. React Router usa basename="/sprintask/":
+   └─> URL: /sprintask/admin/clientes
+   └─> Ruta interna: /admin/clientes ✅
+
+6. Componentes navegan con buildPath():
+   └─> buildPath('/login') → "/sprintask/login" ✅
+```
+
+---
+
+### **Configuración por Ubicación**
+
+| Ubicación | `config.json` → `baseUrl` | `config.json` → `apiUrl` | Ejemplo URL |
+|-----------|--------------------------|-------------------------|-------------|
+| **Raíz** | `/` | `/api` | `https://dominio.com/` |
+| **Subcarpeta** | `/sprintask/` | `/sprintask/api` | `https://dominio.com/sprintask/` |
+| **Otra carpeta** | `/app/` | `/app/api` | `https://dominio.com/app/` |
+
+**Importante:** 
+- ✅ `baseUrl` debe terminar con `/`
+- ✅ `apiUrl` debe incluir la subcarpeta si aplica
+
+---
+
+### **¿Por qué NO se requiere rebuild?**
+
+| Componente | Configuración | ¿Requiere rebuild? |
+|------------|---------------|-------------------|
+| **Assets** | Rutas relativas (`./`) | ❌ **NO** |
+| **API** | `apiUrl` en config.json | ❌ **NO** |
+| **Rutas** | `baseUrl` en config.json | ❌ **NO** |
+| **Backend** | `.env` en servidor | ❌ **NO** |
+
+**Solo editas `config.json` en el servidor** - el mismo build funciona en cualquier ubicación.
+
+---
+
 ## 📁 Estructura de FTP_DEPLOY
 
 ```
 FTP_DEPLOY/
-├── package.json           ← cPanel Node.js config
+├── package.json           ← cPanel Node.js config (type: commonjs)
 ├── tmp/
-│   └── restart.txt        ← Reinicio automático cPanel (en raíz)
+│   └── restart.txt        ← Reinicio automático cPanel (con versión)
 ├── api/
-│   └── server.js          ← Backend bundled (118KB)
+│   └── server.js          ← Backend bundled (118KB, Node.js 18 CommonJS)
 ├── assets/
-│   ├── index-*.js         ← Frontend chunks
+│   ├── index-*.js         ← Frontend chunks (con hash)
 │   ├── vendor-*.js        ← Vendor chunks
 │   └── index-*.css        ← Estilos (Tailwind inline)
-├── index.html             ← Rutas relativas (./assets/)
-├── config.json            ← Configuración frontend (editar)
-├── .env                   ← Configuración backend (editar)
-└── .htaccess              ← Redirecciones Apache (editar)
+├── index.html             ← Rutas relativas (./assets/) + cache busting
+├── config.json            ← Configuración frontend (editar en servidor)
+├── .env                   ← Configuración backend (editar en servidor)
+└── .htaccess              ← Redirecciones Apache (editar en servidor)
 ```
 
-> **Nota:** `tmp/` está en la raíz de `FTP_DEPLOY/` (no dentro de `api/`) para compatibilidad con cPanel/Passenger.
+> **Nota:** `tmp/` está en la raíz de `FTP_DEPLOY/` para compatibilidad con cPanel/Passenger.
 
 ---
 
@@ -93,7 +163,7 @@ FTP_DEPLOY/
 ### Comandos Disponibles
 
 ```bash
-# Build completo (frontend + backend)
+# Build completo (frontend + backend) con limpieza automática
 npm run build:deploy
 
 # Solo frontend
@@ -101,6 +171,37 @@ npm run build:web
 
 # Solo backend
 npm run build:api
+```
+
+### Flujo Automático (`npm run build:deploy`)
+
+```
+1. prebuild.js (limpieza)
+   └─> Elimina assets/ antiguos
+   └─> Elimina api/server.js antiguo
+   └─> Elimina index.html anterior
+   └─> Elimina .htaccess anterior
+
+2. build:deploy API (tsup)
+   └─> Target: Node.js 18
+   └─> Format: CommonJS (cjs)
+   └─> Bundled: 118 KB
+   └─> Output: FTP_DEPLOY/api/server.js
+
+3. build:post Web (Vite + postbuild.js)
+   └─> Code splitting: 7 chunks
+   └─> Total: ~1.26 MB
+   └─> Output: FTP_DEPLOY/assets/
+   └─> Cache busting: Agrega ?v=<timestamp> a assets en index.html
+
+4. prepare-deploy.js (configuración)
+   └─> Crea package.json (cPanel Node.js)
+   └─> Crea .env (desde .env.example)
+   └─> Verifica config.json
+   └─> Verifica .htaccess
+   └─> Actualiza restart.txt (con versión y timestamp)
+
+✅ FTP_DEPLOY listo para subir al servidor
 ```
 
 ### Configuración de Desarrollo
@@ -134,8 +235,10 @@ VITE_APP_NAME=SprinTask
 #### 2. `.htaccess`
 ```apache
 RewriteBase /
-RewriteRule ^api/?$ /index.html [L]
-RewriteRule ^api/.*$ /index.html [L]
+RewriteCond %{REQUEST_URI} ^/api/
+RewriteRule . - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule . /index.html [L]
 ```
 
@@ -156,12 +259,14 @@ RewriteRule . /index.html [L]
 #### 2. `.htaccess`
 ```apache
 RewriteBase /sprintask/
-RewriteRule ^api/?$ /sprintask/index.html [L]
-RewriteRule ^api/.*$ /sprintask/index.html [L]
+RewriteCond %{REQUEST_URI} ^/api/
+RewriteRule . - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule . /sprintask/index.html [L]
 ```
 
-> **Importante:** Reemplaza `/sprintask/` por tu ruta real en los 4 lugares del `.htaccess`.
+> **Importante:** Reemplaza `/sprintask/` por tu ruta real en los 3 lugares del `.htaccess`.
 
 ---
 
@@ -181,6 +286,7 @@ RewriteRule . /sprintask/index.html [L]
 **⚠️ Importante:**
 - `baseUrl` debe terminar en `/`
 - `apiUrl` debe ser ruta completa si es subcarpeta
+- **NO uses detección automática** - siempre configura explícitamente
 
 ---
 
@@ -204,6 +310,11 @@ PassengerStartupTimeout 300
 # Desactivar listado de directorios
 Options -Indexes
 
+<IfModule mod_mime.c>
+AddType application/javascript .js
+AddType text/css .css
+</IfModule>
+
 <IfModule mod_rewrite.c>
 RewriteEngine On
 
@@ -211,7 +322,7 @@ RewriteEngine On
 RewriteCond %{HTTPS} !=on
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-# IMPORTANTE: base de la aplicación
+# Base de la aplicación (editar según ubicación)
 RewriteBase /sprintask/
 
 # API va al backend (NO redirigir)
@@ -222,17 +333,28 @@ RewriteRule . - [L]
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule . - [L]
 
+# Carpetas existentes NO redirigir
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule . - [L]
+
 # SPA routing
 RewriteRule ^index.html$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . index.html [L]
+RewriteRule . /sprintask/index.html [L]
 
 </IfModule>
 
 # Proteger archivos sensibles
 <FilesMatch "(\.env|\.git|\.htaccess)">
 Require all denied
+</FilesMatch>
+
+# Cache busting para producción (evitar caché obsoleto)
+<FilesMatch "\.(html|js|css)$">
+  Header set Cache-Control "no-cache, no-store, must-revalidate"
+  Header set Pragma "no-cache"
+  Header set Expires "0"
 </FilesMatch>
 ```
 
@@ -285,7 +407,7 @@ NODE_ENV=production
   "version": "1.0.0",
   "description": "SprinTask SaaS - Build multi-tenant",
   "main": "api/server.js",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "start": "node api/server.js"
   },
@@ -294,6 +416,8 @@ NODE_ENV=production
   }
 }
 ```
+
+**⚠️ Importante:** `"type": "commonjs"` es requerido para Passenger/cPanel
 
 ---
 
@@ -308,12 +432,151 @@ NODE_ENV=production
 # Solo funciona en servidores cPanel que utilizan Passenger
 # No eliminar este archivo
 
-version=1.0.2
-build=2026-03-12T15:01:07Z
+version=1.0.5
+build=2026-03-13T15:30:00Z
 environment=production
 ```
 
 > **Nota:** El script `prepare-deploy.js` actualiza automáticamente este archivo en cada build.
+
+---
+
+## 🖥️ Solución para cPanel con Node.js
+
+### **Problema Encontrado**
+
+Passenger en cPanel puede no usar la versión de Node.js configurada en la interfaz.
+
+**Síntoma:**
+```bash
+ps aux | grep node
+# Vacío - ningún proceso corriendo
+```
+
+**Error en logs:**
+```
+Error [ERR_REQUIRE_ESM]: require() of ES Module not supported
+code: 'ERR_REQUIRE_ESM'
+```
+
+---
+
+### **Solución Implementada**
+
+| Componente | Configuración | Estado |
+|------------|---------------|--------|
+| **Build API** | `target: 'node18'`, `format: ['cjs']` | ✅ CommonJS |
+| **package.json** | `"type": "commonjs"` | ✅ Configurado |
+| **Backend** | Bundled 118 KB | ✅ Sin dependencias externas |
+
+---
+
+### **Verificación en Servidor**
+
+```bash
+# 1. Verificar versión de Node.js
+node --version
+# Debe mostrar: v18.x.x
+
+# 2. Verificar proceso corriendo
+ps aux | grep node | grep -v grep
+# Debe mostrar: node api/server.js
+
+# 3. Probar health check
+curl "https://tudominio.com/sprintask/api/health"
+# Debe mostrar: {"status":"ok","timestamp":"..."}
+```
+
+---
+
+### **Si Passenger No Inicia Automáticamente**
+
+**Solución temporal:**
+```bash
+cd /sprintask
+nohup node api/server.js > api.log 2>&1 &
+```
+
+**Solución permanente:** Contactar soporte técnico (ver sección de contacto)
+
+---
+
+## 🔄 Si la Versión de Node.js Cambia
+
+### **Paso 1: Identificar Versión Disponible**
+
+```bash
+# En servidor SSH
+node --version
+
+# O listar versiones disponibles
+ls /opt/cpanel/ | grep node
+```
+
+**Versiones posibles:**
+- `ea-nodejs10` → Node.js 10.x
+- `ea-nodejs12` → Node.js 12.x
+- `ea-nodejs14` → Node.js 14.x
+- `ea-nodejs16` → Node.js 16.x
+- `ea-nodejs18` → Node.js 18.x
+- `ea-nodejs20` → Node.js 20.x
+
+---
+
+### **Paso 2: Cambiar Target en tsup.config.ts**
+
+**Archivo:** `apps/api/tsup.config.ts`
+
+```typescript
+export default defineConfig({
+  entry: ['src/server.ts'],
+  outDir: resolve(__dirname, '../../FTP_DEPLOY/api'),
+  format: ['cjs'],
+  target: 'node18',  // ← Cambiar según versión disponible
+  bundle: true,
+  minify: true,
+  sourcemap: false,
+});
+```
+
+**Tabla de targets:**
+
+| Versión Disponible | `target` en tsup |
+|-------------------|------------------|
+| Node.js 10.x | `'node10'` |
+| Node.js 12.x | `'node12'` |
+| Node.js 14.x | `'node14'` |
+| Node.js 16.x | `'node16'` |
+| Node.js 18.x | `'node18'` |
+| Node.js 20.x | `'node20'` |
+
+---
+
+### **Paso 3: Recompilar y Redesplegar**
+
+```bash
+# 1. Recompilar
+npm run build:deploy
+
+# 2. Subir nuevo server.js al servidor
+# 3. Reiniciar Passenger
+touch /sprintask/tmp/restart.txt
+```
+
+---
+
+### **Paso 4: Verificar**
+
+```bash
+# Esperar 60 segundos
+sleep 60
+
+# Verificar proceso
+ps aux | grep node | grep -v grep
+
+# Probar health check
+curl "https://tudominio.com/sprintask/api/health"
+```
 
 ---
 
@@ -383,6 +646,7 @@ environment=production
 - ✅ `assets/index-*.js` → 200 OK
 - ✅ `assets/index-*.css` → 200 OK
 - ✅ `Content-Type: application/javascript`
+- ✅ `config.json?v=...` → 200 OK
 - ❌ Sin errores 404 o MIME type
 
 **Comando SSH:**
@@ -402,7 +666,7 @@ curl -I "https://tudominio.com/sprintask/assets/react-vendor-*.js"
 ```json
 {
   "status": "ok",
-  "timestamp": "2026-03-12T..."
+  "timestamp": "2026-03-13T..."
 }
 ```
 
@@ -484,7 +748,7 @@ ls -la /home/ecointer/pixelycodigo/sprintask/assets/
 
 **Síntoma:**
 ```
-Failed to load module script: Expected a JavaScript-or-Wasm module script 
+Failed to load module script: Expected a JavaScript-or-Wasm module script
 but the server responded with a MIME type of "text/html"
 ```
 
@@ -495,6 +759,7 @@ but the server responded with a MIME type of "text/html"
 2. Probar en modo incógnito (Ctrl + Shift + N)
 3. Verificar `.htaccess` tenga regla para archivos existentes
 4. Forzar recarga (Ctrl + F5)
+5. Verificar headers de cache busting en `.htaccess`
 
 ---
 
@@ -549,12 +814,14 @@ ps aux | grep node | grep -v grep
 
 ### **Error CORS**
 
-**Causa:** `NODE_ENV` no configurado como `production`
+**Causa:** `NODE_ENV` no configurado como `production` o `FRONTEND_URL` incorrecto
 
 **Solución:**
 1. Verificar `.env` tiene `NODE_ENV=production`
-2. Reiniciar aplicación Node.js
-3. Verificar `config.json` tiene `apiUrl` correcto
+2. Verificar `FRONTEND_URL` usa dominio SIN subcarpeta:
+   - ✅ `https://pixelycodigo.com`
+   - ❌ `https://pixelycodigo.com/sprintask`
+3. Reiniciar aplicación Node.js
 
 ---
 
@@ -580,6 +847,23 @@ chmod 644 index.html config.json
 chmod 755 api/ assets/ tmp/
 chmod 600 .env
 ```
+
+---
+
+### **Passenger No Inicia Automáticamente**
+
+**Síntoma:**
+```bash
+ps aux | grep node | grep -v grep
+# Vacío - ningún proceso
+```
+
+**Causa:** Passenger no usa la versión de Node.js configurada
+
+**Solución:**
+1. Verificar versión: `node --version`
+2. Verificar `package.json` tiene `"type": "commonjs"`
+3. Contactar soporte técnico (ver sección de contacto)
 
 ---
 
@@ -630,10 +914,10 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 │                    BUILD EN LOCAL                           │
 │  npm run build:deploy                                       │
 │  - Vite usa base: './' (rutas relativas)                    │
-│  - tsup bundlea todo en api/server.js                       │
+│  - tsup bundlea todo en api/server.js (Node 18 CommonJS)    │
 │  - Scripts generan config por defecto                       │
-│  - tmp/ en raíz de FTP_DEPLOY                               │
-│  - restart.txt para reinicio automático                     │
+│  - Cache busting: assets con ?v=<timestamp>                 │
+│  - tmp/restart.txt actualizado                              │
 └─────────────────────┬───────────────────────────────────────┘
                       │
                       ▼
@@ -646,7 +930,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 ┌─────────────────────────────────────────────────────────────┐
 │                 CONFIGURAR EN SERVIDOR                      │
 │  1. config.json → baseUrl, apiUrl                           │
-│  2. .htaccess → RewriteBase                                 │
+│  2. .htaccess → RewriteBase + cache headers                 │
 │  3. .env → Credenciales MySQL, JWT_SECRET                   │
 └─────────────────────┬───────────────────────────────────────┘
                       │
@@ -656,6 +940,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 │  - Application root: . o nombre de carpeta                  │
 │  - Application startup file: api/server.js                  │
 │  - Node.js version: 18.x o 20.x                             │
+│  - package.json: "type": "commonjs"                         │
 │  - Environment variables desde .env                         │
 └─────────────────────┬───────────────────────────────────────┘
                       │
@@ -667,7 +952,134 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 │  ✅ Login funciona y redirige según rol                     │
 │  ✅ Logout redirige a login                                 │
 │  ✅ ps aux | grep node → Muestra proceso                    │
+│  ✅ config.json?v=<timestamp> → 200 OK                      │
 └─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 📚 Resumen de la Lógica Implementada
+
+### **Qué Archivos NO Cambiar Nunca**
+
+| Archivo | Razón |
+|---------|-------|
+| `apps/web/vite.config.ts` | `base: './'` ya está correcto |
+| `apps/api/tsup.config.ts` | `target: 'node18'`, `format: ['cjs']` |
+| `index.html` (plantilla) | Rutas relativas ya están correctas |
+
+---
+
+### **Qué Archivos Editar por Despliegue**
+
+| Archivo | Qué Editar | Cuándo |
+|---------|------------|--------|
+| `FTP_DEPLOY/config.json` | `baseUrl`, `apiUrl` | Cada despliegue |
+| `FTP_DEPLOY/.htaccess` | `RewriteBase` | Cada despliegue |
+| `FTP_DEPLOY/.env` | Credenciales BD, JWT_SECRET | Primer despliegue |
+
+---
+
+### **Qué Archivos se Generan Automáticamente**
+
+| Archivo | Generado por | Contenido |
+|---------|--------------|-----------|
+| `FTP_DEPLOY/api/server.js` | tsup | Backend bundled (118 KB) |
+| `FTP_DEPLOY/assets/*` | Vite | Frontend chunks con hash |
+| `FTP_DEPLOY/index.html` | Vite + postbuild.js | Con cache busting |
+| `FTP_DEPLOY/package.json` | prepare-deploy.js | cPanel config (commonjs) |
+| `FTP_DEPLOY/tmp/restart.txt` | prepare-deploy.js | Versión y timestamp |
+
+---
+
+### **Diagrama de Flujo Simplificado**
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    RESUMEN VISUAL                            │
+└─────────────────────────────────────────────────────────────┘
+
+1. config.json (fuente de verdad)
+   └─> baseUrl: "/sprintask/"
+   └─> apiUrl: "/sprintask/api"
+
+2. index.html (rutas relativas)
+   └─> ./assets/index-*.js → /sprintask/assets/...
+   └─> ./config.json?v=... → /sprintask/config.json?v=...
+
+3. main.tsx (establece configuración)
+   └─> fetch('./config.json?v=<timestamp>')
+   └─> <base href="/sprintask/">
+   └─> React Router basename="/sprintask/"
+
+4. Componentes (navegan con buildPath)
+   └─> buildPath('/login') → "/sprintask/login"
+
+5. API (usa apiUrl de config)
+   └─> api.get('/admin/clientes')
+   └─> Petición a: /sprintask/api/admin/clientes
+
+✅ Todo funciona en cualquier subcarpeta
+```
+
+---
+
+## 📞 Contacto con Soporte Técnico
+
+**Si el backend no inicia, contactar al hosting con:**
+
+```
+Asunto: URGENTE - Passenger no inicia aplicación Node.js automáticamente
+
+Descripción del Problema:
+
+Tengo una aplicación Node.js configurada en cPanel → Setup Node.js App con:
+
+- Application root: /home/ecointer/pixelycodigo/sprintask
+- Startup file: api/server.js
+- Node.js version: 18.20.8
+- Status en cPanel: Running
+
+PROBLEMA: Passenger NO inicia la aplicación automáticamente.
+
+Evidencia Técnica:
+
+1. Proceso no se inicia:
+   $ ps aux | grep node | grep -v grep
+   # Vacío - ningún proceso
+
+2. Ejecución manual funciona:
+   $ cd /sprintask
+   $ node api/server.js &
+   🚀 SprinTask API corriendo en http://0.0.0.0:3001
+   $ curl http://localhost:3001/health
+   {"status":"ok","timestamp":"..."}
+
+3. Logs de Passenger muestran errores:
+   Error [ERR_REQUIRE_ESM]: require() of ES Module .../api/server.js
+   from .../node-loader.js not supported.
+   code: 'ERR_REQUIRE_ESM'
+
+4. Configuración verificada:
+   - package.json: "type": "commonjs" ✅
+   - api/server.js: 118 KB, CommonJS bundled ✅
+   - Node.js version: 18.20.8 ✅
+   - Startup file: api/server.js ✅
+
+Solicitud:
+
+1. Revisar logs de error de Passenger a nivel de servidor (root)
+2. Verificar por qué Passenger no está iniciando el proceso Node.js
+3. Verificar que Passenger esté usando Node.js 18.20.8
+4. Reiniciar el servicio de Passenger para mi cuenta
+5. Confirmar cuando el proceso esté corriendo automáticamente
+
+Información de la Cuenta:
+- Dominio: pixelycodigo.com
+- Subcarpeta: /sprintask
+- Application root: /home/ecointer/pixelycodigo/sprintask
+
+Nota: La aplicación funciona correctamente cuando se inicia manualmente.
 ```
 
 ---
@@ -679,46 +1091,10 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 | **Guía Rápida de Configuración** | `docs/CONFIGURACION-SERVIDOR.md` |
 | **Modelo de Base de Datos** | `docs/plans/modelo_base_datos_auto.md` |
 | **Resumen de Avance** | `docs/RESUMEN-DE-AVANCE.md` |
+| **Node.js en cPanel - Troubleshooting** | `docs/nodeJsCpanel.md` |
 
 ---
 
-## 📞 Contacto con Soporte Técnico
-
-**Si el backend no inicia, contactar al hosting con:**
-
-```
-Asunto: Backend Node.js no inicia - Passenger no está corriendo el proceso
-
-Evidencia:
-- ps aux | grep node → Vacío (ningún proceso)
-- curl /api/health → Devuelve HTML, no JSON
-- Frontend assets → Funcionan correctamente (HTTP 200 OK)
-
-Configuración:
-- Application root: /home/ecointer/pixelycodigo/sprintask
-- Startup file: api/server.js (118 KB, bundled)
-- Node.js version: 18.x
-- Status en cPanel: Running (pero no hay proceso)
-
-Solicitud:
-1. Revisar logs de error de Passenger (nivel servidor root)
-2. Verificar por qué el proceso no se inicia
-3. Iniciar manualmente la aplicación Node.js
-4. Confirmar cuando el proceso esté corriendo
-```
-
----
-
-## 📚 Documentación Adicional
-
-| Documento | Ubicación |
-|-----------|-----------|
-| **Guía Rápida de Configuración** | [docs/CONFIGURACION-SERVIDOR.md](CONFIGURACION-SERVIDOR.md) |
-| **Modelo de Base de Datos** | [docs/plans/modelo_base_datos_auto.md](plans/modelo_base_datos_auto.md) |
-| **Resumen de Avance** | [docs/RESUMEN-DE-AVANCE.md](RESUMEN-DE-AVANCE.md) |
-
----
-
-**Última actualización:** 12 de Marzo, 2026  
-**Versión:** 9.3 - Frontend 100% Funcional | Backend Esperando Soporte  
+**Última actualización:** 13 de Marzo, 2026
+**Versión:** 10.0 - ✅ Solución Completa Implementada | Cache Busting Producción
 **Documentación oficial de SprinTask SaaS**

@@ -2,8 +2,23 @@
 
 **Guía rápida de archivos a modificar**
 
-**Última actualización:** 12 de Marzo, 2026  
-**Versión:** 2.0 - Configuración Confirmada en Producción
+**Última actualización:** 13 de Marzo, 2026 - 15:50
+**Versión:** 3.0 - Build Completado | ⏳ Problemas de Caché y Passenger
+
+---
+
+## 📋 Resumen Ejecutivo
+
+| Componente | Estado | Notas |
+|------------|--------|-------|
+| **Frontend Build** | ✅ Completado | Rutas relativas, cache busting implementado |
+| **Backend Build** | ✅ Completado | API bundled (118 KB, Node.js 18 CommonJS) |
+| **Archivos en Servidor** | ✅ Subidos | Todos los archivos en `/sprintask/` |
+| **config.json** | ✅ Configurado | `"baseUrl": "", "apiUrl": "/api"` |
+| **.htaccess** | ✅ Configurado | RewriteBase /sprintask/ |
+| **.env** | ✅ Configurado | Credenciales de producción |
+| **Passenger (Backend)** | ⏳ Pendiente | No inicia automáticamente |
+| **Frontend (Navegador)** | ⏳ Pendiente | Problema de caché del navegador |
 
 ---
 
@@ -11,35 +26,34 @@
 
 Después de subir `FTP_DEPLOY/` al servidor, **solo debes editar 3 archivos**:
 
-| Archivo | Ubicación | Propósito |
-|---------|-----------|-----------|
-| `config.json` | Raíz de FTP_DEPLOY | Rutas del frontend |
-| `.htaccess` | Raíz de FTP_DEPLOY | Redirecciones Apache |
-| `.env` | Raíz de FTP_DEPLOY | Credenciales del backend |
+| Archivo | Ubicación | Propósito | Estado |
+|---------|-----------|-----------|--------|
+| `config.json` | Raíz de `/sprintask/` | Rutas del frontend | ✅ Editado |
+| `.htaccess` | Raíz de `/sprintask/` | Redirecciones Apache | ✅ Editado |
+| `.env` | Raíz de `/sprintask/` | Credenciales del backend | ✅ Editado |
 
 ---
 
-## 1️⃣ config.json
+## ✅ Configuraciones Finales Aplicadas
 
-**Ubicación:** `FTP_DEPLOY/config.json`
+### 1️⃣ config.json
 
-### Para subcarpeta `/sprintask/`:
+**Ubicación:** `/sprintask/config.json`
+
 ```json
 {
-  "baseUrl": "/sprintask/",
-  "apiUrl": "/sprintask/api"
+  "baseUrl": "",
+  "apiUrl": "/api"
 }
 ```
 
-> **⚠️ Importante:** `baseUrl` debe terminar en `/`
+**Nota:** `baseUrl` vacío permite que la aplicación detecte automáticamente la subcarpeta `/sprintask/` desde la URL.
 
 ---
 
-## 2️⃣ .htaccess
+### 2️⃣ .htaccess
 
-**Ubicación:** `FTP_DEPLOY/.htaccess`
-
-### Para subcarpeta `/sprintask/`:
+**Ubicación:** `/sprintask/.htaccess`
 
 ```apache
 # DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION BEGIN
@@ -48,20 +62,22 @@ PassengerBaseURI "/sprintask"
 PassengerNodejs "/home/ecointer/nodevenv/pixelycodigo/sprintask/18/bin/node"
 PassengerAppType node
 PassengerStartupFile api/server.js
-PassengerStartupTimeout 300
+PassengerAppLogFile "/home/ecointer/pixelycodigo/sprintask/log/passenger.log"
 # DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION END
 
-# Desactivar listado de directorios
-Options -Indexes
+<IfModule mod_mime.c>
+AddType application/javascript .js
+AddType text/css .css
+</IfModule>
 
-<IfModule mod_rewrite.c>
+Options -Indexes
 RewriteEngine On
 
 # Forzar HTTPS
 RewriteCond %{HTTPS} !=on
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-# IMPORTANTE: base de la aplicación
+# Base de la aplicación
 RewriteBase /sprintask/
 
 # API va al backend (NO redirigir)
@@ -72,206 +88,267 @@ RewriteRule . - [L]
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule . - [L]
 
-# SPA routing
-RewriteRule ^index.html$ - [L]
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . index.html [L]
-
-</IfModule>
+# Carpetas existentes NO redirigir
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule . - [L]
 
 # Proteger archivos sensibles
 <FilesMatch "(\.env|\.git|\.htaccess)">
 Require all denied
 </FilesMatch>
-```
 
-> **⚠️ Nota:** Las secciones de Passenger las agrega CloudLinux automáticamente. No las edites manualmente.
+# SPA routing
+RewriteRule ^index.html$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /sprintask/index.html [L]
+```
 
 ---
 
-## 3️⃣ .env
+### 3️⃣ .env
 
-**Ubicación:** `FTP_DEPLOY/.env`
+**Ubicación:** `/sprintask/.env`
 
 ```env
-# Puerto del servidor
 PORT=3001
-
-# Base de Datos MySQL
 DB_HOST=localhost
 DB_PORT=3306
 DB_USER=usuario_cpanel
 DB_PASSWORD=contraseña_segura
 DB_NAME=sprintask_db
-
-# JWT Secret (generar con: openssl rand -base64 32)
-JWT_SECRET=cambia_esto_por_un_secreto_seguro_generado_aleatoriamente
-
-# Entorno
+JWT_SECRET=generado_seguro
 NODE_ENV=production
 ```
 
-### Variables a Personalizar:
-
-| Variable | Descripción | Ejemplo |
-|----------|-------------|---------|
-| `DB_USER` | Usuario MySQL de cPanel | `usuario_sprintask` |
-| `DB_PASSWORD` | Contraseña del usuario | `TuContraseña123!` |
-| `DB_NAME` | Nombre de la base de datos | `usuario_sprintask_db` |
-| `JWT_SECRET` | Secreto único | Ver sección de generación |
-
 ---
 
-## 🔐 Generar JWT_SECRET
+## 🔧 Problemas Identificados y Soluciones Pendientes
 
-### Opción 1: Terminal (Recomendado)
-```bash
-openssl rand -base64 32
-```
+### Problema 1: ⏳ Passenger No Inicia Automáticamente
 
-### Opción 2: Online
-1. Ir a: https://generate-secret.vercel.app/32
-2. Copiar el valor generado
-
-### Opción 3: Node.js
-```bash
-node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
-```
-
----
-
-## 📁 Estructura Final de FTP_DEPLOY
-
-```
-FTP_DEPLOY/
-├── package.json           ← No editar (configuración cPanel)
-├── tmp/
-│   └── restart.txt        ← No editar (reinicio automático)
-├── api/
-│   └── server.js          ← No editar (backend bundled - 118 KB)
-├── assets/                ← No editar (frontend compilado)
-├── index.html             ← No editar (entry point)
-├── config.json            ← ✏️ EDITAR (rutas)
-├── .env                   ← ✏️ EDITAR (credenciales BD)
-└── .htaccess              ← ✏️ EDITAR (redirecciones Apache)
-```
-
----
-
-## ✅ Checklist de Configuración
-
-- [ ] Editar `config.json` con `baseUrl` y `apiUrl` correctos
-- [ ] Editar `.htaccess` con `RewriteBase` correcto
-- [ ] Editar `.env` con credenciales reales de MySQL
-- [ ] Generar `JWT_SECRET` único
-- [ ] Subir archivos al servidor por FTP
-- [ ] Importar base de datos (17 tablas)
-- [ ] Configurar Node.js en cPanel
-- [ ] Verificar que Passenger inicie el backend
-
----
-
-## 🧪 Verificación
-
-### 1. Health Check
-```
-URL: https://tudominio.com/sprintask/api/health
-Respuesta esperada: { "status": "ok", "timestamp": "..." }
-```
-
-### 2. Frontend
-```
-URL: https://tudominio.com/sprintask/
-Verificar: Sin errores 404 en consola (F12)
-```
-
-### 3. Archivos Protegidos
-```
-URL: https://tudominio.com/sprintask/.env
-Respuesta: 403 Forbidden ✅
-```
-
-### 4. Verificar Assets
-```
-URL: https://tudominio.com/sprintask/assets/react-vendor-*.js
-Respuesta: HTTP 200 OK, Content-Type: application/javascript ✅
-```
-
-### 5. Verificar Proceso Node.js
+**Síntoma:**
 ```bash
 ps aux | grep node | grep -v grep
-# Debería mostrar un proceso corriendo
+# Vacío - ningún proceso corriendo
+```
+
+**Evidencia:**
+- cPanel muestra Node.js App como "Running"
+- `ps aux | grep node` no muestra ningún proceso
+- Ejecutar manualmente `node api/server.js` → ✅ Funciona
+- Passenger intenta cargar pero falla con `ERR_REQUIRE_ESM` (logs antiguos)
+
+**Causa Probable:**
+- Passenger no está utilizando la versión de Node.js 18 configurada
+- Conflicto entre el `package.json` (type: commonjs) y el loader de Passenger
+- El proceso de Passenger no se está iniciando correctamente
+
+**Solución Temporal Aplicada:**
+```bash
+# Iniciar manualmente con nohup
+cd /sprintask
+nohup node api/server.js > api.log 2>&1 &
+```
+
+**Solución Permanente:** Requiere intervención de soporte técnico (ver sección de contacto).
+
+---
+
+### Problema 2: ⏳ Caché del Navegador
+
+**Síntoma:**
+```
+GET https://pixelycodigo.com/sprintask/config.json 404 (Not Found)
+```
+
+**Evidencia:**
+- El archivo `config.json` existe en `/sprintask/config.json`
+- El código frontend tiene cache busting (`fetch(configPath + '?v=' + timestamp)`)
+- El navegador está cargando una versión cacheada del JS que busca en la ruta incorrecta
+
+**Causa Probable:**
+- Caché agresiva del navegador
+- Service Worker registrado anteriormente
+- El JS cacheado tiene la lógica antigua (busca `/config.json` en lugar de `/sprintask/config.json`)
+
+**Soluciones Intentadas:**
+1. ✅ Implementado cache busting con timestamp
+2. ✅ Modo incógnito (sin caché)
+3. ✅ Hard reload (Ctrl + Shift + F5)
+
+**Solución Pendiente:**
+- Limpiar completamente la caché del navegador
+- Unregister Service Workers si existen
+- Verificar que el archivo JS en servidor tenga el hash correcto
+
+---
+
+## 📁 Estructura Final en Servidor
+
+```
+/sprintask/
+├── api/
+│   └── server.js              ← Backend (118 KB, bundled)
+├── assets/
+│   ├── index-DlsNqB6C.js      ← Frontend principal (355 KB)
+│   ├── react-vendor-*.js      ← Vendor chunks
+│   ├── charts-vendor-*.js     
+│   ├── radix-vendor-*.js      
+│   ├── utils-vendor-*.js      
+│   ├── tanstack-vendor-*.js   
+│   └── index-DUkSdQH4.css     ← Estilos (53 KB)
+├── tmp/
+│   └── restart.txt            ← Reinicio automático (v1.0.5)
+├── index.html                 ← Entry point
+├── config.json                ← baseUrl: "", apiUrl: "/api"
+├── .env                       ← Credenciales de producción
+├── .htaccess                  ← Redirecciones Apache
+└── package.json               ← Configuración cPanel (type: commonjs)
 ```
 
 ---
 
-## 🔴 Troubleshooting
+## ✅ Verificaciones Completadas
 
-### Error: Assets cargan como HTML (MIME type error)
-
-**Síntoma:**
-```
-Failed to load module script: Expected a JavaScript-or-Wasm module script 
-but the server responded with a MIME type of "text/html"
-```
-
-**Solución:**
-1. Limpiar caché del navegador (Ctrl + Shift + Supr)
-2. Verificar `.htaccess` tenga regla para archivos existentes
-3. Probar en modo incógnito
-
-### Error: Backend no responde (devuelve HTML)
-
-**Síntoma:**
-```
-curl /api/health devuelve HTML en lugar de JSON
-```
-
-**Causa:** Passenger no está iniciando el proceso Node.js
-
-**Solución:**
-1. Verificar en cPanel → Node.js App → Status: Running
-2. Verificar proceso: `ps aux | grep node`
-3. Contactar soporte si el proceso no está corriendo
-
-### Error: 500 Internal Server Error en assets
-
-**Síntoma:**
-```
-HTTP/1.1 500 Internal Server Error
-```
-
-**Solución:**
-1. Verificar permisos: `chmod 644 assets/*`
-2. Contactar soporte para verificar configuración de Apache
+| Verificación | Comando/URL | Resultado |
+|--------------|-------------|-----------|
+| **Node.js Version** | `node --version` | ✅ v18.20.8 |
+| **Archivos Assets** | `ls -la assets/` | ✅ 7 archivos presentes |
+| **Content-Type JS** | `curl -I .../index-*.js` | ✅ `application/javascript` |
+| **config.json** | `cat config.json` | ✅ `baseUrl: ""` |
+| **index.html** | `cat index.html` | ✅ Referencia correcta |
+| **.htaccess** | `cat .htaccess` | ✅ RewriteBase correcto |
+| **API Manual** | `node api/server.js &` | ✅ Funciona |
+| **Health Check** | `curl localhost:3001/health` | ✅ `{"status":"ok"}` |
+| **Passenger Auto** | `ps aux \| grep node` | ❌ No inicia automáticamente |
 
 ---
 
-## 📞 Contacto con Soporte
+## 🧪 Pruebas Pendientes
 
-Si el backend no inicia, contactar al hosting con esta información:
+### Frontend (Navegador)
 
-```
-Asunto: Backend Node.js no inicia - Passenger no está corriendo el proceso
+1. **Limpiar caché completamente:**
+   - `Ctrl + Shift + Supr` → Todo el tiempo
+   - Clear site data
+   - Unregister Service Workers (F12 → Application)
 
-Evidencia:
-- ps aux | grep node → Vacío (ningún proceso)
-- curl /api/health → Devuelve HTML, no JSON
-- Frontend assets → Funcionan correctamente (200 OK)
+2. **Probar en modo incógnito:**
+   - `Ctrl + Shift + N`
+   - Ingresar a: `https://pixelycodigo.com/sprintask/`
 
-Configuración:
-- Application root: /home/ecointer/pixelycodigo/sprintask
-- Startup file: api/server.js (118 KB, bundled)
-- Node.js version: 18.x
-- Status en cPanel: Running (pero no hay proceso)
+3. **Verificar en DevTools (F12):**
+   - Network: `config.json?v=...` → 200 OK
+   - Network: `index-*.js` → 200 OK
+   - Console: Sin errores
 
-Solicitud:
-1. Revisar logs de error de Passenger
-2. Verificar por qué el proceso no se inicia
-3. Iniciar manualmente la aplicación Node.js
-```
+### Backend (Passenger)
+
+1. **Reiniciar Passenger:**
+   ```bash
+   touch /sprintask/tmp/restart.txt
+   sleep 60
+   ps aux | grep node | grep -v grep
+   ```
+
+2. **Verificar logs:**
+   ```bash
+   tail -100 /sprintask/log/passenger.log
+   ```
+
+3. **Health Check desde navegador:**
+   - `https://pixelycodigo.com/sprintask/api/health`
 
 ---
 
-**Documentación completa:** [docs/configuracionSaaS.md](configuracionSaaS.md)
+## 📞 Contacto con Soporte Técnico
+
+### Ticket para Soporte de Hosting
+
+**Asunto:** URGENTE - Passenger no inicia aplicación Node.js automáticamente
+
+---
+
+**Descripción del Problema:**
+
+Tengo una aplicación Node.js configurada en cPanel → Setup Node.js App con:
+
+| Campo | Valor Configurado |
+|-------|-------------------|
+| Application root | `/home/ecointer/pixelycodigo/sprintask` |
+| Startup file | `api/server.js` |
+| Node.js version | `18.20.8` |
+| Status en cPanel | Running |
+
+**PROBLEMA:** Passenger NO inicia la aplicación automáticamente.
+
+---
+
+**Evidencia Técnica:**
+
+1. **Proceso no se inicia:**
+   ```bash
+   $ ps aux | grep node | grep -v grep
+   # Vacío - ningún proceso
+   ```
+
+2. **Ejecución manual funciona:**
+   ```bash
+   $ cd /sprintask
+   $ node api/server.js &
+   🚀 SprinTask API corriendo en http://0.0.0.0:3001
+   $ curl http://localhost:3001/health
+   {"status":"ok","timestamp":"..."}
+   ```
+
+3. **Logs de Passenger muestran errores:**
+   ```
+   Error [ERR_REQUIRE_ESM]: require() of ES Module .../api/server.js
+   from .../node-loader.js not supported.
+   code: 'ERR_REQUIRE_ESM'
+   ```
+
+4. **Configuración verificada:**
+   - `package.json`: `"type": "commonjs"` ✅
+   - `api/server.js`: 118 KB, CommonJS bundled ✅
+   - Node.js version: 18.20.8 ✅
+   - Startup file: `api/server.js` ✅
+
+---
+
+**Solicitud:**
+
+1. Revisar los logs de error de Passenger a nivel de servidor (root)
+2. Verificar por qué Passenger no está iniciando el proceso Node.js aunque cPanel muestra "Running"
+3. Verificar que Passenger esté usando Node.js 18.20.8 y no una versión del sistema
+4. Reiniciar el servicio de Passenger para mi cuenta
+5. Confirmar cuando el proceso esté corriendo automáticamente
+
+---
+
+**Información de la Cuenta:**
+- Dominio: `pixelycodigo.com`
+- Subcarpeta: `/sprintask`
+- Application root: `/home/ecointer/pixelycodigo/sprintask`
+
+---
+
+**Nota:** La aplicación funciona correctamente cuando se inicia manualmente con `node api/server.js`. El problema es exclusivamente el inicio automático por Passenger.
+
+---
+
+## 📚 Documentación Adicional
+
+| Documento | Ubicación |
+|-----------|-----------|
+| **Configuración Completa SaaS** | `docs/configuracionSaaS.md` |
+| **Modelo de Base de Datos** | `docs/plans/modelo_base_datos_auto.md` |
+| **Resumen de Avance** | `docs/RESUMEN-DE-AVANCE.md` |
+| **Node.js en cPanel - Troubleshooting** | `docs/nodeJsCpanel.md` |
+
+---
+
+**Última actualización:** 13 de Marzo, 2026 - 15:50
+**Responsable:** Equipo de Desarrollo
+**Próxima acción:** Enviar ticket de soporte técnico + limpiar caché del navegador

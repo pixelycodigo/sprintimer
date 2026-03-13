@@ -31,7 +31,7 @@ if (!existsSync(packageJsonPath)) {
     "version": "1.0.0",
     "description": "SprinTask SaaS - Build multi-tenant",
     "main": "api/server.js",
-    "type": "module",
+    "type": "commonjs",
     "scripts": {
       "start": "node api/server.js"
     },

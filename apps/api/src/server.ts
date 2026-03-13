@@ -13,7 +13,7 @@ import logger from './config/logger.js';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = parseInt(process.env.PORT || '3001', 10);
 
 // Middleware de seguridad
 app.use(helmet());
@@ -38,14 +38,20 @@ app.use('/api', routes);
 app.use(errorHandler);
 
 // Iniciar servidor
-app.listen(PORT, () => {
+// Passenger usa process.env.PORT o process.env.PASSENGER_PORT
+const HOST = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
+const DISPLAY_HOST = process.env.NODE_ENV === 'production' 
+  ? (process.env.FRONTEND_URL || 'pixelycodigo.com')
+  : 'localhost';
+
+app.listen(PORT, HOST, () => {
   logger.info('🚀 SprinTask API iniciada', {
     port: PORT,
-    host: 'localhost',
+    host: HOST,
     env: process.env.NODE_ENV || 'development',
     database: process.env.DB_NAME || 'sprintask',
   });
-  console.log(`🚀 SprinTask API corriendo en http://localhost:${PORT}`);
+  console.log(`🚀 SprinTask API corriendo en http://${DISPLAY_HOST}:${PORT}`);
   console.log(`📦 Entorno: ${process.env.NODE_ENV || 'development'}`);
   console.log(`💾 Base de datos: ${process.env.DB_NAME || 'sprintask'}`);
   console.log(`📝 Logs disponibles en: apps/api/logs/`);

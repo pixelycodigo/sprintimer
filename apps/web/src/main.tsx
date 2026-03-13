@@ -46,13 +46,18 @@ function AppWithConfig() {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    // Cargar configuración desde config.json (ruta relativa)
-    fetch('./config.json')
+    // Cargar config.json con cache busting (ruta relativa desde index.html)
+    const timestamp = new Date().getTime();
+    
+    fetch(`./config.json?v=${timestamp}`)
       .then((res) => res.json())
       .then(async (data) => {
-        // Usar valores de config.json (sin fallback hardcodeado)
+        // config.json es la única fuente de verdad
         const configBaseUrl = data.baseUrl || '/';
         setBaseUrl(configBaseUrl);
+
+        // Establecer variable global para getBasePath() y getLoginPath()
+        window.__APP_BASE_URL__ = configBaseUrl;
 
         // Establecer <base href> dinámicamente para rutas relativas
         const baseElement = document.querySelector('base');

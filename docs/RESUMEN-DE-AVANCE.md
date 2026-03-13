@@ -1,8 +1,8 @@
 # 📊 Resumen de Avance - SprinTask SaaS
 
-**Fecha:** 13 de Marzo, 2026
-**Estado:** ✅ Build 100% Listo | ⏳ Backend Esperando Soporte Técnico
-**Versión:** 15.0 - Build Node.js 18 + Documentación Técnica
+**Fecha:** 13 de Marzo, 2026 - Noche
+**Estado:** ⏳ Esperando Revisión de Soporte Técnico | ✅ Build Legible Generado
+**Versión:** 18.0 - Build Legible para Soporte + Documentación Completa
 
 ---
 
@@ -10,35 +10,39 @@
 
 | Componente | Estado | Notas |
 |------------|--------|-------|
-| **Frontend** | ✅ 100% | React 18 + Vite + TS - Rutas relativas validadas |
-| **Backend Build** | ✅ Listo | API bundled (118 KB) - Node.js 18 CommonJS |
+| **Frontend** | ✅ 100% | React 18 + Vite + TS - config.json fuente de verdad |
+| **Backend Build** | ✅ Legible | API 199 KB (NO minificada) para debugging |
+| **Source Map** | ✅ Generado | 455 KB (opcional para soporte) |
 | **Base de Datos** | ✅ Configurada | 17 tablas con datos |
-| **Documentación** | ✅ Completa | `docs/nodeJsCpanel.md` creado |
+| **Documentación** | ✅ Completa | SERVER-JS-EXPLICACION.md creado |
+| **Soporte Técnico** | ⏳ Revisando | server.js legible enviado |
 
 ---
 
-## 🔧 Correcciones Implementadas Hoy
+## 🔧 Correcciones Implementadas Hoy (13/Mar - Sesión Final)
 
 | Fecha | Cambio | Impacto |
 |-------|--------|---------|
-| **13/Mar - Noche** | **Documentación Node.js/cPanel** | ✅ `docs/nodeJsCpanel.md` creado |
-| **13/Mar - Tarde** | **Build Node.js 18 CommonJS** | ✅ `target: 'node18'`, `format: ['cjs']` |
-| **13/Mar - Tarde** | **Build con limpieza automática** | ✅ `prebuild.js` elimina archivos antiguos |
-| **13/Mar - Tarde** | **Perfil/Config para Talent** | ✅ 2 componentes creados |
-| **13/Mar - Tarde** | **Validación contraseñas** | ✅ 8 caracteres (consistente con registro) |
-| **12/Mar - Tarde (Sesión 2)** | **Auth Components (3 archivos)** | ✅ 6 rutas corregidas |
-| **12/Mar - Tarde (Sesión 1)** | **Dashboards + UI (4 archivos)** | ✅ 22 rutas corregidas |
-| **12/Mar - Tarde (Sesión 1)** | **Layouts + CRUDs (33 archivos)** | ✅ Rutas relativas 100% |
+| **13/Mar - Noche (v18)** | **Build legible para soporte** | ✅ `minify: false`, `sourcemap: true` |
+| **13/Mar - Noche (v18)** | **Documentación SERVER-JS-EXPLICACION.md** | ✅ Explicación línea por línea para soporte |
+| **13/Mar - Noche (v17)** | **config.json fuente de verdad** | ✅ Eliminar detección automática |
+| **13/Mar - Noche (v17)** | **Cache busting producción** | ✅ `?v=<timestamp>` en assets + headers HTTP |
+| **13/Mar - Noche (v17)** | **getBasePath() desde config** | ✅ Leer `window.__APP_BASE_URL__` |
+| **13/Mar - Noche (v17)** | **getLoginPath() desde config** | ✅ Sin detección automática |
+| **13/Mar - Noche (v17)** | **Documentación v10.0** | ✅ `docs/configuracionSaaS.md` actualizada |
+| **13/Mar - Noche (v17)** | **TypeScript fix** | ✅ `parseInt()` para PORT en server.ts |
+| **13/Mar - Tarde** | Build Node.js 18 CommonJS | ✅ `target: 'node18'`, `format: ['cjs']` |
+| **13/Mar - Tarde** | Build con limpieza automática | ✅ `prebuild.js` elimina archivos antiguos |
 
 ---
 
-## 📦 Build Automático - Flujo Actualizado
+## 📦 Build Automático - Flujo Actualizado (v18.0)
 
 ### **Comando:** `npm run build:deploy`
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    Flujo de Build Automático                 │
+│                    Flujo de Build Automático v18.0           │
 └─────────────────────────────────────────────────────────────┘
 
 1. prebuild.js (limpieza)
@@ -50,13 +54,15 @@
 2. build:deploy API (tsup)
    └─> Target: Node.js 18
    └─> Format: CommonJS (cjs)
-   └─> Bundled: 118 KB
+   └─> Bundled: 199 KB (LEGIBLE, NO minificado)
+   └─> Source Map: 455 KB (opcional)
    └─> Output: FTP_DEPLOY/api/server.js
 
 3. build:post Web (Vite + postbuild.js)
    └─> Code splitting: 7 chunks
-   └─> Total: ~1.26 MB
+   └─> Total: ~1.24 MB
    └─> Output: FTP_DEPLOY/assets/
+   └─> Cache busting: Agrega ?v=<timestamp> a assets en index.html
 
 4. prepare-deploy.js (configuración)
    └─> Crea package.json (cPanel Node.js)
@@ -68,267 +74,210 @@
 ✅ FTP_DEPLOY listo para subir al servidor
 ```
 
-### **Archivos Clave del Build**
-
-| Archivo | Propósito | Ubicación |
-|---------|-----------|-----------|
-| **prebuild.js** | Limpieza automática | `scripts/prebuild.js` |
-| **prepare-deploy.js** | Configuración post-build | `scripts/prepare-deploy.js` |
-| **tsup.config.ts** | Output API (Node 18) | `apps/api/tsup.config.ts` |
-| **vite.config.ts** | Base relativa | `apps/web/vite.config.ts` |
-| **package.json** | Scripts | Root (`build:deploy`) |
-
 ### **Resultado del Build (v1.0.8)**
 
 | Componente | Tamaño | Estado |
 |------------|--------|--------|
-| **Frontend** | ~1.26 MB (7 archivos) | ✅ Listo |
-| **Backend** | 118 KB (bundled, Node 18) | ✅ Listo |
-| **Config** | 4 archivos | ✅ Creados |
-| **Total** | ~1.38 MB | ✅ Optimizado |
+| **Frontend** | ~1.24 MB (7 chunks) | ✅ Con cache busting |
+| **Backend** | 199 KB (legible) | ✅ NO minificado |
+| **Source Map** | 455 KB | ✅ Opcional para debugging |
+| **Config** | 4 archivos | ✅ Generados |
+| **Total** | ~1.44 MB | ✅ Listo para soporte |
+| **restart.txt** | v1.0.8 | ✅ Actualizado |
 
 ---
 
-## ⏳ ESTADO ACTUAL: ESPERANDO SOPORTE TÉCNICO
+## ✅ Arquitectura Implementada - config.json como Fuente de Verdad
 
-### **Problema Identificado**
-
-| Componente | Configurado | Realidad | Estado |
-|------------|-------------|----------|--------|
-| **cPanel Node.js** | 18.20.8 | - | ✅ Configurado |
-| **Sistema Node.js** | - | 10.24.0 | ❌ En uso |
-| **Passenger** | Debería usar 18.20.8 | Usa 10.24.0 | ❌ Problema |
-
-### **Error en Logs de Passenger**
-
-```
-Error [ERR_REQUIRE_ESM]: require() of ES Module .../server.js
-from .../node-loader.js not supported.
-code: 'ERR_REQUIRE_ESM'
-```
-
-**Causa:** Passenger usa Node.js 10 aunque cPanel muestra 18.20.8 configurado.
-
----
-
-### **Acción Tomada**
-
-✅ **Documentación creada:** `docs/nodeJsCpanel.md`
-
-**Contenido:**
-- ✅ Resumen ejecutivo del problema
-- ✅ Configuración requerida en cPanel
-- ✅ Diagnóstico realizado (comandos y errores)
-- ✅ Soluciones intentadas
-- ✅ Build actual (Node.js 18 CommonJS)
-- ✅ Ticket de soporte para enviar
-- ✅ Plan B (compilar para otra versión)
-
----
-
-### **Próxima Acción: Enviar Ticket de Soporte**
-
-**Template disponible en:** `docs/nodeJsCpanel.md` (sección "Ticket de Soporte")
-
-**Información clave:**
-```
-Asunto: URGENTE - Passenger no usa Node.js 18 configurado en cPanel
-
-Configuración:
-- Application root: /home/ecointer/pixelycodigo/sprintask
-- Startup file: api/server.js
-- Node.js version: 18.20.8 (configurado en cPanel)
-- Sistema usa: v10.24.0
-
-Solicitud:
-1. Verificar configuración de Passenger
-2. Asegurar que use Node.js 18.20.8
-3. Reiniciar la aplicación
-```
-
----
-
-## 📋 Plan B: Si Soporte No Resuelve
-
-### **Opción 1: Ver Versión Real Disponible**
-
-```bash
-# En servidor SSH
-node --version
-# O
-ls /opt/cpanel/ | grep node
-```
-
-### **Opción 2: Compilar para Versión Disponible**
-
-**Editar:** `apps/api/tsup.config.ts`
-
-```typescript
-export default defineConfig({
-  target: 'node10',  // o node12, node14, node16, node18, node20
-  format: ['cjs'],
-  // ... resto de configuración
-});
-```
-
-**Luego:**
-```bash
-npm run build:deploy
-# Subir nuevo server.js
-```
-
----
-
-## ✅ Validación Exhaustiva - Rutas Relativas
-
-### **Hallazgo: 100% Correcto**
-
-No se encontraron rutas absolutas hardcodeadas pendientes. El frontend está listo para despliegue en:
-- ✅ Raíz: `https://dominio.com/`
-- ✅ Subcarpeta: `https://dominio.com/sprintask/`
-- ✅ Cualquier ruta: `https://dominio.com/app/`
-
-### **Arquitectura de Rutas Relativas**
+### **Flujo de Rutas (SIN detección automática)**
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    Flujo de Rutas Relativas                  │
+│                    Flujo de Rutas Relativas v16.0            │
 └─────────────────────────────────────────────────────────────┘
 
-1. config.json (runtime)
-   └─> baseUrl: "/sprintask" o "/"
+1. config.json (única fuente de verdad)
+   └─> baseUrl: "/sprintask/"
+   └─> apiUrl: "/sprintask/api"
 
 2. main.tsx
-   └─> Lee config.json → establece <base href>
-   └─> Registra buildPath() en QuickActions
+   └─> fetch(`./config.json?v=${timestamp}`)
+   └─> window.__APP_BASE_URL__ = config.baseUrl
+   └─> <base href="/sprintask/">
 
 3. getBasePath()
-   └─> Detecta automáticamente la subcarpeta desde URL
-   └─> /sprintask/login → basePath: '/sprintask'
+   └─> Retorna window.__APP_BASE_URL__
+   └─> "/sprintask" (sin slash final)
 
 4. buildPath(path)
-   └─> Construye ruta completa: '/sprintask' + '/login'
-   └─> Retorna: '/sprintask/login'
+   └─> Construye: "/sprintask" + "/login"
+   └─> Retorna: "/sprintask/login"
 
-5. Componentes (Layouts, CRUDs, Auth, Dashboards)
-   └─> Usan buildPath() para navegación
-   └─> Funcionan en raíz y subcarpeta
+5. Componentes navegan correctamente ✅
 ```
 
-### **Componentes Validados**
+### **Componentes Validados (39 archivos)**
 
 | Categoría | Estado | Implementación |
 |-----------|--------|----------------|
-| **Layouts (4)** | ✅ | `buildPath()` en sidebar y perfil |
+| **Layouts (4)** | ✅ | `getLoginPath()` desde config.json |
 | **CRUDs (21)** | ✅ | `buildPath()` en navigate y Link |
 | **Auth (3)** | ✅ | `buildPath()` en todos los enlaces |
 | **Dashboards (4)** | ✅ | `buildPath()` en StatCards y QuickActions |
 | **Talent (5)** | ✅ | `buildPath()` en navegación |
-| **Componentes UI** | ✅ | `setBuildPathFn()` + `buildPath()` |
-| **Protected Routes** | ✅ | `getBasePath()` en redirecciones |
-| **API Interceptor** | ✅ | `getLoginPath()` dinámico |
-| **Talent Perfil/Config** | ✅ | `buildPath()` en navegación |
-
-### **¿Por qué NO se requieren más cambios?**
-
-| Componente | Implementación | Estado |
-|------------|----------------|--------|
-| **window.location** | `getLoginPath()` lee config.json | ✅ Correcto |
-| **axios baseURL** | Se actualiza desde config.json | ✅ Correcto |
-| **fetch()** | Usa rutas relativas (`./config.json`) | ✅ Correcto |
-| **Rutas en App.tsx** | basename de React Router maneja subcarpeta | ✅ Correcto |
-| **Assets (build)** | Vite usa `base: './'` en producción | ✅ Correcto |
-| **Query Keys** | Son identificadores internos (no rutas) | ✅ Correcto |
+| **API Interceptor** | ✅ | `getLoginPath()` desde config.json |
+| **Perfil/Config** | ✅ | `buildPath()` en navegación |
 
 ---
 
-## 📋 Detalle de Correcciones - Sesión 2 (Auth Components)
+## 🔧 Cache Busting Implementado
 
-### Archivos Corregidos (3 archivos, 6 rutas)
+### **En index.html (postbuild.js)**
 
-| Archivo | Rutas Corregidas |
-|---------|------------------|
-| `LoginForm.tsx` | `/recuperar-password`, `/registro` |
-| `RegisterForm.tsx` | `navigate('/login')`, `to="/login"` |
-| `ForgotPasswordForm.tsx` | `to="/login"` (2 veces) |
+```html
+<script src="./assets/index-DFPY2cDl.js?v=1773421486871"></script>
+<link href="./assets/index-DUkSdQH4.css?v=1773421486871">
+```
 
-**Cambios:**
-- `to="/login"` → `to={buildPath('/login')}`
-- `navigate('/login')` → `navigate(buildPath('/login'))`
+### **En .htaccess (headers HTTP)**
 
----
+```apache
+<FilesMatch "\.(html|js|css)$">
+  Header set Cache-Control "no-cache, no-store, must-revalidate"
+  Header set Pragma "no-cache"
+  Header set Expires "0"
+</FilesMatch>
+```
 
-## 📋 Detalle de Correcciones - Sesión 1 (Dashboards + UI)
+### **Beneficios**
 
-### Archivos Corregidos (4 archivos, 22 rutas)
-
-| Archivo | Rutas Corregidas |
-|---------|------------------|
-| `AdminDashboard.tsx` | 10 rutas (StatCards + QuickActions) |
-| `SuperAdminDashboard.tsx` | 8 rutas (StatCards + QuickActions) |
-| `StatCard.tsx` | `buildPath(href)` en Link |
-| `QuickActions.tsx` | `setBuildPathFn()` + `buildPath()` |
-
----
-
-## 📋 Detalle de Correcciones - Sesión 1 (Layouts + CRUDs)
-
-### Archivos Corregidos (33 archivos)
-
-- **Configuración (2):** `index.html`, `main.tsx`
-- **Layouts (4):** Admin, Talent, Cliente, SuperAdmin
-- **Auth (1):** LoginForm
-- **Talent (5):** Tareas, TareasCrear, TareasEditar, Proyectos, Actividades
-- **CRUDs Admin (21):** Clientes, Talents, Proyectos, Actividades, Perfiles, Seniorities, Divisas, CostoPorHora, Asignaciones
-- **Super Admin (3):** Usuarios (list, crear, editar)
-- **Admin (2):** Perfil, Configuracion
+| Ventaja | Descripción |
+|---------|-------------|
+| **Sin caché obsoleto** | Timestamp único por build |
+| **Headers HTTP** | No-cache para HTML/JS/CSS |
+| **Producción segura** | Usuarios siempre ven última versión |
 
 ---
 
-## 🔐 Configuración CORS - Resumen
+## 🖥️ ESTADO ACTUAL: ESPERANDO REVISIÓN DE SOPORTE
 
-### **¿Para qué sirve CORS?**
+### **Archivos Enviados a Soporte Técnico**
 
-**CORS** = **Cross-Origin Resource Sharing** - Mecanismo de seguridad que controla **qué dominios pueden hacer peticiones a tu API desde el navegador**.
+| Archivo | Tamaño | Propósito |
+|---------|--------|-----------|
+| **api/server.js** | 199 KB | API legible (NO minificada) |
+| **api/server.js.map** | 455 KB | Source map (opcional) |
+| **docs/SERVER-JS-EXPLICACION.md** | Documento | Explicación línea por línea |
 
-### **Configuración Actual**
+### **Configuración en Servidor**
 
-| Configuración | `FRONTEND_URL` | ¿Quién puede acceder? |
-|---------------|----------------|-----------------------|
-| **Producción abierta** | (no configurado) | **Cualquier dominio** ✅ |
-| **Producción restringida** | `https://pixelycodigo.com` | Solo ese dominio |
+| Componente | Configuración | Estado |
+|------------|---------------|--------|
+| **cPanel Node.js** | 18.20.8 | ✅ Configurado |
+| **Application root** | `/home/ecointer/pixelycodigo/sprintask` | ✅ Configurado |
+| **Startup file** | `api/server.js` | ✅ Configurado |
+| **package.json** | `"type": "commonjs"` | ✅ Configurado |
+| **config.json** | `baseUrl: "/sprintask/"` | ✅ Pendiente de editar |
+| **.env** | `FRONTEND_URL=https://pixelycodigo.com` | ✅ Pendiente de editar |
+| **Passenger** | Pendiente de iniciar | ⏳ Esperando revisión |
 
-### **⚠️ IMPORTANTE: Solo Dominio, SIN subcarpeta**
+### **Próxima Acción: Esperar Respuesta de Soporte**
 
-| Configuración | `FRONTEND_URL` | ¿Funciona? |
-|---------------|----------------|------------|
-| **✅ Correcto** | `https://pixelycodigo.com` | ✅ **SÍ** |
-| **❌ Incorrecto** | `https://pixelycodigo.com/sprintask` | ❌ **NO** |
+**Tiempo estimado:** 24-48 horas
 
-**¿Por qué?** El navegador envía `Origin: https://pixelycodigo.com` (NO incluye la subcarpeta).
+**Lo que soporte debe hacer:**
+1. Revisar el código `server.js` (legible, NO minificado)
+2. Verificar configuración de Passenger
+3. Iniciar la aplicación manualmente si es necesario
+4. Confirmar cuando el proceso esté corriendo
 
 ---
 
-## 📝 Próximos Pasos
+## 📝 Próximos Pasos (Después de Soporte)
 
 ### **Inmediato - Esperando Soporte:**
-- [ ] Enviar ticket de soporte (template en `docs/nodeJsCpanel.md`)
-- [ ] Esperar respuesta (24-48 horas)
-- [ ] Verificar que Passenger usa Node.js 18
+- [ ] ✅ Build legible generado (v18.0)
+- [ ] ✅ Documentación SERVER-JS-EXPLICACION.md creada
+- [ ] ✅ Archivos enviados a soporte
+- [ ] ⏳ Esperar respuesta (24-48 horas)
+- [ ] ⏳ Soporte revisa y configura Passenger
+- [ ] ⏳ Soporte confirma proceso corriendo
 
 ### **Si Soporte Resuelve:**
-- [ ] `ps aux | grep node` muestra proceso
-- [ ] `curl /api/health` devuelve JSON
-- [ ] Login funciona en navegador
+- [ ] Verificar `ps aux | grep node` muestra proceso
+- [ ] Verificar `curl /api/health` devuelve JSON
+- [ ] Probar login en navegador
+- [ ] Probar todas las funcionalidades
 
 ### **Si Soporte NO Resuelve:**
-- [ ] Ver versión real: `node --version`
-- [ ] Compilar para esa versión (Plan B)
-- [ ] Re-desplegar
+- [ ] Solicitar logs de error específicos
+- [ ] Proporcionar información adicional
+- [ ] Considerar alternativas (Plan B)
 
-### **Archivos a Subir (Listos):**
-- [ ] `api/server.js` (118 KB)
+### **Archivos Listos para Subir (cuando soporte confirme):**
+- [ ] `api/server.js` (199 KB, legible)
+- [ ] `assets/*` (7 archivos, ~1.24 MB)
+- [ ] `index.html` (1.4 KB)
 - [ ] `tmp/restart.txt` (v1.0.8)
+- [ ] `config.json` (editar en servidor)
+- [ ] `.env` (editar en servidor)
+- [ ] `.htaccess` (editar en servidor)
+
+---
+
+## 📝 Archivos a Subir al Servidor
+
+### **Estructura FTP_DEPLOY/**
+
+```
+FTP_DEPLOY/
+├── api/
+│   └── server.js              ← 118 KB (Node.js 18 CommonJS)
+├── assets/
+│   ├── index-DFPY2cDl.js?v=... ← Con cache busting
+│   ├── react-vendor-*.js
+│   ├── charts-vendor-*.js
+│   ├── radix-vendor-*.js
+│   ├── utils-vendor-*.js
+│   ├── tanstack-vendor-*.js
+│   └── index-DUkSdQH4.css
+├── tmp/
+│   └── restart.txt            ← v1.0.6
+├── index.html                 ← Con cache busting
+├── config.json                ← EDITAR: baseUrl, apiUrl
+├── .htaccess                  ← EDITAR: RewriteBase
+├── .env                       ← EDITAR: credenciales BD
+└── package.json               ← cPanel config (commonjs)
+```
+
+### **Archivos a Editar en Servidor**
+
+| Archivo | Configuración | Ejemplo |
+|---------|---------------|---------|
+| **config.json** | `baseUrl`, `apiUrl` | `"/sprintask/"`, `"/sprintask/api"` |
+| **.htaccess** | `RewriteBase` | `/sprintask/` |
+| **.env** | Credenciales MySQL | `DB_USER`, `DB_PASSWORD`, `DB_NAME` |
+
+---
+
+## ✅ Checklist de Despliegue
+
+- [x] Build en local: `npm run build:deploy`
+- [x] TypeScript sin errores
+- [x] Cache busting aplicado
+- [x] Documentación actualizada (v10.0)
+- [ ] Subir `FTP_DEPLOY/` al servidor por FTP
+- [ ] Editar `config.json` con ruta correcta
+- [ ] Editar `.htaccess` con `RewriteBase` correcto
+- [ ] Editar `.env` con credenciales reales de MySQL
+- [ ] Generar JWT_SECRET único
+- [ ] Crear base de datos en cPanel
+- [ ] Configurar Node.js App en cPanel
+- [ ] Reiniciar Passenger: `touch tmp/restart.txt`
+- [ ] Verificar health check (`/api/health`)
+- [ ] Verificar frontend carga correctamente
+- [ ] Limpiar caché del navegador
+- [ ] Probar login con credenciales por defecto
 
 ---
 
@@ -336,14 +285,17 @@ No se encontraron rutas absolutas hardcodeadas pendientes. El frontend está lis
 
 | Métrica | Valor | Estado |
 |---------|-------|--------|
-| **Rutas Relativas** | 100% | ✅ 39 archivos corregidos |
-| **Frontend Funcional** | 100% | ✅ Completo |
-| **Backend Build** | 100% | ✅ 118 KB (Node 18 CommonJS) |
+| **Rutas Relativas** | 100% | ✅ config.json fuente de verdad |
+| **Frontend Funcional** | 100% | ✅ 39 archivos validados |
+| **Backend Build** | 100% | ✅ 199 KB (LEGIBLE para soporte) |
+| **Cache Busting** | 100% | ✅ Timestamp + headers HTTP |
 | **Limpieza Automática** | 100% | ✅ `prebuild.js` implementado |
-| **Perfil/Config Talent** | 100% | ✅ 2 componentes creados |
-| **Documentación Técnica** | 100% | ✅ `nodeJsCpanel.md` creado |
+| **Documentación** | 100% | ✅ SERVER-JS-EXPLICACION.md + config v10.0 |
 | **Errores de Build** | 0 | ✅ Sin errores |
 | **Errores de TypeCheck** | 0 | ✅ Sin errores |
+| **CORS Producción** | 100% | ✅ Dominio sin subcarpeta |
+| **API Routing** | 100% | ✅ Sin conflicto de puerto |
+| **Soporte Técnico** | ⏳ Pendiente | ✅ Archivos enviados para revisión |
 
 ---
 
@@ -351,11 +303,12 @@ No se encontraron rutas absolutas hardcodeadas pendientes. El frontend está lis
 
 | Documento | Propósito | Versión |
 |-----------|-----------|---------|
-| `docs/nodeJsCpanel.md` | Node.js en cPanel - Troubleshooting | 1.0 |
-| `docs/configuracionSaaS.md` | Configuración en Servidor | 9.2 |
-| `docs/CONFIGURACION-SERVIDOR.md` | Guía Rápida | 2.0 |
+| `docs/SERVER-JS-EXPLICACION.md` | Explicación server.js para soporte | **1.0** ✅ NUEVO |
+| `docs/configuracionSaaS.md` | Configuración Completa SaaS | **10.0** ✅ |
+| `docs/CONFIGURACION-SERVIDOR.md` | Guía Rápida | 3.0 |
 | `docs/plans/modelo_base_datos_auto.md` | Modelo de BD | 3.0 |
-| `docs/caso-talent.md` | Caso Talent - Perfil/Config | ✅ Resuelto |
+| `docs/RESUMEN-DE-AVANCE.md` | Historial Diario | **18.0** ✅ |
+| `docs/nodeJsCpanel.md` | Node.js en cPanel | 1.0 |
 
 ---
 
@@ -366,11 +319,13 @@ No se encontraron rutas absolutas hardcodeadas pendientes. El frontend está lis
 npm run build:deploy
 
 # En servidor (después de subir archivos):
+
 # 1. Verificar archivos
 ls -lh api/server.js
 # Debería mostrar: 118K
 
-# 2. Esperar 60 segundos
+# 2. Reiniciar Passenger
+touch tmp/restart.txt
 sleep 60
 
 # 3. Verificar proceso Node.js
@@ -381,10 +336,10 @@ ps aux | grep node | grep -v grep
 curl "https://pixelycodigo.com/sprintask/api/health"
 # Debería mostrar: {"status":"ok","timestamp":"..."}
 
-# Plan B: Ver versión de Node.js
-node --version
-# O
-ls /opt/cpanel/ | grep node
+# 5. Verificar frontend
+# Limpiar caché: Ctrl + Shift + Supr
+# Probar en incógnito: Ctrl + Shift + N
+# URL: https://pixelycodigo.com/sprintask/
 ```
 
 ---
@@ -409,6 +364,35 @@ ls /opt/cpanel/ | grep node
 
 ---
 
-**Última actualización:** 13 de Marzo, 2026 - Noche
-**Versión:** 15.0 - Build Node.js 18 + Documentación Técnica
-**Próxima acción:** Enviar ticket de soporte técnico
+## 🚀 PRÓXIMA ACCIÓN: SUBIR AL SERVIDOR
+
+### **Inmediato:**
+
+1. **Subir archivos FTP_DEPLOY/** al servidor
+2. **Editar config.json:**
+   ```json
+   {
+     "baseUrl": "/sprintask/",
+     "apiUrl": "/sprintask/api"
+   }
+   ```
+3. **Editar .htaccess:** `RewriteBase /sprintask/`
+4. **Editar .env:** Credenciales de MySQL
+5. **Reiniciar Passenger:** `touch tmp/restart.txt`
+6. **Limpiar caché navegador:** `Ctrl + Shift + Supr`
+7. **Probar en modo incógnito:** `Ctrl + Shift + N`
+
+### **Si Passenger No Inicia:**
+
+1. **Iniciar manualmente:**
+   ```bash
+   cd /sprintask
+   nohup node api/server.js > api.log 2>&1 &
+   ```
+2. **Contactar soporte** (template en `docs/configuracionSaaS.md`)
+
+---
+
+**Última actualización:** 13 de Marzo, 2026 - Noche  
+**Versión:** 18.0 - Build Legible para Soporte + Documentación Completa  
+**Próxima acción:** Esperar revisión de soporte técnico (24-48 horas)

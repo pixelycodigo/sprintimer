@@ -2,11 +2,10 @@
 
 /**
  * Script post-build para el frontend
- * Con rutas relativas, NO se modifica index.html
- * Solo genera .htaccess con la ruta correcta para Apache
+ * Con rutas relativas y cache busting para producción
  */
 
-import { writeFileSync, existsSync, readFileSync } from 'fs';
+import { writeFileSync, existsSync, readFileSync, readdirSync } from 'fs';
 import { resolve } from 'path';
 
 const webDir = process.cwd();
@@ -30,11 +29,30 @@ try {
 }
 
 // ==========================================
-// NO modificar index.html (ya tiene rutas relativas)
+// Cache busting: Agregar ?v=<timestamp> a assets en index.html
 // ==========================================
 
-console.log('✅ index.html mantiene rutas relativas (./assets/)');
-console.log('   No es necesario modificar <base href> ni rutas de assets');
+const timestamp = new Date().getTime();
+const indexHtmlPath = resolve(ftpDeployDir, 'index.html');
+
+try {
+  let indexHtml = readFileSync(indexHtmlPath, 'utf-8');
+  
+  // Agregar ?v=<timestamp> a los assets JS y CSS
+  indexHtml = indexHtml.replace(
+    /src="\.(\/assets\/[^"]+)"/g,
+    `src=".$1?v=${timestamp}"`
+  );
+  indexHtml = indexHtml.replace(
+    /href="\.(\/assets\/[^"]+)"/g,
+    `href=".$1?v=${timestamp}"`
+  );
+  
+  writeFileSync(indexHtmlPath, indexHtml, 'utf-8');
+  console.log(`✅ Cache busting aplicado a assets (v=${timestamp})`);
+} catch (error) {
+  console.log('⚠️  No se pudo aplicar cache busting a index.html');
+}
 
 // ==========================================
 // Generar .htaccess con la ruta correcta
@@ -42,6 +60,11 @@ console.log('   No es necesario modificar <base href> ni rutas de assets');
 
 const htaccessContent = `# Desactivar listado de directorios
 Options -Indexes
+
+<IfModule mod_mime.c>
+AddType application/javascript .js
+AddType text/css .css
+</IfModule>
 
 <IfModule mod_rewrite.c>
 RewriteEngine On
@@ -53,9 +76,17 @@ RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 # IMPORTANTE: base de la aplicación (editar en servidor si es necesario)
 RewriteBase ${baseUrl}
 
-# Bloquear acceso directo a /api
-RewriteRule ^api/?$ ${baseUrl}index.html [L]
-RewriteRule ^api/.*$ ${baseUrl}index.html [L]
+# API va al backend (NO redirigir)
+RewriteCond %{REQUEST_URI} ^/api/
+RewriteRule . - [L]
+
+# Archivos existentes (JS, CSS, imágenes) NO redirigir
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule . - [L]
+
+# Carpetas existentes NO redirigir
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule . - [L]
 
 # SPA routing
 RewriteRule ^index.html$ - [L]
@@ -68,6 +99,13 @@ RewriteRule . ${baseUrl}index.html [L]
 # Proteger archivos sensibles
 <FilesMatch "(\\.env|\\.git|\\.htaccess)">
 Require all denied
+</FilesMatch>
+
+# Cache busting para producción (evitar caché obsoleto)
+<FilesMatch "\\.(html|js|css)$">
+  Header set Cache-Control "no-cache, no-store, must-revalidate"
+  Header set Pragma "no-cache"
+  Header set Expires "0"
 </FilesMatch>
 `;
 

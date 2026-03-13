@@ -21,13 +21,13 @@ export default defineConfig({
   bundle: true,
 
   // Habilitar code splitting (Hybrid Chunks)
-  splitting: true,
+  splitting: false,
 
-  // Minificación para producción
-  minify: true,
+  // NO minificar para que soporte técnico pueda leer el código
+  minify: false,
 
-  // No generar source maps para producción
-  sourcemap: false,
+  // Generar source maps para debugging
+  sourcemap: true,
 
   // NO limpiar directorio de salida (preserva tmp/version.txt)
   clean: false,
@@ -42,4 +42,7 @@ export default defineConfig({
   loader: {
     '.sql': 'text',
   },
+
+  // Mantener nombres de variables legibles
+  keepNames: true,
 });

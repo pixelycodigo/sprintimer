@@ -5,36 +5,29 @@ import { authService } from '../services/auth.service';
 // URL de la API se lee desde config.json en tiempo de ejecución
 // Esto permite cambiar la ruta sin rebuild
 let API_URL = '/api'; // Valor inicial, se actualiza con initApiUrl()
-let BASE_URL = '/'; // Base URL para redirecciones (se actualiza con initApiUrl())
 
-// Función para inicializar la URL de la API y baseUrl desde config.json
+// Función para inicializar la URL de la API desde config.json
 export async function initApiUrl() {
   try {
     const response = await fetch('./config.json');
     const config = await response.json();
-    API_URL = config.apiUrl;
-    BASE_URL = config.baseUrl || '/';
-
-    // Asegurar que baseUrl termine con /
-    if (!BASE_URL.endsWith('/')) {
-      BASE_URL += '/';
-    }
+    API_URL = config.apiUrl || '/api';
 
     // Actualizar baseURL de la instancia existente
     api.defaults.baseURL = API_URL;
 
     console.log('✅ API URL configurada:', API_URL);
-    console.log('✅ Base URL configurada:', BASE_URL);
   } catch (error) {
     console.warn('⚠️ No se pudo cargar config.json, usando valores por defecto');
   }
 }
 
 // Función para obtener la ruta de login completa
+// Usa config.json como fuente de verdad (NO detección automática)
 export function getLoginPath(): string {
-  // Asegurar que no haya doble slash
-  const base = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL;
-  return `${base}/login`;
+  const globalBaseUrl = (window as any).__APP_BASE_URL__ || '/';
+  const baseUrl = globalBaseUrl.endsWith('/') ? globalBaseUrl : globalBaseUrl + '/';
+  return `${baseUrl}login`;
 }
 
 export const api = axios.create({
