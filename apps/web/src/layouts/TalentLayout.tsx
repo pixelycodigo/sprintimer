@@ -1,4 +1,4 @@
-import { Outlet, useNavigate, Link } from 'react-router-dom';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   Briefcase,
@@ -40,6 +40,7 @@ export default function TalentLayout() {
   const sidebar = useSidebarStore();
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
@@ -55,16 +56,22 @@ export default function TalentLayout() {
 
         <SidebarContent>
           <SidebarGroup>
-            {navigation.map((item) => (
-              <SidebarMenuItem key={item.name}>
-                <Link to={item.path} className="flex items-center gap-3">
+            {navigation.map((item) => {
+              const isActive = location.pathname === item.path || location.pathname.startsWith(item.path + '/');
+              return (
+                <SidebarMenuItem
+                  key={item.name}
+                  href={buildPath(item.path)}
+                  active={isActive}
+                  className="flex items-center gap-3"
+                >
                   <SidebarMenuItemIcon>
                     <item.icon className="w-5 h-5" aria-hidden="true" />
                   </SidebarMenuItemIcon>
                   {item.name}
-                </Link>
-              </SidebarMenuItem>
-            ))}
+                </SidebarMenuItem>
+              );
+            })}
           </SidebarGroup>
         </SidebarContent>
 
