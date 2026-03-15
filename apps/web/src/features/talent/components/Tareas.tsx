@@ -62,6 +62,7 @@ export default function TalentTareas() {
     {
       header: 'Estado',
       accessorKey: 'completado',
+      id: 'estado-toggle', // ID único para evitar conflicto de keys
       cell: ({ row }) => {
         const completado = row.getValue('completado') as boolean;
         const id = row.original.id;
@@ -117,11 +118,13 @@ export default function TalentTareas() {
     {
       header: 'Estado',
       accessorKey: 'completado',
+      id: 'estado-badge', // ID único para evitar conflicto de keys
       cell: ({ getValue }) => <StatusBadge active={!getValue<boolean>()} activeLabel="Pendiente" inactiveLabel="Completada" />,
     },
     {
       header: 'Acciones',
       accessorKey: 'id',
+      id: 'acciones', // ID único
       cell: ({ row }) => (
         <DataTableActions
           editId={row.original.id}
