@@ -7,18 +7,25 @@ import { authService } from '../services/auth.service';
 let API_URL = '/api'; // Valor inicial, se actualiza con initApiUrl()
 
 // Función para inicializar la URL de la API desde config.json
-export async function initApiUrl() {
+// Opcional: recibir el valor desde main.tsx para evitar doble fetch
+export async function initApiUrl(configApiUrl?: string) {
+  if (configApiUrl) {
+    // Usar valor proporcionado desde main.tsx
+    API_URL = configApiUrl;
+    api.defaults.baseURL = API_URL;
+    return;
+  }
+  
+  // Fallback: intentar cargar config.json (solo en producción)
   try {
     const response = await fetch('./config.json');
     const config = await response.json();
     API_URL = config.apiUrl || '/api';
-
-    // Actualizar baseURL de la instancia existente
     api.defaults.baseURL = API_URL;
-
-    console.log('✅ API URL configurada:', API_URL);
-  } catch (error) {
-    console.warn('⚠️ No se pudo cargar config.json, usando valores por defecto');
+  } catch {
+    // Usar valor por defecto en desarrollo
+    API_URL = '/api';
+    api.defaults.baseURL = API_URL;
   }
 }
 

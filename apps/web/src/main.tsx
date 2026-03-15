@@ -48,7 +48,7 @@ function AppWithConfig() {
   useEffect(() => {
     // Cargar config.json con cache busting (ruta relativa desde index.html)
     const timestamp = new Date().getTime();
-    
+
     fetch(`./config.json?v=${timestamp}`)
       .then((res) => res.json())
       .then(async (data) => {
@@ -69,15 +69,15 @@ function AppWithConfig() {
           document.head.prepend(newBase);
         }
 
-        // Inicializar URL de la API desde config.json
-        await initApiUrl();
+        // Inicializar URL de la API pasando el valor directamente (evita doble fetch)
+        await initApiUrl(data.apiUrl || '/api');
 
         setLoaded(true);
       })
       .catch(async () => {
-        // Fallback solo si no hay config.json
+        // Fallback solo si no hay config.json (normal en desarrollo)
         setBaseUrl('/');
-        await initApiUrl();
+        await initApiUrl('/api');
         setLoaded(true);
       });
   }, []);
