@@ -150,7 +150,7 @@ La acción que representa que SprinTask ha entregado valor al usuario es cuando 
 
 ![Sprintask](images/login.png "Acceso a Plataforma")
 
-- **URL del producto desplegado:** `https://pixelycodigo.com/sprintask/`
+- **URL del producto desplegado:** `https://sprintask.pixelycodigo.com`
 - **Repositorio:** [https://github.com/pixelycodigo/sprintimer] 
 
 - **Credenciales de prueba:**
@@ -160,8 +160,8 @@ La acción que representa que SprinTask ha entregado valor al usuario es cuando 
         - Para una experiencia completa, este usuario puede crear clientes, proyectos, asignar talents y revisar dashboards.
 
     - **Usuario Talent (Ejemplo: "Elena Gómez" con 4 proyectos asignados):**
-        - Email: `elena.gomez@sprintask.com`
-        - Contraseña: `Talent123!`
+        - Email: `carlos.mendoza@sprintask.com`
+        - Contraseña: `Talent1234!`
         - **Proyectos Asignados (simulados):**
             1.  **Proyecto "Plataforma de E-learning":** Actividad "Desarrollo Frontend", "Implementación de API REST".
             2.  **Proyecto "App de Gestión Financiera":** Actividad "Diseño UI/UX", "Refactorización de Componentes".
