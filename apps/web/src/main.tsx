@@ -91,14 +91,12 @@ function AppWithConfig() {
   }
 
   return (
-    <React.StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter basename={baseUrl}>
-          <App />
-          <Toaster position="top-right" richColors />
-        </BrowserRouter>
-      </QueryClientProvider>
-    </React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter basename={baseUrl}>
+        <App />
+        <Toaster position="top-right" richColors />
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 }
 
