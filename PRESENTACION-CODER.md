@@ -156,12 +156,12 @@ La acción que representa que SprinTask ha entregado valor al usuario es cuando 
 - **Credenciales de prueba:**
     - **Usuario Administrador:**
         - Email: `admin@sprintask.com`
-        - Contraseña: `Admin123!`
+        - Contraseña: `Admin1234!`
         - Para una experiencia completa, este usuario puede crear clientes, proyectos, asignar talents y revisar dashboards.
 
     - **Usuario Talent (Ejemplo: "Elena Gómez" con 4 proyectos asignados):**
         - Email: `carlos.mendoza@sprintask.com`
-        - Contraseña: `Talent1234!`
+        - Contraseña: `Talent123!`
         - **Proyectos Asignados (simulados):**
             1.  **Proyecto "Plataforma de E-learning":** Actividad "Desarrollo Frontend", "Implementación de API REST".
             2.  **Proyecto "App de Gestión Financiera":** Actividad "Diseño UI/UX", "Refactorización de Componentes".
