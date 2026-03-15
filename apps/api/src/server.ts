@@ -15,6 +15,15 @@ dotenv.config();
 const app = express();
 const PORT = parseInt(process.env.PORT || '3001', 10);
 
+// ==========================================
+// CONFIGURACIÓN DE SUBCARPETA (APP_SUBPATH)
+// ==========================================
+// Permite desplegar en subcarpeta sin rebuild
+// Ejemplos: "sprintask", "app", "mi-app"
+// Dejar vacío para desplegar en raíz del dominio
+// ==========================================
+const APP_SUBPATH = (process.env.APP_SUBPATH || '').trim();
+
 // Middleware de seguridad
 app.use(helmet());
 app.use(cors(corsOptions));
@@ -26,12 +35,39 @@ app.use(requestLogger);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Health check (público, sin autenticación)
+// ==========================================
+// HEALTH CHECKS (públicos, sin autenticación)
+// ==========================================
+
+// Health check en raíz (siempre disponible)
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// Rutas API
+// Health check estándar API (siempre disponible)
+app.get('/api/health', (_req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Si hay subcarpeta configurada, agregar rutas adicionales
+if (APP_SUBPATH) {
+  // Health check en subcarpeta (ej: /sprintask/health)
+  app.get(`/${APP_SUBPATH}/health`, (_req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  });
+
+  // Health check API en subcarpeta (ej: /sprintask/api/health)
+  app.get(`/${APP_SUBPATH}/api/health`, (_req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  });
+
+  // Rutas API en subcarpeta (ej: /sprintask/api/*)
+  app.use(`/${APP_SUBPATH}/api`, routes);
+
+  logger.info('📁 Subcarpeta configurada', { subpath: APP_SUBPATH });
+}
+
+// Rutas API en raíz (siempre disponible)
 app.use('/api', routes);
 
 // Middleware de error (debe ir al final)

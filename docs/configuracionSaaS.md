@@ -370,6 +370,13 @@ Require all denied
 # Puerto del servidor
 PORT=3001
 
+# Subcarpeta de la Aplicación (OPCIONAL)
+# ==========================================
+# Usar solo si se despliega en subcarpeta (ej: dominio.com/sprintask/)
+# Dejar vacío si se despliega en raíz del dominio (dominio.com/)
+# DEBE COINCIDIR con baseUrl en config.json del frontend
+APP_SUBPATH=sprintask
+
 # Base de Datos MySQL
 DB_HOST=localhost
 DB_PORT=3306
@@ -386,12 +393,24 @@ NODE_ENV=production
 
 **Variables a personalizar:**
 
-| Variable | Descripción | Ejemplo |
-|----------|-------------|---------|
-| `DB_USER` | Usuario MySQL de cPanel | `usuario_sprintask` |
-| `DB_PASSWORD` | Contraseña del usuario | `TuContraseña123!` |
-| `DB_NAME` | Nombre de la base de datos | `usuario_sprintask_db` |
-| `JWT_SECRET` | Secreto único | Ver sección de generación |
+| Variable | Descripción | Ejemplo | Requerida |
+|----------|-------------|---------|-----------|
+| `APP_SUBPATH` | Subcarpeta de la app | `sprintask`, `app` | ⚠️ Solo si usas subcarpeta |
+| `DB_USER` | Usuario MySQL de cPanel | `usuario_sprintask` | ✅ Sí |
+| `DB_PASSWORD` | Contraseña del usuario | `TuContraseña123!` | ✅ Sí |
+| `DB_NAME` | Nombre de la base de datos | `usuario_sprintask_db` | ✅ Sí |
+| `JWT_SECRET` | Secreto único | Ver sección de generación | ✅ Sí |
+
+**⚠️ Importante sobre `APP_SUBPATH`:**
+
+| Escenario | `config.json` → `baseUrl` | `.env` → `APP_SUBPATH` | ¿Funciona? |
+|-----------|--------------------------|------------------------|------------|
+| **Raíz** | `/` | (vacío) | ✅ Sí |
+| **Subcarpeta** | `/sprintask/` | `sprintask` | ✅ Sí |
+| **Subcarpeta (mismatch)** | `/mi-app/` | `sprintask` | ❌ **NO** - debe coincidir |
+| **Subcarpeta (sin config)** | `/sprintask/` | (vacío) | ❌ **NO** - backend no responde en subcarpeta |
+
+> **Regla de oro:** `APP_SUBPATH` debe ser **exactamente igual** al valor de `baseUrl` en `config.json` (sin las barras).
 
 ---
 

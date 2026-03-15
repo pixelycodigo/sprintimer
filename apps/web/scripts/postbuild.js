@@ -58,27 +58,34 @@ try {
 // Generar .htaccess con la ruta correcta
 // ==========================================
 
-const htaccessContent = `# Desactivar listado de directorios
-Options -Indexes
+// Nota: Las directivas de Passenger se agregan en el servidor
+// Este .htaccess es la base que luego se edita en producción
+
+const htaccessContent = `# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION BEGIN
+# Estas líneas se completan en el servidor con las rutas reales
+PassengerAppRoot "/home/usuario/sprintask"
+PassengerBaseURI "${baseUrl === '/' ? '' : baseUrl}"
+PassengerNodejs "/home/usuario/nodevenv/sprintask/18/bin/node"
+PassengerAppType node
+PassengerStartupFile api/server.js
+PassengerAppLogFile "/home/usuario/sprintask/log/passenger.log"
+PassengerStartupTimeout 300
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION END
 
 <IfModule mod_mime.c>
 AddType application/javascript .js
 AddType text/css .css
 </IfModule>
 
-<IfModule mod_rewrite.c>
+Options -Indexes
 RewriteEngine On
 
 # Forzar HTTPS
 RewriteCond %{HTTPS} !=on
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-# IMPORTANTE: base de la aplicación (editar en servidor si es necesario)
+# Base de la aplicación (editar en servidor si es necesario)
 RewriteBase ${baseUrl}
-
-# API va al backend (NO redirigir)
-RewriteCond %{REQUEST_URI} ^/api/
-RewriteRule . - [L]
 
 # Archivos existentes (JS, CSS, imágenes) NO redirigir
 RewriteCond %{REQUEST_FILENAME} -f
@@ -88,13 +95,16 @@ RewriteRule . - [L]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule . - [L]
 
-# SPA routing
+# API va al backend - DEBE IR ANTES del SPA fallback
+# Usa la ruta completa porque REQUEST_URI no es modificado por RewriteBase
+RewriteCond %{REQUEST_URI} ^${baseUrl === '/' ? '' : baseUrl}/api/
+RewriteRule ^ - [L]
+
+# SPA routing - todo lo demás va a index.html
 RewriteRule ^index.html$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule . ${baseUrl}index.html [L]
-
-</IfModule>
 
 # Proteger archivos sensibles
 <FilesMatch "(\\.env|\\.git|\\.htaccess)">

@@ -20,31 +20,28 @@ if (!existsSync(ftpDeployDir)) {
 }
 
 // ==========================================
-// 1. Crear package.json para cPanel Node.js
+// 1. Crear/Actualizar package.json para cPanel Node.js
 // ==========================================
 
 const packageJsonPath = resolve(ftpDeployDir, 'package.json');
 
-if (!existsSync(packageJsonPath)) {
-  const packageJsonContent = JSON.stringify({
-    "name": "sprintask-deploy",
-    "version": "1.0.0",
-    "description": "SprinTask SaaS - Build multi-tenant",
-    "main": "api/server.js",
-    "type": "commonjs",
-    "scripts": {
-      "start": "node api/server.js"
-    },
-    "engines": {
-      "node": ">=18.0.0"
-    }
-  }, null, 2) + '\n';
+// Siempre crear/actualizar para asegurar configuración correcta
+const packageJsonContent = JSON.stringify({
+  "name": "sprintask-deploy",
+  "version": "1.0.0",
+  "description": "SprinTask SaaS - Build multi-tenant",
+  "main": "api/server.js",
+  "type": "commonjs",  // ✅ Requerido para Passenger/cPanel
+  "scripts": {
+    "start": "node api/server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}, null, 2) + '\n';
 
-  writeFileSync(packageJsonPath, packageJsonContent, 'utf-8');
-  console.log('✅ package.json creado para cPanel Node.js');
-} else {
-  console.log('ℹ️  package.json ya existe');
-}
+writeFileSync(packageJsonPath, packageJsonContent, 'utf-8');
+console.log('✅ package.json actualizado para cPanel Node.js (type: commonjs)');
 
 // ==========================================
 // 2. Crear .env para el backend (desde .env.example)
